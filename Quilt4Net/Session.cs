@@ -5,6 +5,16 @@ namespace Tharga.Quilt4Net
 {
     public class Session
     {
+        public Session(string apiKey)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Authorize(string token)
+        {
+            throw new NotImplementedException();
+        }
+
         //public void BeginRegister()
         //{
         //    //Starts an unmanaged task that queues the register message, to be executed later.
