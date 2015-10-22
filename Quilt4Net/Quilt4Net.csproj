@@ -34,9 +34,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Client.cs" />
+    <Compile Include="DataTransfer\CreateUserRequest.cs" />
+    <Compile Include="DataTransfer\LoginRequest.cs" />
+    <Compile Include="DataTransfer\LoginResponse.cs" />
+    <Compile Include="Interfaces\IWebApiClient.cs" />
     <Compile Include="SessionResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Session.cs" />
+    <Compile Include="User.cs" />
+    <Compile Include="WebApiClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
