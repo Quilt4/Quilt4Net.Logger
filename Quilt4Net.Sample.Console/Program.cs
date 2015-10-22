@@ -14,18 +14,26 @@ namespace Quilt4Net.Sample.Console
         {
             //TODO: Make first API call. Create a user.
 
+            var client = GetHttpClient();
+
             var jsonFormatter = new JsonMediaTypeFormatter();
             var content = new ObjectContent<CreateUserRequest>(new CreateUserRequest { Username = "xyz" }, jsonFormatter);
 
-            var client = GetHttpClient();
             var response = client.PostAsync(string.Format("api/{0}/{1}", "user", "Create"), content);
             if (!response.Wait(_timeout))
                 throw new TimeoutException("The WebAPI call exceeded the allotted time.");
             if (!response.Result.IsSuccessStatusCode)
-            {
                 throw new InvalidOperationException();
-                //throw ExpectedIssues.GetException(ExpectedIssues.ServiceCallError).AddData("StatusCode", (int)response.Result.StatusCode).AddData("StatusCodeName", response.Result.StatusCode).AddData("ReasonPhrase", response.Result.ReasonPhrase);   
-            }
+
+            var content2 = new ObjectContent<LoginRequest>(new LoginRequest { Username = "xyz", Password = "123" }, jsonFormatter);
+            var response2 = client.PostAsync(string.Format("api/{0}/{1}", "user", "Login"), content2);
+            if (!response2.Wait(_timeout))
+                throw new TimeoutException("The WebAPI call exceeded the allotted time.");
+            if (!response2.Result.IsSuccessStatusCode)
+                throw new InvalidOperationException();
+
+            var result = response2.Result.Content.ReadAsAsync<LoginResponse>().Result;
+            System.Console.WriteLine(result.SessionKey);
 
             System.Console.WriteLine("Press any key to exit...");
             System.Console.ReadKey();
@@ -38,12 +46,5 @@ namespace Quilt4Net.Sample.Console
             client.Timeout = _timeout;
             return client;
         }
-    }
-
-    public class CreateUserRequest
-    {
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
     }
 }
