@@ -38,7 +38,10 @@
     <Compile Include="DataTransfer\CreateUserRequest.cs" />
     <Compile Include="DataTransfer\LoginRequest.cs" />
     <Compile Include="DataTransfer\LoginResponse.cs" />
+    <Compile Include="DataTransfer\ProjectRequest.cs" />
+    <Compile Include="DataTransfer\ProjectResponse.cs" />
     <Compile Include="Interfaces\IWebApiClient.cs" />
+    <Compile Include="Project.cs" />
     <Compile Include="SessionResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Session.cs" />
