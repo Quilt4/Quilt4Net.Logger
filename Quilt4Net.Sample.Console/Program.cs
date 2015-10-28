@@ -33,7 +33,7 @@ namespace Quilt4Net.Sample.Console
                 foreach (var project in projects)
                 {
                     System.Console.WriteLine("Project: " + project.Name);
-                    await client.Project.GetAsync(project.ProjectId);
+                    var proj = await client.Project.GetAsync(project.ProjectId);
                 }
             }
             catch (Exception exception)

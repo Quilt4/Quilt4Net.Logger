@@ -6,11 +6,38 @@ using Tharga.Quilt4Net.Interfaces;
 
 namespace Tharga.Quilt4Net.Entities
 {
+    internal class Color : IColor
+    {
+        public Color(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; }
+    }
+
+    internal class Environment : IEnvironment
+    {
+        public Environment(string name, string color)
+        {
+            Name = name;
+            Color = new Color(color);
+        }
+
+        public string Name { get; }
+        public IColor Color { get; }
+    }
+
     internal class Session : ISession
     {
-        public Session(SessionResponse sessionResponse)
+        public Session(SessionResponse sessionResponse, IProject project)
         {
-            
+            Project = project;
+            SessionKey = sessionResponse.SessionKey;
+            StartTime = sessionResponse.StartTime;
+            EndTime = sessionResponse.EndTime;
+            Environment = new Environment(sessionResponse.EnvironmentName, sessionResponse.EnvironmentColor);
+            CallerIpAddress = sessionResponse.CallerIpAddress;
         }
 
 
@@ -19,14 +46,14 @@ namespace Tharga.Quilt4Net.Entities
         public DateTime? EndTime { get; }
         public IEnvironment Environment { get; }
         public string CallerIpAddress { get; }
-        public TimeSpan Duration { get; }
-        public IUser User { get; }
-        public IUserHandle UserHandle { get; }
-        public IMachine Machine { get; }
-        public IIssue[] Issues { get; }
-        public IIssueType[] IssueTypes { get; }
-        public IVersion Version { get; }
-        public IApplication Application { get; }
+        public TimeSpan Duration => (EndTime ?? DateTime.UtcNow) - StartTime;
+        public IUser User { get { throw new NotImplementedException(); } }
+        public IUserHandle UserHandle { get { throw new NotImplementedException(); } }
+        public IMachine Machine { get { throw new NotImplementedException(); } }
+        //public IIssue[] Issues { get { throw new NotImplementedException(); } }
+        //public IIssueType[] IssueTypes { get { throw new NotImplementedException(); } }
+        //public IVersion Version { get { return Project.Applications.SelectMany(x => x.Versions).Single(x => x.Name == _sessionResponse.VersionName); } }
+        //public IApplication Application { get { return Project.Applications.Single(x => x.Name == _sessionResponse.ApplicationName); } }
         public IProject Project { get; }
     }
 
@@ -44,7 +71,7 @@ namespace Tharga.Quilt4Net.Entities
         }
 
         public DateTime IssueTime { get; }
-        public IIssue LinkedIssues { get; }
+        public IIssue LinkedIssues { get { throw new NotImplementedException(); } }
         public IDictionary<string, string> Data { get; }
         public string UserInput { get; }
         public bool? Visible { get; }
@@ -72,10 +99,12 @@ namespace Tharga.Quilt4Net.Entities
     internal class IssueType : IIssueType
     {
         private readonly Issue[] _issues;
-        private readonly Session[] _sessions;
+        private readonly ISession[] _sessions;
 
-        public IssueType(IVersion version, IssueTypeResponse issueTypeResponse, IEnumerable<IssueResponse> issueResponses, IEnumerable<SessionResponse> sessionResponses)
+        public IssueType(IProject project, IApplication application, IVersion version, IssueTypeResponse issueTypeResponse, IEnumerable<IssueResponse> issueResponses, IEnumerable<SessionResponse> sessionResponses)
         {
+            Version = version;
+            Application = application;
             Message = issueTypeResponse.Message;
             StackTrace = new StackTrace(issueTypeResponse.StackTrace);
             Type = issueTypeResponse.Type;
@@ -83,10 +112,8 @@ namespace Tharga.Quilt4Net.Entities
             Ticket = issueTypeResponse.Ticket;
             Level = new Issuelevel(issueTypeResponse.Level);
             //InnerIssue //TODO: Fix!
-            var sessions = sessionResponses.Where(x => x.ApplicationName == Application.Name && x.VersionName == version.Name).Select(x => new Session(x)).ToArray(); //Pick all sessions for this application and version
-            var session = sessions.Single(y => y.SessionKey == issueTypeResponse.SessionKey);
-            _issues = issueResponses.Where(x => x.ApplicationName == Application.Name && x.VersionName == version.Name && x.IssueTypeMessage == Message).Select(x => new Issue(this, session, x)).ToArray();
-            _sessions = sessions.Where(x => _issues.Any(y => y.Session.SessionKey == x.SessionKey)).ToArray(); //Pick just the sessions where this issue type has appeared
+            _issues = issueResponses.Where(x => x.ApplicationName == Application.Name && x.VersionName == version.Name && x.IssueTypeMessage == Message).Select(x => new Issue(this, project.Sessions.Single(y => y.SessionKey == x.SessionKey), x)).ToArray();
+            _sessions = project.Sessions.Where(x => _issues.Any(y => y.Session.SessionKey == x.SessionKey)).ToArray(); //Pick just the sessions where this issue type has appeared
         }
 
         public string Message { get; }
@@ -95,34 +122,36 @@ namespace Tharga.Quilt4Net.Entities
         public string ResponseMessage { get; }
         public int Ticket { get; }
         public IIssuelevel Level { get; }
-        public IIssueType InnerIssue { get; }
+        public IIssueType InnerIssue { get { throw new NotImplementedException(); } }
         public IEnumerable<IIssue> Issues => _issues;
         public IEnumerable<ISession> Sessions => _sessions;
-
-        //TODO: Populate this
         public IVersion Version { get; }
         public IApplication Application { get; }
-        public IProject Project { get; }
-        public IUser[] Users { get; }
-        public IUserHandle[] UserHandles { get; }
-        public IMachine[] Machines { get; }
+
+        //TODO: Populate this
+        public IProject Project { get { throw new NotImplementedException(); } }
+        public IUser[] Users { get { throw new NotImplementedException(); } }
+        public IUserHandle[] UserHandles { get { throw new NotImplementedException(); } }
+        public IMachine[] Machines { get { throw new NotImplementedException(); } }
     }
 
     internal class Version : IVersion
     {
         private readonly IssueType[] _issueTypes;
         private readonly IssueResponse[] _issueResponses;
-        private readonly SessionResponse[] _sessionResponses;
+        private readonly ISession[] _sessions;
 
-        public Version(IApplication application, VersionResponse versionResponse, IEnumerable<IssueTypeResponse> issueTypeResponses, IEnumerable<IssueResponse> issueResponses, IEnumerable<SessionResponse> sessionResponses)
+        public Version(IProject project, IApplication application, VersionResponse versionResponse, IEnumerable<IssueTypeResponse> issueTypeResponses, IEnumerable<IssueResponse> issueResponses, SessionResponse[] sessionResponses)
         {
+            Project = project;
             Application = application;
             Name = versionResponse.Name;
             BuildTime = versionResponse.BuildTime;
             SupportToolkit = versionResponse.SupportToolkit;
             _issueResponses = issueResponses.Where(x => x.ApplicationName == Application.Name && x.VersionName == Name).ToArray();
-            _sessionResponses = sessionResponses.Where(x => x.ApplicationName == Application.Name && x.VersionName == Name).ToArray();
-            _issueTypes = issueTypeResponses.Where(x => x.ApplicationName == Application.Name && x.VersionName == Name).Select(x => new IssueType(this, x, _issueResponses, _sessionResponses)).ToArray();
+            var versionSessionResponses = sessionResponses.Where(x => x.ApplicationName == Application.Name && x.VersionName == Name).ToArray();
+            _issueTypes = issueTypeResponses.Where(x => x.ApplicationName == Application.Name && x.VersionName == Name).Select(x => new IssueType(project, application, this, x, _issueResponses, versionSessionResponses)).ToArray();
+            _sessions = project.Sessions.Where(x => sessionResponses.Any(y => y.ApplicationName == application.Name)).ToArray();
         }
 
         public string Name { get; }
@@ -130,14 +159,14 @@ namespace Tharga.Quilt4Net.Entities
         public string SupportToolkit { get; }
         public IApplication Application { get; }
         public IEnumerable<IIssueType> IssueTypes => _issueTypes;
+        public IProject Project { get; }
+        public IEnumerable<ISession> Sessions => _sessions;
 
         //TODO: Populate this
-        public IProject Project { get; }
-        public ISession[] Sessions { get; }
-        public IUser[] Users { get; }
-        public IUserHandle[] UserHandles { get; }
-        public IMachine[] Machines { get; }
-        public IIssue[] Issues { get; }
+        public IUser[] Users { get { throw new NotImplementedException(); } }
+        public IUserHandle[] UserHandles { get { throw new NotImplementedException(); } }
+        public IMachine[] Machines { get { throw new NotImplementedException(); } }
+        public IIssue[] Issues { get { throw new NotImplementedException(); } }
     }
 
     internal class Application : IApplication
@@ -145,48 +174,51 @@ namespace Tharga.Quilt4Net.Entities
         private readonly Version[] _versions;
         private readonly IssueTypeResponse[] _issueTypeResponses;
         private readonly IssueResponse[] _issueResponses;
-        private readonly SessionResponse[] _sessionResponses;
+        private readonly ISession[] _sessions;
 
-        internal Application(ApplicationResponse applicationResponse, IEnumerable<VersionResponse> versionResponses, IEnumerable<IssueTypeResponse> issueTypeResponses, IEnumerable<IssueResponse> issueResponses, IEnumerable<SessionResponse> sessionResponses)
+        internal Application(IProject project, ApplicationResponse applicationResponse, IEnumerable<VersionResponse> versionResponses, IEnumerable<IssueTypeResponse> issueTypeResponses, IEnumerable<IssueResponse> issueResponses, SessionResponse[] sessionResponses)
         {
             Name = applicationResponse.Name;
             _issueTypeResponses = issueTypeResponses.Where(x => x.ApplicationName == Name).ToArray();
             _issueResponses = issueResponses.Where(x => x.ApplicationName == Name).ToArray();
-            _sessionResponses = sessionResponses.Where(x => x.ApplicationName == Name).ToArray();
-            _versions = versionResponses.Where(x => x.ApplicationName == Name).Select(x => new Version(this, x, _issueTypeResponses, _issueResponses, _sessionResponses)).ToArray();
+            var applicationSessionResponses = sessionResponses.Where(x => x.ApplicationName == Name).ToArray();
+            _versions = versionResponses.Where(x => x.ApplicationName == Name).Select(x => new Version(project, this, x, _issueTypeResponses, _issueResponses, applicationSessionResponses)).ToArray();
+            _sessions = project.Sessions.Where(x => sessionResponses.Any(y => y.ApplicationName == Name)).ToArray();
         }
 
         public string Name { get; }
         public IEnumerable<IVersion> Versions => _versions;
+        public IEnumerable<ISession> Sessions => _sessions;
 
         //TODO: Populate this
-        public IArchive Archive { get; }
-        public IProject Project { get; }
-        public ISession[] Sessions { get; }
-        public IUser[] Users { get; }
-        public IUserHandle[] UserHandles { get; }
-        public IMachine[] Machines { get; }
-        public IIssue[] Issues { get; }
-        public IIssueType[] IssueTypes { get; }
+        public IArchive Archive { get { throw new NotImplementedException(); } }
+        public IProject Project { get { throw new NotImplementedException(); } }
+        public IUser[] Users { get { throw new NotImplementedException(); } }
+        public IUserHandle[] UserHandles { get { throw new NotImplementedException(); } }
+        public IMachine[] Machines { get { throw new NotImplementedException(); } }
+        public IIssue[] Issues { get { throw new NotImplementedException(); } }
+        public IIssueType[] IssueTypes { get { throw new NotImplementedException(); } }
     }
 
     internal class Project : IProject
     {
         private readonly Application[] _applications;
+        private readonly ISession[] _sessions;
 
         internal Project(ProjectResponse projectResponse)
         {
             Name = projectResponse.Name;
             Info = projectResponse.Info;
-            _applications = projectResponse.Applications.Select(x => new Application(x, projectResponse.Versions, projectResponse.IssueTypes, projectResponse.Issues, projectResponse.Sessions)).ToArray();
+            _sessions = projectResponse.Sessions.Select(x => new Session(x, this)).ToArray();
+            _applications = projectResponse.Applications.Select(x => new Application(this, x, projectResponse.Versions, projectResponse.IssueTypes, projectResponse.Issues, projectResponse.Sessions)).ToArray();
         }
 
         public string Name { get; }
         public IProjectInfo Info { get; }
         public IEnumerable<IApplication> Applications => _applications;
+        public IEnumerable<ISession> Sessions => _sessions;
 
         //TODO: Populate this
-        public ISession[] Sessions { get { throw new NotImplementedException(); } }
         public IUser[] Users { get { throw new NotImplementedException(); } }
         public IUserHandle[] UserHandles { get { throw new NotImplementedException(); } }
         public IMachine[] Machines { get { throw new NotImplementedException(); } }

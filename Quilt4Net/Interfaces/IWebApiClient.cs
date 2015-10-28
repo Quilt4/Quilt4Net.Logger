@@ -84,10 +84,10 @@ namespace Tharga.Quilt4Net.Interfaces
         IMachine Machine { get; }
 
         //Shortcut / Up-links
-        IIssue[] Issues { get; }
-        IIssueType[] IssueTypes { get; }
-        IVersion Version { get; }
-        IApplication Application { get; }
+        //IIssue[] Issues { get; }
+        //IIssueType[] IssueTypes { get; }
+        //IVersion Version { get; }
+        //IApplication Application { get; }
         IProject Project { get; }
     }
 
@@ -147,7 +147,7 @@ namespace Tharga.Quilt4Net.Interfaces
         IProject Project { get; }
 
         //Shortcuts
-        ISession[] Sessions { get; }
+        IEnumerable<ISession> Sessions { get; }
         IUser[] Users { get; }
         IUserHandle[] UserHandles { get; }
         IMachine[] Machines { get; }
@@ -166,7 +166,7 @@ namespace Tharga.Quilt4Net.Interfaces
         IProject Project { get; }
 
         //Shortcuts
-        ISession[] Sessions { get; }
+        IEnumerable<ISession> Sessions { get; }
         IUser[] Users { get; }
         IUserHandle[] UserHandles { get; }
         IMachine[] Machines { get; }
@@ -182,7 +182,7 @@ namespace Tharga.Quilt4Net.Interfaces
         IEnumerable<IApplication> Applications { get; }
 
         //Shortcuts
-        ISession[] Sessions { get; }
+        IEnumerable<ISession> Sessions { get; }
         IUser[] Users { get; }
         IUserHandle[] UserHandles { get; }
         IMachine[] Machines { get; }
