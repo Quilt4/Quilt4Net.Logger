@@ -99,16 +99,20 @@ namespace Tharga.Quilt4Net.Interfaces
         IDictionary<string, string> Data { get; }
         string UserInput { get; }
         bool? Visible { get; }
-        int Ticket { get; }
         ISession Session { get; }
 
         //Up-links
         IIssueType IssueType { get; }
     }
 
+    public interface IStackTrace
+    {
+    }
+
     public interface IIssueType
     {
         string Message { get; }
+        IStackTrace StackTrace { get; }
         string Type { get; }
         string ResponseMessage { get; }
         int Ticket { get; }
