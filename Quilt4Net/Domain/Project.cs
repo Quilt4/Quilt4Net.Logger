@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Tharga.Quilt4Net.DataTransfer;
+using Tharga.Quilt4Net.Entities;
 using Tharga.Quilt4Net.Interfaces;
 
 namespace Tharga.Quilt4Net.Domain
@@ -22,7 +23,7 @@ namespace Tharga.Quilt4Net.Domain
 
         public async Task<IEnumerable<IProjectInfo>> GetAllAsync()
         {
-            var result = await _webApiClient.ExecuteGetList<IProjectInfo>("project");
+            var result = await _webApiClient.ExecuteGetList<ProjectInfo>("project");
             return result;
         }
 

@@ -73,6 +73,7 @@ namespace Tharga.Quilt4Net.Interfaces
 
     public interface ISession
     {
+        Guid SessionKey { get; }
         DateTime StartTime { get; }
         DateTime? EndTime { get; }
         IEnvironment Environment { get; }
@@ -119,7 +120,7 @@ namespace Tharga.Quilt4Net.Interfaces
         IIssuelevel Level { get; }
         IIssueType InnerIssue { get; }
 
-        IIssue[] Issues { get; }
+        IEnumerable<IIssue> Issues { get; }
 
         //Up-links
         IVersion Version { get; }
@@ -127,7 +128,7 @@ namespace Tharga.Quilt4Net.Interfaces
         IProject Project { get; }
 
         //Shortcuts
-        ISession[] Sessions { get; }
+        IEnumerable<ISession> Sessions { get; }
         IUser[] Users { get; }
         IUserHandle[] UserHandles { get; }
         IMachine[] Machines { get; }

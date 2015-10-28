@@ -12,6 +12,7 @@ namespace Tharga.Quilt4Net.DataTransfer
         public VersionResponse[] Versions { get; set; }
         public IssueTypeResponse[] IssueTypes { get; set; }
         public IssueResponse[] Issues { get; set; }
+        public SessionResponse[] Sessions { get; set; }
     }
 
     public class ApplicationResponse
@@ -38,6 +39,7 @@ namespace Tharga.Quilt4Net.DataTransfer
         public int Ticket { get; set; }
         public string Level { get; set; }
         public IssueTypeResponse Inner { get; set; }
+        public Guid SessionKey { get; set; }
     }
 
     public class IssueResponse
@@ -48,5 +50,13 @@ namespace Tharga.Quilt4Net.DataTransfer
         public IDictionary<string, string> Data { get; set; }
         public string UserInput { get; set; }
         public bool? Visible { get; set; }
+        public string IssueTypeMessage { get; set; }
+    }
+
+    public class SessionResponse
+    {
+        public Guid SessionKey { get; set; }
+        public string ApplicationName { get; set; }
+        public string VersionName { get; set; }
     }
 }
