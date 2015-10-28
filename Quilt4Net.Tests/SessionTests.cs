@@ -23,15 +23,17 @@ namespace Tharga.Quilt4Net.Tests
             var issueTypeMessage1 = "ABC";
             var userName = "BobLoblaw";
             var userHandleName = "ABC123";
+            var machineName = "BBB111";
             var projectResponse = new ProjectResponse
             {
                 Applications = new[] { new ApplicationResponse { Name = applicationName1 } },
                 Versions = new[] { new VersionResponse { ApplicationName = applicationName1, Name = versionName1 }, },
                 IssueTypes = new[] { new IssueTypeResponse { ApplicationName = applicationName1, VersionName = versionName1, Message = issueTypeMessage1 } },
                 Issues = new[] { new IssueResponse { ApplicationName = applicationName1, VersionName = versionName1, IssueTypeMessage = issueTypeMessage1, IssueTime = DateTime.UtcNow, SessionKey = sessionKey }, },
-                Sessions = new[] { new SessionResponse { ApplicationName = applicationName1, SessionKey = sessionKey, VersionName = versionName1, UserName = userName, UserHandleName = userHandleName}, },
+                Sessions = new[] { new SessionResponse { ApplicationName = applicationName1, SessionKey = sessionKey, VersionName = versionName1, UserName = userName, UserHandleName = userHandleName, MachineName = machineName }, },
                 Users = new[] {new UserResponse { UserName = userName }, },
-                UserHandles = new[] { new UserHandleResponse { Name = userHandleName }, }
+                UserHandles = new[] { new UserHandleResponse { Name = userHandleName }, },
+                Machines = new[] { new MachineResponse {Name = machineName }, },
             };
             webApiClientMock.Setup(x => x.ExecuteGet<Guid, ProjectResponse>("project", It.IsAny<Guid>())).Returns(() => Task.FromResult(projectResponse));
             var projectId = Guid.NewGuid();
@@ -70,6 +72,7 @@ namespace Tharga.Quilt4Net.Tests
             var versionName1 = "1.0.0.0";
             var issueTypeMessage1 = "ABC";
             var userName = "BobLoblaw";
+            var machineName = "ABC123";
             var projectResponse = new ProjectResponse
             {
                 Applications = new[] { new ApplicationResponse { Name = applicationName1 } },
@@ -80,9 +83,10 @@ namespace Tharga.Quilt4Net.Tests
                     new IssueResponse { ApplicationName = applicationName1, VersionName = versionName1, IssueTypeMessage = issueTypeMessage1, IssueTime = DateTime.UtcNow, SessionKey = sessionKey },
                     new IssueResponse { ApplicationName = applicationName1, VersionName = versionName1, IssueTypeMessage = issueTypeMessage1, IssueTime = DateTime.UtcNow, SessionKey = sessionKey },
                 },
-                Sessions = new[] { new SessionResponse { ApplicationName = applicationName1, SessionKey = sessionKey, VersionName = versionName1, UserName = userName }, },
+                Sessions = new[] { new SessionResponse { ApplicationName = applicationName1, SessionKey = sessionKey, VersionName = versionName1, UserName = userName, MachineName = machineName }, },
                 Users = new[] { new UserResponse { UserName = userName }, },
-                UserHandles = new UserHandleResponse[] { }
+                UserHandles = new UserHandleResponse[] { },
+                Machines = new[] { new MachineResponse { Name = machineName }, },
             };
             webApiClientMock.Setup(x => x.ExecuteGet<Guid, ProjectResponse>("project", It.IsAny<Guid>())).Returns(() => Task.FromResult(projectResponse));
             var projectId = Guid.NewGuid();
@@ -122,6 +126,7 @@ namespace Tharga.Quilt4Net.Tests
             var versionName1 = "1.0.0.0";
             var issueTypeMessage1 = "ABC";
             var userName = "BobLoblaw";
+            var machineName = "ABC123";
             var projectResponse = new ProjectResponse
             {
                 Applications = new[] { new ApplicationResponse { Name = applicationName1 } },
@@ -134,11 +139,12 @@ namespace Tharga.Quilt4Net.Tests
                 },
                 Sessions = new[]
                 {
-                    new SessionResponse { ApplicationName = applicationName1, SessionKey = sessionKey1, VersionName = versionName1, UserName = userName },
-                    new SessionResponse { ApplicationName = applicationName1, SessionKey = sessionKey2, VersionName = versionName1, UserName = userName },
+                    new SessionResponse { ApplicationName = applicationName1, SessionKey = sessionKey1, VersionName = versionName1, UserName = userName, MachineName = machineName },
+                    new SessionResponse { ApplicationName = applicationName1, SessionKey = sessionKey2, VersionName = versionName1, UserName = userName, MachineName = machineName },
                 },
                 Users = new[] { new UserResponse { UserName = userName }, },
                 UserHandles = new UserHandleResponse[] { },
+                Machines = new[] { new MachineResponse { Name = machineName }, },
             };
             webApiClientMock.Setup(x => x.ExecuteGet<Guid, ProjectResponse>("project", It.IsAny<Guid>())).Returns(() => Task.FromResult(projectResponse));
             var projectId = Guid.NewGuid();
@@ -181,6 +187,7 @@ namespace Tharga.Quilt4Net.Tests
             var issueTypeMessage1 = "ABC";
             var userName1 = "BobLoblaw";
             var userName2 = "Reapadda";
+            var machineName = "ABC123";
             var projectResponse = new ProjectResponse
             {
                 Applications = new[]
@@ -201,11 +208,12 @@ namespace Tharga.Quilt4Net.Tests
                 },
                 Sessions = new[]
                 {
-                    new SessionResponse { ApplicationName = applicationName1, SessionKey = sessionKey1, VersionName = versionName1, UserName = userName1 },
-                    new SessionResponse { ApplicationName = applicationName2, SessionKey = sessionKey2, VersionName = versionName1, UserName = userName2 },
+                    new SessionResponse { ApplicationName = applicationName1, SessionKey = sessionKey1, VersionName = versionName1, UserName = userName1, MachineName = machineName },
+                    new SessionResponse { ApplicationName = applicationName2, SessionKey = sessionKey2, VersionName = versionName1, UserName = userName2, MachineName = machineName },
                 },
                 Users = new[] { new UserResponse { UserName = userName1 }, new UserResponse { UserName = userName2 }, },
                 UserHandles = new UserHandleResponse[] { },
+                Machines = new[] { new MachineResponse { Name = machineName }, },
             };
             webApiClientMock.Setup(x => x.ExecuteGet<Guid, ProjectResponse>("project", It.IsAny<Guid>())).Returns(() => Task.FromResult(projectResponse));
             var projectId = Guid.NewGuid();

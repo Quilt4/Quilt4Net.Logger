@@ -6,6 +6,27 @@ using Tharga.Quilt4Net.Interfaces;
 
 namespace Tharga.Quilt4Net.Entities
 {
+    internal class Machine : IMachine
+    {
+        public Machine(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; }
+
+        //TODO: Populate this
+        public IDictionary<string, string> Data { get { throw new NotImplementedException(); } }
+        public ISession[] Sessions { get { throw new NotImplementedException(); } }
+        public IUser[] Users { get { throw new NotImplementedException(); } }
+        public IUserHandle[] UserHandles { get { throw new NotImplementedException(); } }
+        public IIssue[] Issues { get { throw new NotImplementedException(); } }
+        public IIssueType[] IssueTypes { get { throw new NotImplementedException(); } }
+        public IVersion[] Versions { get { throw new NotImplementedException(); } }
+        public IApplication[] Applications { get { throw new NotImplementedException(); } }
+        public IProject[] Projects { get { throw new NotImplementedException(); } }
+    }
+
     internal class UserHandler : IUserHandle
     {
         public UserHandler(string name)
@@ -24,6 +45,8 @@ namespace Tharga.Quilt4Net.Entities
         }
 
         public string Name { get; }
+
+        //TODO: Populate this
         public ISession[] Sessions { get { throw new NotImplementedException(); } }
         public IMachine[] Users { get { throw new NotImplementedException(); } }
         public IIssue[] Issues { get { throw new NotImplementedException(); } }
@@ -58,11 +81,12 @@ namespace Tharga.Quilt4Net.Entities
 
     internal class Session : ISession
     {
-        public Session(SessionResponse sessionResponse, IProject project, IUser user, IUserHandle userHandle)
+        public Session(SessionResponse sessionResponse, IProject project, IUser user, IUserHandle userHandle, IMachine machine)
         {
             Project = project;
             User = user;
             UserHandle = userHandle ?? new UserHandler(string.Empty);
+            Machine = machine;
             SessionKey = sessionResponse.SessionKey;
             StartTime = sessionResponse.StartTime;
             EndTime = sessionResponse.EndTime;
@@ -78,7 +102,7 @@ namespace Tharga.Quilt4Net.Entities
         public TimeSpan Duration => (EndTime ?? DateTime.UtcNow) - StartTime;
         public IUser User { get; }
         public IUserHandle UserHandle { get; }
-        public IMachine Machine { get { throw new NotImplementedException(); } }
+        public IMachine Machine { get; }
         //public IIssue[] Issues { get { throw new NotImplementedException(); } }
         //public IIssueType[] IssueTypes { get { throw new NotImplementedException(); } }
         //public IVersion Version { get { return Project.Applications.SelectMany(x => x.Versions).Single(x => x.Name == _sessionResponse.VersionName); } }
@@ -109,6 +133,7 @@ namespace Tharga.Quilt4Net.Entities
         private readonly ISession[] _sessions;
         private readonly IUser[] _users;
         private readonly IUserHandle[] _userHandles;
+        private readonly IMachine[] _machines;
 
         public IssueType(IProject project, IApplication application, IVersion version, IssueTypeResponse issueTypeResponse, IEnumerable<IssueResponse> issueResponses, IEnumerable<SessionResponse> sessionResponses)
         {
@@ -126,6 +151,7 @@ namespace Tharga.Quilt4Net.Entities
             _sessions = project.Sessions.Where(x => _issues.Any(y => y.Session.SessionKey == x.SessionKey)).ToArray(); //Pick just the sessions where this issue type has appeared
             _users = _sessions.Select(x => x.User).Distinct().ToArray();
             _userHandles = _sessions.Select(x => x.UserHandle).Distinct().ToArray();
+            _machines = _sessions.Select(x => x.Machine).Distinct().ToArray();
         }
 
         public string Message { get; }
@@ -142,9 +168,7 @@ namespace Tharga.Quilt4Net.Entities
         public IProject Project { get; }
         public IEnumerable<IUser> Users => _users;
         public IEnumerable<IUserHandle> UserHandles => _userHandles;
-
-        //TODO: Populate this
-        public IMachine[] Machines { get { throw new NotImplementedException(); } }
+        public IEnumerable<IMachine> Machines => _machines;
     }
 
     internal class Version : IVersion
@@ -154,6 +178,7 @@ namespace Tharga.Quilt4Net.Entities
         private readonly ISession[] _sessions;
         private readonly IUser[] _users;
         private readonly IUserHandle[] _userHandles;
+        private readonly IMachine[] _machines;
 
         public Version(IProject project, IApplication application, VersionResponse versionResponse, IEnumerable<IssueTypeResponse> issueTypeResponses, IEnumerable<IssueResponse> issueResponses, SessionResponse[] sessionResponses)
         {
@@ -168,6 +193,7 @@ namespace Tharga.Quilt4Net.Entities
             _sessions = project.Sessions.Where(x => sessionResponses.Any(y => y.ApplicationName == application.Name)).ToArray();
             _users = _sessions.Select(x => x.User).Distinct().ToArray();
             _userHandles = _sessions.Select(x => x.UserHandle).Distinct().ToArray();
+            _machines = _sessions.Select(x => x.Machine).Distinct().ToArray();
         }
 
         public string Name { get; }
@@ -179,9 +205,9 @@ namespace Tharga.Quilt4Net.Entities
         public IEnumerable<ISession> Sessions => _sessions;
         public IEnumerable<IUser> Users => _users;
         public IEnumerable<IUserHandle> UserHandles => _userHandles;
+        public IEnumerable<IMachine> Machines => _machines;
 
         //TODO: Populate this
-        public IMachine[] Machines { get { throw new NotImplementedException(); } }
         public IIssue[] Issues { get { throw new NotImplementedException(); } }
     }
 
@@ -193,6 +219,7 @@ namespace Tharga.Quilt4Net.Entities
         private readonly ISession[] _sessions;
         private readonly IUser[] _users;
         private readonly IUserHandle[] _userHandles;
+        private readonly IMachine[] _machines;
 
         internal Application(IProject project, ApplicationResponse applicationResponse, IEnumerable<VersionResponse> versionResponses, IEnumerable<IssueTypeResponse> issueTypeResponses, IEnumerable<IssueResponse> issueResponses, SessionResponse[] sessionResponses)
         {
@@ -204,6 +231,7 @@ namespace Tharga.Quilt4Net.Entities
             _sessions = project.Sessions.Where(x => sessionResponses.Any(y => y.ApplicationName == Name)).ToArray();
             _users = _sessions.Select(x => x.User).Distinct().ToArray();
             _userHandles = _sessions.Select(x => x.UserHandle).Distinct().ToArray();
+            _machines = _sessions.Select(x => x.Machine).Distinct().ToArray();
         }
 
         public string Name { get; }
@@ -211,11 +239,11 @@ namespace Tharga.Quilt4Net.Entities
         public IEnumerable<ISession> Sessions => _sessions;
         public IEnumerable<IUser> Users => _users;
         public IEnumerable<IUserHandle> UserHandles => _userHandles;
+        public IEnumerable<IMachine> Machines => _machines;
 
         //TODO: Populate this
         public IArchive Archive { get { throw new NotImplementedException(); } }
         public IProject Project { get { throw new NotImplementedException(); } }
-        public IMachine[] Machines { get { throw new NotImplementedException(); } }
         public IIssue[] Issues { get { throw new NotImplementedException(); } }
         public IIssueType[] IssueTypes { get { throw new NotImplementedException(); } }
     }
@@ -226,6 +254,7 @@ namespace Tharga.Quilt4Net.Entities
         private readonly Session[] _sessions;
         private readonly User[] _users;
         private readonly UserHandler[] _userHandles;
+        private readonly Machine[] _machines;
 
         internal Project(ProjectResponse projectResponse)
         {
@@ -233,7 +262,8 @@ namespace Tharga.Quilt4Net.Entities
             Info = projectResponse.Info;
             _users = projectResponse.Users.Select(x => new User(x.UserName)).ToArray();
             _userHandles = projectResponse.UserHandles.Select(x => new UserHandler(x.Name)).ToArray();
-            _sessions = projectResponse.Sessions.Select(x => new Session(x, this, _users.Single(y => y.Name == x.UserName), string.IsNullOrEmpty(x.UserHandleName) ? null : _userHandles.Single(y => y.Name == x.UserHandleName))).ToArray();
+            _machines = projectResponse.Machines.Select(x => new Machine(x.Name)).ToArray();
+            _sessions = projectResponse.Sessions.Select(x => new Session(x, this, _users.Single(y => y.Name == x.UserName), string.IsNullOrEmpty(x.UserHandleName) ? null : _userHandles.Single(y => y.Name == x.UserHandleName), _machines.Single(y => y.Name == x.MachineName ))).ToArray();
             _applications = projectResponse.Applications.Select(x => new Application(this, x, projectResponse.Versions, projectResponse.IssueTypes, projectResponse.Issues, projectResponse.Sessions)).ToArray();
         }
 
@@ -243,9 +273,9 @@ namespace Tharga.Quilt4Net.Entities
         public IEnumerable<ISession> Sessions => _sessions;
         public IEnumerable<IUser> Users => _users;
         public IEnumerable<IUserHandle> UserHandles => _userHandles;
+        public IEnumerable<IMachine> Machines => _machines;
 
         //TODO: Populate this
-        public IMachine[] Machines { get { throw new NotImplementedException(); } }
         public IIssue[] Issues { get { throw new NotImplementedException(); } }
         public IIssueType[] IssueTypes { get { throw new NotImplementedException(); } }
         public IVersion[] Versions { get { throw new NotImplementedException(); } }

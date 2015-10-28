@@ -112,7 +112,7 @@ namespace Tharga.Quilt4Net.Interfaces
         IEnumerable<ISession> Sessions { get; }
         IEnumerable<IUser> Users { get; }
         IEnumerable<IUserHandle> UserHandles { get; }
-        IMachine[] Machines { get; }
+        IEnumerable<IMachine> Machines { get; }
     }
 
     public interface IVersion
@@ -131,7 +131,7 @@ namespace Tharga.Quilt4Net.Interfaces
         IEnumerable<ISession> Sessions { get; }
         IEnumerable<IUser> Users { get; }
         IEnumerable<IUserHandle> UserHandles { get; }
-        IMachine[] Machines { get; }
+        IEnumerable<IMachine> Machines { get; }
         IIssue[] Issues { get; }
     }
 
@@ -150,7 +150,7 @@ namespace Tharga.Quilt4Net.Interfaces
         IEnumerable<ISession> Sessions { get; }
         IEnumerable<IUser> Users { get; }
         IEnumerable<IUserHandle> UserHandles { get; }
-        IMachine[] Machines { get; }
+        IEnumerable<IMachine> Machines { get; }
         IIssue[] Issues { get; }
         IIssueType[] IssueTypes { get; }
     }
@@ -166,7 +166,7 @@ namespace Tharga.Quilt4Net.Interfaces
         IEnumerable<ISession> Sessions { get; }
         IEnumerable<IUser> Users { get; }
         IEnumerable<IUserHandle> UserHandles { get; }
-        IMachine[] Machines { get; }
+        IEnumerable<IMachine> Machines { get; }
         IIssue[] Issues { get; }
         IIssueType[] IssueTypes { get; }
         IVersion[] Versions { get; }
