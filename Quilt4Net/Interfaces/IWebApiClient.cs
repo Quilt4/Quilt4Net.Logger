@@ -135,7 +135,7 @@ namespace Tharga.Quilt4Net.Interfaces
         DateTime? BuildTime { get; }
         string SupportToolkit { get; }
 
-        IIssueType[] IssueTypes { get; }
+        IEnumerable<IIssueType> IssueTypes { get; }
 
         //Up-links
         IApplication Application { get; }
