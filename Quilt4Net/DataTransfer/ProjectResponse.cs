@@ -13,6 +13,8 @@ namespace Tharga.Quilt4Net.DataTransfer
         public IssueTypeResponse[] IssueTypes { get; set; }
         public IssueResponse[] Issues { get; set; }
         public SessionResponse[] Sessions { get; set; }
+        public UserResponse[] Users { get; set; }
+        public UserHandleResponse[] UserHandles { get; set; }
     }
 
     public class ApplicationResponse
@@ -63,5 +65,17 @@ namespace Tharga.Quilt4Net.DataTransfer
         public string EnvironmentName { get; set; }
         public string EnvironmentColor { get; set; }
         public string CallerIpAddress { get; set; }
+        public string UserName { get; set; }
+        public string UserHandleName { get; set; }
+    }
+
+    public class UserResponse
+    {
+        public string UserName { get; set; }
+    }
+
+    public class UserHandleResponse
+    {
+        public string Name { get; set; }
     }
 }

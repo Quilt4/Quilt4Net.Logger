@@ -40,7 +40,10 @@
     <Compile Include="DataTransfer\LoginResponse.cs" />
     <Compile Include="DataTransfer\ProjectRequest.cs" />
     <Compile Include="DataTransfer\ProjectResponse.cs" />
+    <Compile Include="Entities\Issue.cs" />
     <Compile Include="Entities\Project.cs" />
+    <Compile Include="Interfaces\IIssue.cs" />
+    <Compile Include="Interfaces\IStackTrace.cs" />
     <Compile Include="Interfaces\IWebApiClient.cs" />
     <Compile Include="Domain\Project.cs" />
     <Compile Include="DataTransfer\SessionResponse.cs" />

@@ -63,7 +63,7 @@ namespace Tharga.Quilt4Net.Interfaces
         IVersion[] Versions { get; }
         //IVersion[] ArchivedVersions { get; }
         IApplication[] Applications { get; }
-        IProject[] Projects { get; }
+        //IProject[] Projects { get; }
     }
 
     public interface IUserHandle
@@ -91,25 +91,6 @@ namespace Tharga.Quilt4Net.Interfaces
         IProject Project { get; }
     }
 
-
-
-    public interface IIssue
-    {
-        DateTime IssueTime { get; }
-        IIssue LinkedIssues { get; }
-        IDictionary<string, string> Data { get; }
-        string UserInput { get; }
-        bool? Visible { get; }
-        ISession Session { get; }
-
-        //Up-links
-        IIssueType IssueType { get; }
-    }
-
-    public interface IStackTrace
-    {
-    }
-
     public interface IIssueType
     {
         string Message { get; }
@@ -129,8 +110,8 @@ namespace Tharga.Quilt4Net.Interfaces
 
         //Shortcuts
         IEnumerable<ISession> Sessions { get; }
-        IUser[] Users { get; }
-        IUserHandle[] UserHandles { get; }
+        IEnumerable<IUser> Users { get; }
+        IEnumerable<IUserHandle> UserHandles { get; }
         IMachine[] Machines { get; }
     }
 
@@ -148,8 +129,8 @@ namespace Tharga.Quilt4Net.Interfaces
 
         //Shortcuts
         IEnumerable<ISession> Sessions { get; }
-        IUser[] Users { get; }
-        IUserHandle[] UserHandles { get; }
+        IEnumerable<IUser> Users { get; }
+        IEnumerable<IUserHandle> UserHandles { get; }
         IMachine[] Machines { get; }
         IIssue[] Issues { get; }
     }
@@ -167,8 +148,8 @@ namespace Tharga.Quilt4Net.Interfaces
 
         //Shortcuts
         IEnumerable<ISession> Sessions { get; }
-        IUser[] Users { get; }
-        IUserHandle[] UserHandles { get; }
+        IEnumerable<IUser> Users { get; }
+        IEnumerable<IUserHandle> UserHandles { get; }
         IMachine[] Machines { get; }
         IIssue[] Issues { get; }
         IIssueType[] IssueTypes { get; }
@@ -183,8 +164,8 @@ namespace Tharga.Quilt4Net.Interfaces
 
         //Shortcuts
         IEnumerable<ISession> Sessions { get; }
-        IUser[] Users { get; }
-        IUserHandle[] UserHandles { get; }
+        IEnumerable<IUser> Users { get; }
+        IEnumerable<IUserHandle> UserHandles { get; }
         IMachine[] Machines { get; }
         IIssue[] Issues { get; }
         IIssueType[] IssueTypes { get; }
