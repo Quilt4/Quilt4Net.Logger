@@ -1,22 +1,19 @@
-﻿//namespace Tharga.Quilt4Net.DataTransfer
-//{
-//    public class SessionResponse
-//    {
-//        private SessionResponse()
-//        {
-//        }
+﻿using System;
 
-//        //        private readonly bool _isServerOnline;
-//        //        private readonly Exception _exception;
-
-//        //        public SessionResponse(bool isServerOnline, Exception exception)
-//        //        {
-//        //            _isServerOnline = isServerOnline;
-//        //            _exception = exception;
-//        //        }
-
-//        //        public bool IsServerOnline { get { return _isServerOnline; } }
-//        //        public bool Success { get { return _exception == null; } }
-//        //        public Exception Exception { get { return _exception; } }
-//    }
-//}
+namespace Tharga.Quilt4Net.DataTransfer
+{
+    public class SessionResponse
+    {
+        public Guid SessionKey { get; set; }
+        public string ApplicationName { get; set; }
+        public string VersionName { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
+        public string EnvironmentName { get; set; }
+        public string EnvironmentColor { get; set; }
+        public string CallerIpAddress { get; set; }
+        public string UserKey { get; set; }
+        public string UserHandleName { get; set; }
+        public string MachineKey { get; set; }
+    }
+}
