@@ -1,4 +1,5 @@
 ﻿using System;
+using Tharga.Quilt4Net.Domain;
 using Tharga.Quilt4Net.Interfaces;
 
 namespace Tharga.Quilt4Net
@@ -15,6 +16,6 @@ namespace Tharga.Quilt4Net
         }
 
         public User User => _user.Value;
-        public Project Project => _project.Value;
+        public Project Project => _project.Value;        
     }
 }

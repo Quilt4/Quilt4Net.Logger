@@ -19,7 +19,7 @@ namespace Tharga.Quilt4Net
             _timeout = timeout;
         }
 
-        public async Task<TResult> ExecuteGet<T, TResult>(string controller, string id)
+        public async Task<TResult> ExecuteGet<T, TResult>(string controller, T id)
         {
             var client = GetHttpClient();
             var response = await client.GetAsync($"api/{controller}/{id}");

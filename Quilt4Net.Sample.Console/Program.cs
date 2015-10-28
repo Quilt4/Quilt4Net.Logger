@@ -18,8 +18,13 @@ namespace Quilt4Net.Sample.Console
         {
             try
             {
+                //Create a client that can be used to connect to the server with
                 var client = new Client(new WebApiClient(new Uri("http://localhost:5004/"), new TimeSpan(0, 0, 0, 30)));
+
+                //Create a new user to work with
                 await client.User.CreateAsync("xyz", "uuu", "daniel.bohlin@gmail.com");
+
+                //Logon using the new user
                 var loginResponse = await client.User.Login("xyz", "uuu");
                 System.Console.WriteLine(loginResponse.SessionKey);
 
@@ -28,6 +33,7 @@ namespace Quilt4Net.Sample.Console
                 foreach (var project in projects)
                 {
                     System.Console.WriteLine("Project: " + project.Name);
+                    await client.Project.GetAsync(project.ProjectId);
                 }
             }
             catch (Exception exception)
