@@ -1,11 +1,9 @@
-﻿using Tharga.Quilt4Net.Interfaces;
-
-namespace Tharga.Quilt4Net.DataTransfer
+﻿namespace Tharga.Quilt4Net.DataTransfer
 {
     public class ProjectResponse
     {
         public string Name { get; set; }
-        public IProjectInfo Info { get; set; }
+        public ProjectInfo Info { get; set; }
         public ApplicationResponse[] Applications { get; set; }
         public VersionResponse[] Versions { get; set; }
         public IssueTypeResponse[] IssueTypes { get; set; }

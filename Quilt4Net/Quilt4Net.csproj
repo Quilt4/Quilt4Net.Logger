@@ -54,6 +54,7 @@
     <Compile Include="DataTransfer\LoginRequest.cs" />
     <Compile Include="DataTransfer\LoginResponse.cs" />
     <Compile Include="DataTransfer\MachineResponse.cs" />
+    <Compile Include="DataTransfer\ProjectInfo.cs" />
     <Compile Include="DataTransfer\ProjectRequest.cs" />
     <Compile Include="DataTransfer\ProjectResponse.cs" />
     <Compile Include="DataTransfer\UserHandleResponse.cs" />
@@ -66,7 +67,6 @@
     <Compile Include="Entities\Issuelevel.cs" />
     <Compile Include="Entities\IssueType.cs" />
     <Compile Include="Entities\Project.cs" />
-    <Compile Include="Entities\ProjectInfo.cs" />
     <Compile Include="Entities\Session.cs" />
     <Compile Include="Entities\StackTrace.cs" />
     <Compile Include="Entities\UserHandler.cs" />

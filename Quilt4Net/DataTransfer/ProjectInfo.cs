@@ -1,9 +1,9 @@
 ﻿using System;
 using Tharga.Quilt4Net.Interfaces;
 
-namespace Tharga.Quilt4Net.Entities
+namespace Tharga.Quilt4Net.DataTransfer
 {
-    internal class ProjectInfo : IProjectInfo
+    public class ProjectInfo : IProjectInfo
     {
         public Guid ProjectId { get; set; }
         public string Name { get; set; }

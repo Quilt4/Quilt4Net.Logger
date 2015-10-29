@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Tharga.Quilt4Net.DataTransfer;
-using Tharga.Quilt4Net.Entities;
 using Tharga.Quilt4Net.Interfaces;
 
 namespace Tharga.Quilt4Net.Domain
