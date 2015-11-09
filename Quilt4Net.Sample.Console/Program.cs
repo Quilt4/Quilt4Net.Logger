@@ -18,7 +18,8 @@ namespace Quilt4Net.Sample.Console
         {
             try
             {
-                var client = new Client(new WebApiClient(new Uri("http://localhost:5004/"), new TimeSpan(0, 0, 0, 30)));
+                var port = 5000; //5004
+                var client = new Client(new WebApiClient(new Uri(string.Format("http://localhost:{0}/", port)), new TimeSpan(0, 0, 0, 30)));
                 await client.User.CreateAsync("xyz", "uuu", "daniel.bohlin@gmail.com");
                 var loginResponse = await client.User.Login("xyz", "uuu");
                 System.Console.WriteLine(loginResponse.SessionKey);
