@@ -13,9 +13,9 @@ namespace Tharga.Quilt4Net
             _webApiClient = webApiClient;
         }
 
-        public async Task CreateAsync(string username, string password, string email)
+        public async Task CreateAsync(string email, string password)
         {
-            await _webApiClient.ExecuteCommandAsync("user", "Create", new CreateUserRequest { Username = username, Password = password, Email = email });
+            await _webApiClient.ExecuteCommandAsync("Account", "Register", new CreateUserRequest { Email = email, Password = password, ConfirmPassword = password });
         }
 
         public async Task<LoginResponse> Login(string username, string password)

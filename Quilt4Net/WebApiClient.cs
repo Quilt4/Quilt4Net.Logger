@@ -104,7 +104,7 @@ namespace Tharga.Quilt4Net
             //This is where the hash is supposed to be calculated for the message
             if (_keyPair != null)
             {
-                var rsaProvider = new RSACryptoServiceProvider(512);
+                //var rsaProvider = new RSACryptoServiceProvider(512);
                 //TODO: Use the private key to create a signature for the requestUri and content
                 //requestUri
                 //content
