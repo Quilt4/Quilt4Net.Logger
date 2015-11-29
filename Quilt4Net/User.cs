@@ -18,7 +18,7 @@ namespace Tharga.Quilt4Net
             await _webApiClient.ExecuteCommandAsync("Account", "Register", new CreateUserRequest { Email = email, Password = password, ConfirmPassword = password });
         }
 
-        public async Task<LoginResponse> Login(string username, string password)
+        public async Task<LoginResponse> LoginAsync(string username, string password)
         {
             var response = await _webApiClient.ExecuteQueryAsync<LoginRequest, LoginResponse>("Account", "Login", new LoginRequest { Username = username, Password = password });
             _webApiClient.SetAuthorization(response.token_type, response.access_token);

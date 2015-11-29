@@ -15,9 +15,9 @@ namespace Tharga.Quilt4Net
             _webApiClient = webApiClient;
         }
 
-        public async Task CreateAsync(string projectName)
+        public async Task CreateAsync(string projectName, string dashboardColor = null)
         {
-            await _webApiClient.ExecuteCommandAsync("Project", "Create", new CreateProjectRequest { ProjectKey = Guid.NewGuid(), Name = projectName });
+            await _webApiClient.ExecuteCommandAsync("Project", "Create", new CreateProjectRequest { ProjectKey = Guid.NewGuid(), Name = projectName, DashboardColor = dashboardColor });
         }
 
         public async Task<IEnumerable<ProjectResponse>> GetAllAsync()

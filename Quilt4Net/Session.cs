@@ -1,47 +1,70 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Tharga.Quilt4Net.DataTransfer;
+using Tharga.Quilt4Net.Interfaces;
 
 namespace Tharga.Quilt4Net
 {
     public class Session
     {
-        public Session(string apiKey)
+        private readonly IWebApiClient _webApiClient;
+
+        internal Session(IWebApiClient webApiClient)
         {
-            throw new NotImplementedException();
+            _webApiClient = webApiClient;
         }
 
-        public void Authorize(string token)
+        public async Task RegisterAsync()
         {
-            throw new NotImplementedException();
+            await _webApiClient.ExecuteCommandAsync("Session", "Register", new RegisterSessionRequest { SessionKey = Guid.NewGuid() });
         }
-
-        //public void BeginRegister()
-        //{
-        //    //Starts an unmanaged task that queues the register message, to be executed later.
-        //    throw new NotImplementedException();
-        //}
-
-        public SessionResponse Register()
-        {
-            //Executes and waits for the result to come back from the server
-            throw new NotImplementedException();
-        }
-
-        //public SessionResponse Register(TimeSpan timeout)
-        //{
-        //    //Executes and waits for the result to come back from the server
-        //    throw new NotImplementedException();
-        //}
-
-        //public async Task<SessionResponse> RegisterAsync()
-        //{
-        //    //Executes the register and awaits the response from the server.
-        //    throw new NotImplementedException();
-        //}
-
-        //public async Task<SessionResponse> RegisterAsync(TimeSpan timeout)
-        //{
-        //    //Executes the register and awaits the response from the server.
-        //    throw new NotImplementedException();
-        //}
     }
 }
+
+//using System;
+
+//namespace Tharga.Quilt4Net
+//{
+//    public class Session
+//    {
+//        public Session(string apiKey)
+//        {
+//            throw new NotImplementedException();
+//        }
+
+//        public void Authorize(string token)
+//        {
+//            throw new NotImplementedException();
+//        }
+
+//        //public void BeginRegister()
+//        //{
+//        //    //Starts an unmanaged task that queues the register message, to be executed later.
+//        //    throw new NotImplementedException();
+//        //}
+
+//        public SessionResponse Register()
+//        {
+//            //Executes and waits for the result to come back from the server
+//            throw new NotImplementedException();
+//        }
+
+//        //public SessionResponse Register(TimeSpan timeout)
+//        //{
+//        //    //Executes and waits for the result to come back from the server
+//        //    throw new NotImplementedException();
+//        //}
+
+//        //public async Task<SessionResponse> RegisterAsync()
+//        //{
+//        //    //Executes the register and awaits the response from the server.
+//        //    throw new NotImplementedException();
+//        //}
+
+//        //public async Task<SessionResponse> RegisterAsync(TimeSpan timeout)
+//        //{
+//        //    //Executes the register and awaits the response from the server.
+//        //    throw new NotImplementedException();
+//        //}
+//    }
+//}

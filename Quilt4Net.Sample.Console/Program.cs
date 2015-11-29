@@ -20,16 +20,19 @@ namespace Quilt4Net.Sample.Console
             {
                 var port = 29660; // 59779; //5000; //5004
                 var client = new Client(new WebApiClient(new Uri(string.Format("http://localhost:{0}/", port)), new TimeSpan(0, 0, 0, 30)));
-                //await client.User.CreateAsync("daniel.bohlin@gmail.com", "Qwerty!1");
-                await client.User.Login("daniel.bohlin@gmail.com", "Qwerty!1");
-                await client.Project.CreateAsync("Some project");
 
-                var projects = await client.Project.GetAllAsync();
-                foreach (var project in projects)
-                {
-                    System.Console.WriteLine("Project: " + project.Name);
-                    //await client.Project.UpdateAsync(project.ProjectKey, project.Name + "_1", project.DashboardColor);
-                }
+                await client.Session.RegisterAsync();
+
+                ////await client.User.CreateAsync("daniel.bohlin@gmail.com", "Qwerty!1");
+                //await client.User.LoginAsync("daniel.bohlin@gmail.com", "Qwerty!1");
+                //await client.Project.CreateAsync("Some project");
+
+                //var projects = await client.Project.GetAllAsync();
+                //foreach (var project in projects)
+                //{
+                //    System.Console.WriteLine("Project: " + project.Name + ", ProjectApiKey: " + project.ProjectApiKey);
+                //    //await client.Project.UpdateAsync(project.ProjectKey, project.Name + "_1", project.DashboardColor);
+                //}
             }
             catch (Exception exception)
             {
