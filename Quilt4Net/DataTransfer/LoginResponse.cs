@@ -6,7 +6,11 @@ namespace Tharga.Quilt4Net.DataTransfer
         {
         }
 
-        public string PublicSessionKey { get; set; }
-        public string PrivateSessionKey { get; set; }
+        public string access_token { get; set; }
+        public string token_type { get; set; }
+        public string expires_in { get; set; }
+        public string userName { get; set; }
+        //public string .issued { get; set; }
+        //public string .expires { get; set; }
     }
 }

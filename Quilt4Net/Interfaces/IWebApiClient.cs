@@ -10,6 +10,6 @@ namespace Tharga.Quilt4Net.Interfaces
         Task ExecuteCreateCommandAsync<T>(string controller, T data);
         Task ExecuteCommandAsync<T>(string controller, string action, T data);
         Task<TResult> ExecuteQueryAsync<T, TResult>(string controller, string action, T data);
-        void SetSession(string publicSessionKey, string privateSessionKey);
+        void SetAuthorization(string tokenType, string accessToken);
     }
 }

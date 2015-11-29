@@ -20,7 +20,9 @@ namespace Quilt4Net.Sample.Console
             {
                 var port = 29660; // 59779; //5000; //5004
                 var client = new Client(new WebApiClient(new Uri(string.Format("http://localhost:{0}/", port)), new TimeSpan(0, 0, 0, 30)));
-                await client.User.CreateAsync("daniel.bohlin@gmail.com", "Qwerty!1");
+                //await client.User.CreateAsync("daniel.bohlin@gmail.com", "Qwerty!1");
+                await client.User.Login("daniel.bohlin@gmail.com", "Qwerty!1");
+
                 //var loginResponse = await client.User.Login("xyz", "uuu");
                 //System.Console.WriteLine(loginResponse.PublicSessionKey);
 
@@ -36,8 +38,8 @@ namespace Quilt4Net.Sample.Console
                 System.Console.WriteLine(exception.Message + " @" + exception.StackTrace);
             }
 
-            System.Console.WriteLine("Press any key to exit...");
-            System.Console.ReadKey();
+            //System.Console.WriteLine("Press any key to exit...");
+            //System.Console.ReadKey();
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Tharga.Quilt4Net
     {
         private readonly Uri _address;
         private readonly TimeSpan _timeout;
-        private Tuple<string,string> _keyPair;
+        private Authorization _authorization;
 
         public WebApiClient(Uri address, TimeSpan timeout)
         {
@@ -63,9 +63,9 @@ namespace Tharga.Quilt4Net
             return result;
         }
 
-        public void SetSession(string publicSessionKey, string privateSessionKey)
+        public void SetAuthorization(string tokenType, string accessToken)
         {
-            _keyPair = new Tuple<string, string>(publicSessionKey, privateSessionKey);
+            _authorization = new Authorization(tokenType, accessToken);
         }
 
         public async Task ExecuteCreateCommandAsync<T>(string controller, T data)
@@ -97,20 +97,13 @@ namespace Tharga.Quilt4Net
         private HttpClient GetHttpClient(string requestUri, string content = null)
         {
             var client = new HttpClient { BaseAddress = _address };
-            //var client = new WebClient();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.Timeout = _timeout;
 
             //This is where the hash is supposed to be calculated for the message
-            if (_keyPair != null)
+            if (_authorization != null)
             {
-                //var rsaProvider = new RSACryptoServiceProvider(512);
-                //TODO: Use the private key to create a signature for the requestUri and content
-                //requestUri
-                //content
-
-                var messageHash = "ABC";
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(_keyPair.Item1, Convert.ToBase64String(Encoding.UTF8.GetBytes(messageHash)));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(_authorization.TokenType, _authorization.AccessToken);
             }
 
             return client;

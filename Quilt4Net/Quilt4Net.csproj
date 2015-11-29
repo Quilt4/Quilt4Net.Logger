@@ -34,6 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Authorization.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="DataTransfer\CreateUserRequest.cs" />
     <Compile Include="DataTransfer\LoginRequest.cs" />
