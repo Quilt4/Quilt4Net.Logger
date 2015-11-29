@@ -2,7 +2,7 @@
 
 namespace Tharga.Quilt4Net.DataTransfer
 {
-    internal class RegisterSessionRequest
+    public class RegisterSessionRequest
     {
         public Guid SessionKey { get; set; }
     }

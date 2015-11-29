@@ -2,7 +2,7 @@
 
 namespace Tharga.Quilt4Net.DataTransfer
 {
-    internal class UpdateProjectRequest
+    public class UpdateProjectRequest
     {
         public Guid ProjectKey { get; set; }
         public string Name { get; set; }
