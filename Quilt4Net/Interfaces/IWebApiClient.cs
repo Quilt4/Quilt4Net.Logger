@@ -5,10 +5,11 @@ namespace Tharga.Quilt4Net.Interfaces
 {
     public interface IWebApiClient
     {
-        Task<TResult> ExecuteGet<T, TResult>(string controller, string id);
-        Task<IEnumerable<TResult>> ExecuteGetList<TResult>(string controller);
-        Task ExecuteCreateCommandAsync<T>(string controller, T data);
+        Task<IEnumerable<TResult>> ExecuteGet<TResult>(string controller, string action);
         Task ExecuteCommandAsync<T>(string controller, string action, T data);
+
+        //TODO: Revisit
+        Task<TResult> ExecuteGet<T, TResult>(string controller, string id);
         Task<TResult> ExecuteQueryAsync<T, TResult>(string controller, string action, T data);
         void SetAuthorization(string tokenType, string accessToken);
     }

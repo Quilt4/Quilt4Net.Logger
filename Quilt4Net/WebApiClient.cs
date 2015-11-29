@@ -34,9 +34,9 @@ namespace Tharga.Quilt4Net
             return result;
         }
 
-        public async Task<IEnumerable<TResult>> ExecuteGetList<TResult>(string controller)
+        public async Task<IEnumerable<TResult>> ExecuteGet<TResult>(string controller, string action)
         {
-            string requestUri = $"api/{controller}";
+            string requestUri = $"api/{controller}/{action}";
 
             var client = GetHttpClient(requestUri);
             var response = await client.GetAsync(requestUri);

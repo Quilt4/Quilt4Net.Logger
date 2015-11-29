@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Tharga.Quilt4Net.DataTransfer;
@@ -17,12 +17,12 @@ namespace Tharga.Quilt4Net
 
         public async Task CreateAsync(string projectName)
         {
-            await _webApiClient.ExecuteCreateCommandAsync("project", new ProjectRequest { Name = projectName });
+            await _webApiClient.ExecuteCommandAsync("Project", "Create", new CreateProjectRequest { Key = Guid.NewGuid(), Name = projectName });
         }
 
         public async Task<IEnumerable<ProjectResponse>> GetAllAsync()
         {
-            var result = await _webApiClient.ExecuteGetList<ProjectResponse>("project");
+            var result = await _webApiClient.ExecuteGet<ProjectResponse>("Project", "List");
             return result;
         }
     }

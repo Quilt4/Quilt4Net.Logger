@@ -23,15 +23,13 @@ namespace Quilt4Net.Sample.Console
                 //await client.User.CreateAsync("daniel.bohlin@gmail.com", "Qwerty!1");
                 await client.User.Login("daniel.bohlin@gmail.com", "Qwerty!1");
 
-                //var loginResponse = await client.User.Login("xyz", "uuu");
-                //System.Console.WriteLine(loginResponse.PublicSessionKey);
+                await client.Project.CreateAsync("Some project");
 
-                ////await client.Project.CreateAsync("Some project");
-                //var projects = await client.Project.GetAllAsync();
-                //foreach (var project in projects)
-                //{
-                //    System.Console.WriteLine("Project: " + project.Name);
-                //}
+                var projects = await client.Project.GetAllAsync();
+                foreach (var project in projects)
+                {
+                    System.Console.WriteLine("Project: " + project.Name);
+                }
             }
             catch (Exception exception)
             {
