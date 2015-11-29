@@ -22,12 +22,13 @@ namespace Quilt4Net.Sample.Console
                 var client = new Client(new WebApiClient(new Uri(string.Format("http://localhost:{0}/", port)), new TimeSpan(0, 0, 0, 30)));
                 //await client.User.CreateAsync("daniel.bohlin@gmail.com", "Qwerty!1");
                 await client.User.Login("daniel.bohlin@gmail.com", "Qwerty!1");
-                //await client.Project.CreateAsync("Some project");
+                await client.Project.CreateAsync("Some project");
 
                 var projects = await client.Project.GetAllAsync();
                 foreach (var project in projects)
                 {
                     System.Console.WriteLine("Project: " + project.Name);
+                    //await client.Project.UpdateAsync(project.ProjectKey, project.Name + "_1", project.DashboardColor);
                 }
             }
             catch (Exception exception)

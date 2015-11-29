@@ -17,13 +17,18 @@ namespace Tharga.Quilt4Net
 
         public async Task CreateAsync(string projectName)
         {
-            await _webApiClient.ExecuteCommandAsync("Project", "Create", new CreateProjectRequest { Key = Guid.NewGuid(), Name = projectName });
+            await _webApiClient.ExecuteCommandAsync("Project", "Create", new CreateProjectRequest { ProjectKey = Guid.NewGuid(), Name = projectName });
         }
 
         public async Task<IEnumerable<ProjectResponse>> GetAllAsync()
         {
             var result = await _webApiClient.ExecuteGet<ProjectResponse>("Project", "List");
             return result;
+        }
+
+        public async Task UpdateAsync(Guid projectKey, string projectName, string dashboardColor)
+        {
+            await _webApiClient.ExecuteCommandAsync("Project", "Update", new UpdateProjectRequest { ProjectKey = projectKey, Name = projectName, DashboardColor = dashboardColor });
         }
     }
 }
