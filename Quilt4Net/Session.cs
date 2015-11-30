@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Tharga.Quilt4Net.DataTransfer;
 using Tharga.Quilt4Net.Interfaces;
@@ -21,15 +22,35 @@ namespace Tharga.Quilt4Net
 
             _sessionKey = Guid.NewGuid();
 
+            //TODO: Populate with real data
             var registerSessionRequest = new RegisterSessionRequest
             {
                 SessionKey = _sessionKey,
                 ProjectApiKey = projectApiKey,
                 ClientStartTime = DateTime.UtcNow,
                 Environment = environment,
-                //Application = application,
-                //Machine = machine,
-                //User = user,
+                Application = new ApplicationData
+                {
+                    Name = "A",
+                    BuildTime = null,
+                    Fingerprint = "B",
+                    SupportToolkitNameVersion = "C",
+                    Version = "1.2.3.4",
+                },
+                Machine = new MachineData
+                {
+                    Name = "D",
+                    Fingerprint = "E",
+                    Data = new Dictionary<string, string>
+                    {
+                        { "A", "A1" },
+                    }
+                },
+                User = new UserData
+                {
+                    Fingerprint = "F",
+                    UserName = "G"
+                },
             };
 
             await _webApiClient.ExecuteCommandAsync("Session", "Register", registerSessionRequest);
