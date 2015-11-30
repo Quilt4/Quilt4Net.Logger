@@ -48,13 +48,17 @@
     </Compile>
     <Compile Include="Authorization.cs" />
     <Compile Include="Client.cs" />
+    <Compile Include="DataTransfer\ApplicationData.cs" />
     <Compile Include="DataTransfer\CreateProjectRequest.cs" />
+    <Compile Include="DataTransfer\CreateProjectResponse.cs" />
     <Compile Include="DataTransfer\CreateUserRequest.cs" />
     <Compile Include="DataTransfer\LoginRequest.cs" />
     <Compile Include="DataTransfer\LoginResponse.cs" />
+    <Compile Include="DataTransfer\MachineData.cs" />
     <Compile Include="DataTransfer\ProjectRequest.cs" />
     <Compile Include="DataTransfer\ProjectResponse.cs" />
     <Compile Include="DataTransfer\RegisterSessionRequest.cs" />
+    <Compile Include="DataTransfer\UserData.cs" />
     <Compile Include="Interfaces\IWebApiClient.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="SessionResponse.cs" />

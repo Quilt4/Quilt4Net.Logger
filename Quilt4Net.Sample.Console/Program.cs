@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Tharga.Quilt4Net;
 
@@ -19,9 +20,10 @@ namespace Quilt4Net.Sample.Console
             try
             {
                 var port = 29660; // 59779; //5000; //5004
-                var client = new Client(new WebApiClient(new Uri(string.Format("http://localhost:{0}/", port)), new TimeSpan(0, 0, 0, 30)));
+                var client = new Client(new WebApiClient(new Uri($"http://localhost:{port}/"), new TimeSpan(0, 0, 0, 30)));
 
-                await client.Session.RegisterAsync();
+                var project = await client.Project.CreateAsync("Some project");
+                await client.Session.RegisterAsync(project.ProjectApiKey, "Dev");
 
                 ////await client.User.CreateAsync("daniel.bohlin@gmail.com", "Qwerty!1");
                 //await client.User.LoginAsync("daniel.bohlin@gmail.com", "Qwerty!1");

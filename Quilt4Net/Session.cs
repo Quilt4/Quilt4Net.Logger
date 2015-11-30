@@ -8,15 +8,31 @@ namespace Tharga.Quilt4Net
     public class Session
     {
         private readonly IWebApiClient _webApiClient;
+        private Guid _sessionKey;
 
         internal Session(IWebApiClient webApiClient)
         {
             _webApiClient = webApiClient;
         }
 
-        public async Task RegisterAsync()
+        public async Task RegisterAsync(string projectApiKey, string environment)
         {
-            await _webApiClient.ExecuteCommandAsync("Session", "Register", new RegisterSessionRequest { SessionKey = Guid.NewGuid() });
+            if (_sessionKey != Guid.Empty) throw new InvalidOperationException("The session has already been registered.");
+
+            _sessionKey = Guid.NewGuid();
+
+            var registerSessionRequest = new RegisterSessionRequest
+            {
+                SessionKey = _sessionKey,
+                ProjectApiKey = projectApiKey,
+                ClientStartTime = DateTime.UtcNow,
+                Environment = environment,
+                //Application = application,
+                //Machine = machine,
+                //User = user,
+            };
+
+            await _webApiClient.ExecuteCommandAsync("Session", "Register", registerSessionRequest);
         }
     }
 }
