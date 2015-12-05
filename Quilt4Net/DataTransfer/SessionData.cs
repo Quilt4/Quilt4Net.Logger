@@ -2,7 +2,7 @@
 
 namespace Tharga.Quilt4Net.DataTransfer
 {
-    public class RegisterSessionRequest
+    public class SessionData
     {
         public Guid SessionKey { get; set; }
         public string ProjectApiKey { get; set; }

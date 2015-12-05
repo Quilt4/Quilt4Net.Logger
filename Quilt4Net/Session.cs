@@ -23,7 +23,7 @@ namespace Tharga.Quilt4Net
             _sessionKey = Guid.NewGuid();
 
             //TODO: Populate with real data
-            var registerSessionRequest = new RegisterSessionRequest
+            var registerSessionRequest = new SessionData
             {
                 SessionKey = _sessionKey,
                 ProjectApiKey = projectApiKey,
@@ -53,7 +53,8 @@ namespace Tharga.Quilt4Net
                 },
             };
 
-            await _webApiClient.ExecuteCommandAsync("Session", "Register", registerSessionRequest);
+            //await _webApiClient.ExecuteCommandAsync("Session", "Register", registerSessionRequest);
+            await _webApiClient.CreateAsync("Client/Session", registerSessionRequest);
         }
     }
 }

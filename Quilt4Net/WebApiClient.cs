@@ -20,7 +20,32 @@ namespace Tharga.Quilt4Net
             _timeout = timeout;
         }
 
-        public async Task<TResult> ExecuteGet<T, TResult>(string controller, string id)
+        public async Task CreateAsync<T>(string controller, T data)
+        {
+            string requestUri = $"api/{controller}";
+
+            var jsonFormatter = new JsonMediaTypeFormatter();
+            var content = new ObjectContent<T>(data, jsonFormatter);
+
+            var client = GetHttpClient(requestUri);
+
+            await client.PostAsync(requestUri, content);
+        }
+
+        public async Task<IEnumerable<TResult>> ReadAsync<TResult>(string controller)
+        {
+            string requestUri = $"api/{controller}";
+
+            var client = GetHttpClient(requestUri);
+            var response = await client.GetAsync(requestUri);
+            if (!response.IsSuccessStatusCode)
+                throw new InvalidOperationException();
+
+            var result = response.Content.ReadAsAsync<IEnumerable<TResult>>().Result;
+            return result;
+        }
+
+        public async Task<TResult> ReadAsync<TResult>(string controller, string id)
         {
             string requestUri = $"api/{controller}/{id}";
 
@@ -33,17 +58,38 @@ namespace Tharga.Quilt4Net
             return result;
         }
 
-        public async Task<IEnumerable<TResult>> ExecuteGet<TResult>(string controller, string action)
+        public async Task UpdateAsync<T>(string controller, string id, T data)
+        {
+            string requestUri = $"api/{controller}/{id}";
+
+            var jsonFormatter = new JsonMediaTypeFormatter();
+            var content = new ObjectContent<T>(data, jsonFormatter);
+
+            var client = GetHttpClient(requestUri);
+
+            await client.PutAsync(requestUri, content);
+        }
+
+        public async Task DeleteAsync(string controller, string id)
+        {
+            string requestUri = $"api/{controller}/{id}";
+
+            var client = GetHttpClient(requestUri);
+
+            await client.DeleteAsync(requestUri);
+        }
+
+        public async Task ExecuteCommandAsync<T>(string controller, string action, T data)
         {
             string requestUri = $"api/{controller}/{action}";
 
-            var client = GetHttpClient(requestUri);
-            var response = await client.GetAsync(requestUri);
+            var jsonFormatter = new JsonMediaTypeFormatter();
+            var content = new ObjectContent<T>(data, jsonFormatter);
+
+            var client = GetHttpClient(requestUri, content.ToString());
+            var response = await client.PostAsync(requestUri, content);
             if (!response.IsSuccessStatusCode)
                 throw new InvalidOperationException();
-
-            var result = response.Content.ReadAsAsync<IEnumerable<TResult>>().Result;
-            return result;
         }
 
         public async Task<TResult> ExecuteQueryAsync<T, TResult>(string controller, string action, T data)
@@ -65,32 +111,6 @@ namespace Tharga.Quilt4Net
         public void SetAuthorization(string tokenType, string accessToken)
         {
             _authorization = new Authorization(tokenType, accessToken);
-        }
-
-        public async Task ExecuteCreateCommandAsync<T>(string controller, T data)
-        {
-            string requestUri = $"api/{controller}";
-
-            var jsonFormatter = new JsonMediaTypeFormatter();
-            var content = new ObjectContent<T>(data, jsonFormatter);
-
-            var client = GetHttpClient(requestUri, content.ToString());
-            var response = await client.PostAsync(requestUri, content);
-            if (!response.IsSuccessStatusCode)
-                throw new InvalidOperationException();
-        }
-
-        public async Task ExecuteCommandAsync<T>(string controller, string action, T data)
-        {
-            string requestUri = $"api/{controller}/{action}";
-
-            var jsonFormatter = new JsonMediaTypeFormatter();
-            var content = new ObjectContent<T>(data, jsonFormatter);
-
-            var client = GetHttpClient(requestUri, content.ToString());
-            var response = await client.PostAsync(requestUri, content);
-            if (!response.IsSuccessStatusCode)
-                throw new InvalidOperationException();
         }
 
         private HttpClient GetHttpClient(string requestUri, string content = null)
