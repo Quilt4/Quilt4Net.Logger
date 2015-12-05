@@ -10,6 +10,7 @@ namespace Quilt4Net.Sample.Console.Commands.User
         {
             RegisterCommand(new CreateUserCommand(client));
             RegisterCommand(new LoginUserCommand(client));
+            RegisterCommand(new LogoutUserCommand(client));
         }
     }
 }

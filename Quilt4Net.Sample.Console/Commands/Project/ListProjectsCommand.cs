@@ -5,11 +5,11 @@ using Tharga.Toolkit.Console.Command.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Project
 {
-    internal class ListProjectCommand : ActionCommandBase
+    internal class ListProjectsCommand : ActionCommandBase
     {
         private readonly Client _client;
 
-        public ListProjectCommand(Client client)
+        public ListProjectsCommand(Client client)
             : base("List", "List projects")
         {
             _client = client;
@@ -22,7 +22,8 @@ namespace Quilt4Net.Sample.Console.Commands.Project
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            var projects = await _client.Project.GetListAsync();
+            var projects = (await _client.Project.GetListAsync()).ToArray();
+            if (!projects.Any()) return true;
             var title = new[] { new[] { "Name", "ProjectApiKey" } };
             var data = title.Union(projects.Select(x => new[] { x.Name, x.ProjectApiKey }).ToArray()).ToArray();
             OutputTable(data);

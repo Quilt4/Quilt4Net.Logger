@@ -16,6 +16,8 @@ namespace Tharga.Quilt4Net
             _webApiClient = webApiClient;
         }
 
+        public bool IsRegistered => _sessionKey != Guid.Empty;
+
         public async Task RegisterAsync(string projectApiKey, string environment)
         {
             if (_sessionKey != Guid.Empty) throw new InvalidOperationException("The session has already been registered.");

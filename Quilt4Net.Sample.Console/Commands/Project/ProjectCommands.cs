@@ -8,7 +8,10 @@ namespace Quilt4Net.Sample.Console.Commands.Project
         public ProjectCommands(Client client)
             : base("Project")
         {
-            RegisterCommand(new ListProjectCommand(client));
+            RegisterCommand(new CreateProjectCommand(client));
+            RegisterCommand(new ListProjectsCommand(client));
+            RegisterCommand(new GetProjectCommand(client));
+            RegisterCommand(new UpdateProjectCommand(client));
             RegisterCommand(new DeleteProjectCommand(client));
         }
     }

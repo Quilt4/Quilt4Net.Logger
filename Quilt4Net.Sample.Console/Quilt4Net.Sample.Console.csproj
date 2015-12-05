@@ -69,11 +69,18 @@
     <Compile Include="..\Build\AssemblyVersionInfo.cs">
       <Link>Properties\AssemblyVersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Commands\Project\CreateProjectCommand.cs" />
     <Compile Include="Commands\Project\DeleteProjectCommand.cs" />
-    <Compile Include="Commands\Project\ListProjectCommand.cs" />
+    <Compile Include="Commands\Project\GetProjectCommand.cs" />
+    <Compile Include="Commands\Project\ListProjectsCommand.cs" />
+    <Compile Include="Commands\Session\ListSessionsCommand.cs" />
+    <Compile Include="Commands\Session\RegisterSessionsCommand.cs" />
+    <Compile Include="Commands\Session\SessionCommands.cs" />
+    <Compile Include="Commands\Project\UpdateProjectCommand.cs" />
     <Compile Include="Commands\User\CreateUserCommand.cs" />
     <Compile Include="Commands\User\LoginUserCommand.cs" />
     <Compile Include="Commands\Project\ProjectCommands.cs" />
+    <Compile Include="Commands\User\LogoutUserCommand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Commands\User\UserCommands.cs" />

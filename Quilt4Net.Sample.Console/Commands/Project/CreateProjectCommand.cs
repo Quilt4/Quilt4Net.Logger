@@ -1,17 +1,15 @@
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Tharga.Quilt4Net;
 using Tharga.Toolkit.Console.Command.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Project
 {
-    internal class DeleteProjectCommand : ActionCommandBase
+    internal class CreateProjectCommand : ActionCommandBase
     {
         private readonly Client _client;
 
-        public DeleteProjectCommand(Client client)
-            : base("Delete", "Delete a project")
+        public CreateProjectCommand(Client client)
+            : base("Create", "Create a new project")
         {
             _client = client;
         }
@@ -24,8 +22,8 @@ namespace Quilt4Net.Sample.Console.Commands.Project
         public override async Task<bool> InvokeAsync(string paramList)
         {
             var index = 0;
-            var projectKey = QueryParam("Project", GetParam(paramList, index++), (await _client.Project.GetListAsync()).ToDictionary(x => x.ProjectKey,x => x.Name));
-            await _client.Project.DeleteAsync(projectKey);
+            var projectName = QueryParam<string>("Name", GetParam(paramList, index++));
+            await _client.Project.CreateAsync(projectName);
             return true;
         }
     }

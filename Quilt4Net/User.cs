@@ -13,11 +13,11 @@ namespace Tharga.Quilt4Net
             _webApiClient = webApiClient;
         }
 
-        public bool IsAuthorized { get { return _webApiClient.IsAuthorized; } }
+        public bool IsAuthorized => _webApiClient.IsAuthorized;
 
-        public async Task CreateAsync(string userName, string password)
+        public async Task CreateAsync(string userName, string email, string password)
         {
-            await _webApiClient.ExecuteCommandAsync("Account", "Register", new CreateUserRequest { UserName = userName, Password = password });
+            await _webApiClient.ExecuteCommandAsync("Account", "Register", new RegisterBindingModel { UserName = userName, Email = email, Password = password, ConfirmPassword = password });
         }
 
         public async Task<LoginData> LoginAsync(string username, string password)
@@ -29,7 +29,7 @@ namespace Tharga.Quilt4Net
 
         public async Task LogoutAsync()
         {
-            _webApiClient.SetAuthorization(null, null);
+            await Task.Run(() => _webApiClient.SetAuthorization(null, null));
         }
     }
 }

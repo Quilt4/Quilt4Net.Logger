@@ -17,9 +17,10 @@ namespace Quilt4Net.Sample.Console.Commands.User
         public override async Task<bool> InvokeAsync(string paramList)
         {
             var index = 0;
-            var email = QueryParam<string>("EMail", GetParam(paramList,index++));
+            var userName = QueryParam<string>("UserName", GetParam(paramList,index++));
+            var email = QueryParam<string>("EMail", GetParam(paramList, index++));
             var password = QueryParam<string>("Password", GetParam(paramList, index++));
-            await _client.User.CreateAsync(email, password);
+            await _client.User.CreateAsync(userName, email, password);
             return true;
         }
     }
