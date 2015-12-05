@@ -16,7 +16,7 @@ namespace Tharga.Quilt4Net
             _webApiClient = webApiClient;
         }
 
-        public async Task<IEnumerable<ProjectData>> GetAllAsync()
+        public async Task<IEnumerable<ProjectData>> GetListAsync()
         {
             var result = await _webApiClient.ReadAsync<ProjectData>(_controller);
             return result;

@@ -16,5 +16,6 @@ namespace Tharga.Quilt4Net.Interfaces
         Task ExecuteCommandAsync<T>(string controller, string action, T data);
         Task<TResult> ExecuteQueryAsync<T, TResult>(string controller, string action, T data);
         void SetAuthorization(string tokenType, string accessToken);
+        bool IsAuthorized { get; }
     }
 }

@@ -110,8 +110,10 @@ namespace Tharga.Quilt4Net
 
         public void SetAuthorization(string tokenType, string accessToken)
         {
-            _authorization = new Authorization(tokenType, accessToken);
+            _authorization = string.IsNullOrEmpty(accessToken) ? null : new Authorization(tokenType, accessToken);
         }
+
+        public bool IsAuthorized => _authorization != null;
 
         private HttpClient GetHttpClient(string requestUri, string content = null)
         {

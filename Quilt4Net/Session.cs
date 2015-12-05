@@ -53,8 +53,12 @@ namespace Tharga.Quilt4Net
                 },
             };
 
-            //await _webApiClient.ExecuteCommandAsync("Session", "Register", registerSessionRequest);
             await _webApiClient.CreateAsync("Client/Session", registerSessionRequest);
+        }
+
+        public async Task<IEnumerable<SessionData>> GetListAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }
