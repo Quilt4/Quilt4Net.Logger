@@ -1,8 +1,8 @@
 ﻿using System;
+using Quilt4Net.Sample.Console.Commands.Issue;
 using Quilt4Net.Sample.Console.Commands.Project;
 using Quilt4Net.Sample.Console.Commands.Session;
 using Quilt4Net.Sample.Console.Commands.User;
-using Tharga.Quilt4Net;
 using Tharga.Toolkit.Console;
 using Tharga.Toolkit.Console.Command;
 using Tharga.Toolkit.Console.Command.Base;
@@ -24,6 +24,7 @@ namespace Quilt4Net.Sample.Console
             rootCommand.RegisterCommand(new UserCommands(client));
             rootCommand.RegisterCommand(new ProjectCommands(client));
             rootCommand.RegisterCommand(new SessionCommands(client));
+            rootCommand.RegisterCommand(new IssueCommands(client));
             new CommandEngine(rootCommand).Run(args);
         }
     }

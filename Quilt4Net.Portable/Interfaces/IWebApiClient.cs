@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Tharga.Quilt4Net.Interfaces
+namespace Quilt4Net.Interfaces
 {
     public interface IWebApiClient
     {

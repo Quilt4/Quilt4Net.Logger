@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using Tharga.Quilt4Net.Interfaces;
+using Quilt4Net.Interfaces;
 
-namespace Tharga.Quilt4Net
+namespace Quilt4Net
 {
     public class Issue
     {

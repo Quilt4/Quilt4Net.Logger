@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Tharga.Quilt4Net;
 using Tharga.Toolkit.Console.Command.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Project

@@ -1,4 +1,4 @@
-namespace Tharga.Quilt4Net
+namespace Quilt4Net
 {
     internal class Authorization
     {

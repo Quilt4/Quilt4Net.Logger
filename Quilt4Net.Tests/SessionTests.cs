@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace Tharga.Quilt4Net.Tests
+namespace Quilt4Net.Tests
 {
     [TestFixture]
     public class SessionTests

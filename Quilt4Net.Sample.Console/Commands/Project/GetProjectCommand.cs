@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Tharga.Quilt4Net;
 using Tharga.Toolkit.Console.Command.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Project
@@ -10,7 +9,7 @@ namespace Quilt4Net.Sample.Console.Commands.Project
         private readonly Client _client;
 
         public GetProjectCommand(Client client)
-            : base("Get", "Get a project")
+            : base("GetApplicationData", "GetApplicationData a project")
         {
             _client = client;
         }

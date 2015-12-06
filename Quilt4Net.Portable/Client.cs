@@ -1,7 +1,7 @@
 ﻿using System;
-using Tharga.Quilt4Net.Interfaces;
+using Quilt4Net.Interfaces;
 
-namespace Tharga.Quilt4Net
+namespace Quilt4Net
 {
     public class Client
     {
@@ -14,7 +14,7 @@ namespace Tharga.Quilt4Net
         {
             _user = new Lazy<User>(() => new User(webApiClient));
             _project = new Lazy<Project>(() => new Project(webApiClient));
-            _session = new Lazy<Session>(() => new Session(webApiClient));
+            _session = new Lazy<Session>(() => new Session(webApiClient, new ApplicationHelper(new Configuration()), new MachineHelper(), new UserHelper()));
             _issue = new Lazy<Issue>(() => new Issue(webApiClient));
         }
 

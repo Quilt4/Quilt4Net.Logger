@@ -1,4 +1,4 @@
-﻿namespace Tharga.Quilt4Net.DataTransfer
+﻿namespace Quilt4Net.DataTransfer
 {
     internal class RegisterBindingModel
     {

@@ -7,8 +7,8 @@
     <ProjectGuid>{17D454A0-E2E2-4010-8E15-D213219234FC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tharga.Quilt4Net.Tests</RootNamespace>
-    <AssemblyName>Tharga.Quilt4Net.Tests</AssemblyName>
+    <RootNamespace>Quilt4Net.Tests</RootNamespace>
+    <AssemblyName>Quilt4Net.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -75,12 +75,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Quilt4Net\Quilt4Net.csproj">
-      <Project>{6D022F03-0708-4F5F-A436-4931CD106DC7}</Project>
-      <Name>Quilt4Net</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

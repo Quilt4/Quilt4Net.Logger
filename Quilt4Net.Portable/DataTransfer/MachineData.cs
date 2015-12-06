@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Tharga.Quilt4Net.DataTransfer
+namespace Quilt4Net.DataTransfer
 {
     public class MachineData
     {

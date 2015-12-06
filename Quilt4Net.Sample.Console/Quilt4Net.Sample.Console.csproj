@@ -69,10 +69,12 @@
     <Compile Include="..\Build\AssemblyVersionInfo.cs">
       <Link>Properties\AssemblyVersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Commands\Issue\RegisterIssueCommand.cs" />
     <Compile Include="Commands\Project\CreateProjectCommand.cs" />
     <Compile Include="Commands\Project\DeleteProjectCommand.cs" />
     <Compile Include="Commands\Project\GetProjectCommand.cs" />
     <Compile Include="Commands\Project\ListProjectsCommand.cs" />
+    <Compile Include="Commands\Issue\IssueCommands.cs" />
     <Compile Include="Commands\Session\ListSessionsCommand.cs" />
     <Compile Include="Commands\Session\RegisterSessionsCommand.cs" />
     <Compile Include="Commands\Session\SessionCommands.cs" />
@@ -90,9 +92,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Quilt4Net\Quilt4Net.csproj">
-      <Project>{6D022F03-0708-4F5F-A436-4931CD106DC7}</Project>
-      <Name>Quilt4Net</Name>
+    <ProjectReference Include="..\Quilt4Net.Portable\Quilt4Net.Portable.csproj">
+      <Project>{6d022f03-0708-4f5f-a436-4931cd106dc7}</Project>
+      <Name>Quilt4Net.Portable</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
