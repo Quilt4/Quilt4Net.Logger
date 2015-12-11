@@ -7,7 +7,7 @@ using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core
 {
-    public class Session : ISession
+    public abstract class Session : ISession
     {
         private readonly IWebApiClient _webApiClient;
         private readonly IApplicationHelper _applicationHelper;
@@ -25,12 +25,9 @@ namespace Quilt4Net.Core
 
         public bool IsRegistered => _sessionKey != Guid.Empty;
 
-        public Task RegisterAsync(string projectApiKey, string environment)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract Task RegisterAsync(string projectApiKey, string environment);
 
-        public async Task RegisterAsync(string projectApiKey, string environment, Assembly firstAssembly)
+        public virtual async Task RegisterAsync(string projectApiKey, string environment, Assembly firstAssembly)
         {
             if (_sessionKey != Guid.Empty) throw new InvalidOperationException("The session has already been registered.");
 
