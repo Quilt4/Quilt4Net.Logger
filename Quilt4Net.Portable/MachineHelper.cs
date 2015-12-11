@@ -5,16 +5,20 @@ using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core
 {
-    internal class MachineHelper : IMachineHelper
+    public abstract class MachineHelper : IMachineHelper
     {
-        public MachineData GetMachineData()
+        public abstract MachineData GetMachineData();
+
+        internal abstract string GetMachineName();
+
+        public MachineData GetMachineData(string machineName)
         {
-            var fingerprint = $"MI1:{$"{GetCpuId()}{GetDriveSerial()}{GetMachineName()}".ToMd5Hash()}";
+            var fingerprint = $"MI1:{$"{GetCpuId()}{GetDriveSerial()}{machineName}".ToMd5Hash()}";
             var data = new Dictionary<string, string> { { "OsName", GetOsName() }, { "Model", GetModel() }, { "Type", "Desktop" }, { "Screen", GetScreen() }, { "TimeZone", GetTimeZone() }, { "Language", GetLanguage() } };
 
             var machine = new MachineData
             {
-                Name = GetMachineName(),
+                Name = machineName,
                 Fingerprint = fingerprint,
                 Data = data
             };
@@ -23,8 +27,8 @@ namespace Quilt4Net.Core
 
         private static string GetCpuId()
         {
-            throw new NotImplementedException();
-            //var cpuInfo = "Unknown";
+            var cpuInfo = "Unknown";
+            //TODO: Move this code to .NET override class
             //try
             //{
             //    var mc = new ManagementClass("win32_processor");
@@ -44,14 +48,14 @@ namespace Quilt4Net.Core
             //    cpuInfo = "N/A";
             //}
 
-            //return cpuInfo;
+            return cpuInfo;
         }
 
         private static string GetDriveSerial()
         {
-            throw new NotImplementedException();
-            //var driveSerial = string.Empty;
+            var driveSerial = string.Empty;
 
+            //TODO: Move this code to .NET override class
             //var drives = Directory.GetLogicalDrives();
             //foreach (var drive in drives)
             //{
@@ -62,19 +66,14 @@ namespace Quilt4Net.Core
             //    }
             //}
 
-            //return driveSerial;
-        }
-
-        internal static string GetMachineName()
-        {
-            throw new NotImplementedException();
-            //return Environment.MachineName;
+            return driveSerial;
         }
 
         internal static string GetOsName()
         {
-            throw new NotImplementedException();
-            //var response = "Unknown";
+            var response = "Unknown";
+
+            //TODO: Move this code to .NET override class
             //try
             //{
             //    const string query = "SELECT * FROM Win32_OperatingSystem";
@@ -107,13 +106,14 @@ namespace Quilt4Net.Core
             //    }
             //}
 
-            //return response;
+            return response;
         }
 
         internal static string GetModel()
         {
-            throw new NotImplementedException();
-            //var model = string.Empty;
+            var model = string.Empty;
+
+            //TODO: Move this code to .NET override class
             //var mc = new ManagementClass("win32_processor");
             //var moc = mc.GetInstances();
 
@@ -126,13 +126,14 @@ namespace Quilt4Net.Core
             //    }
             //}
 
-            //return model;
+            return model;
         }
 
         internal static string GetScreen()
         {
-            throw new NotImplementedException();
-            //var response = "Unknown";
+            var response = "Unknown";
+
+            //TODO: Move this code to .NET override class
             //try
             //{
             //    const string GraphicsQuery = "SELECT * FROM Win32_VideoController";
@@ -159,35 +160,43 @@ namespace Quilt4Net.Core
             //    response = "N/A";
             //}
 
-            //return response;
+            return response;
         }
 
         public static string GetTimeZone()
         {
-            throw new NotImplementedException();
+            var response = "Unknown";
+
+            //TODO: Move this code to .NET override class
             //try
             //{
             //    var timeZone = TimeZoneInfo.Local;
-            //    return timeZone.Id;
+            //    response = timeZone.Id;
             //}
             //catch
             //{
-            //    return "N/A";
+            //    response = "N/A";
             //}
+
+            return response;
         }
 
         public static string GetLanguage()
         {
-            throw new NotImplementedException();
+            var response = "Unknown";
+
+            //TODO: Move this code to .NET override class
             //try
             //{
             //    var currentCulture = Thread.CurrentThread.CurrentCulture;
-            //    return currentCulture.Name;
+            //    response = currentCulture.Name;
             //}
             //catch
             //{
-            //    return "N/A";
+            //    response = "N/A";
             //}
+
+            return response;
         }
     }
 }

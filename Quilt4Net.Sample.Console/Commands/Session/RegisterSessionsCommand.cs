@@ -17,6 +17,9 @@ namespace Quilt4Net.Sample.Console.Commands.Session
 
         public override bool CanExecute()
         {
+            if (!_client.User.IsAuthorized)
+                return false;
+
             return !_client.Session.IsRegistered;
         }
 

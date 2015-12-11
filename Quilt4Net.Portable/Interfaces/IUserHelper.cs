@@ -5,5 +5,6 @@ namespace Quilt4Net.Core.Interfaces
     public interface IUserHelper
     {
         UserData GetUser();
+        UserData GetUser(string userName);
     }
 }
