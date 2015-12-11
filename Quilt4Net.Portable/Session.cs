@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
-using Quilt4Net.DataTransfer;
-using Quilt4Net.Interfaces;
+using Quilt4Net.Core.DataTransfer;
+using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net
+namespace Quilt4Net.Core
 {
-    public class Session
+    public class Session : ISession
     {
         private readonly IWebApiClient _webApiClient;
         private readonly IApplicationHelper _applicationHelper;
@@ -24,6 +24,11 @@ namespace Quilt4Net
         }
 
         public bool IsRegistered => _sessionKey != Guid.Empty;
+
+        public Task RegisterAsync(string projectApiKey, string environment)
+        {
+            throw new NotImplementedException();
+        }
 
         public async Task RegisterAsync(string projectApiKey, string environment, Assembly firstAssembly)
         {

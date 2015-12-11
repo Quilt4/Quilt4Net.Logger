@@ -1,7 +1,7 @@
 using System.Reflection;
-using Quilt4Net.DataTransfer;
+using Quilt4Net.Core.DataTransfer;
 
-namespace Quilt4Net.Interfaces
+namespace Quilt4Net.Core.Interfaces
 {
     public interface IApplicationHelper
     {

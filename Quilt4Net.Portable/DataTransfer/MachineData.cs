@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Quilt4Net.DataTransfer
+namespace Quilt4Net.Core.DataTransfer
 {
     public class MachineData
     {

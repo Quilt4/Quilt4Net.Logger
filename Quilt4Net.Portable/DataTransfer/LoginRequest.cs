@@ -1,4 +1,4 @@
-﻿namespace Quilt4Net.DataTransfer
+﻿namespace Quilt4Net.Core.DataTransfer
 {
     internal class LoginRequest
     {

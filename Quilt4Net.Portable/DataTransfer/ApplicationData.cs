@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Quilt4Net.DataTransfer
+namespace Quilt4Net.Core.DataTransfer
 {
     public class ApplicationData
     {

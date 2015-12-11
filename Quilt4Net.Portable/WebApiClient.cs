@@ -4,9 +4,9 @@ using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Quilt4Net.Interfaces;
+using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net
+namespace Quilt4Net.Core
 {
     public class WebApiClient : IWebApiClient
     {

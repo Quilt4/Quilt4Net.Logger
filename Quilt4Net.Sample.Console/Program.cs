@@ -1,4 +1,5 @@
 ﻿using System;
+using Quilt4Net.Core;
 using Quilt4Net.Sample.Console.Commands.Issue;
 using Quilt4Net.Sample.Console.Commands.Project;
 using Quilt4Net.Sample.Console.Commands.Session;

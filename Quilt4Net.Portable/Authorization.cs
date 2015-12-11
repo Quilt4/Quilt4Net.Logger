@@ -1,4 +1,4 @@
-namespace Quilt4Net
+namespace Quilt4Net.Core
 {
     internal class Authorization
     {

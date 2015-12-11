@@ -21,7 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{FC718711
 		Build\Release.msbuild = Build\Release.msbuild
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quilt4Net.Portable", "Quilt4Net.Portable\Quilt4Net.Portable.csproj", "{6D022F03-0708-4F5F-A436-4931CD106DC7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quilt4Net.Core", "Quilt4Net.Portable\Quilt4Net.Core.csproj", "{6D022F03-0708-4F5F-A436-4931CD106DC7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quilt4Net", "Quilt4Net\Quilt4Net.csproj", "{7617B049-94F7-421E-AA74-8A68267E3319}"
 EndProject

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Quilt4Net
+namespace Quilt4Net.Core
 {
     internal static class HelperExtension
     {

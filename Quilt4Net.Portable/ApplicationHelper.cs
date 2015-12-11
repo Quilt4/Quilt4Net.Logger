@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
-using Quilt4Net.DataTransfer;
-using Quilt4Net.Interfaces;
+using Quilt4Net.Core.DataTransfer;
+using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net
+namespace Quilt4Net.Core
 {
     internal class ApplicationHelper : IApplicationHelper
     {

@@ -1,6 +1,6 @@
-﻿using Quilt4Net.Interfaces;
+﻿using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net
+namespace Quilt4Net.Core
 {
     internal class Configuration : IConfiguration
     {

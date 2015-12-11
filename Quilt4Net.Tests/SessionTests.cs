@@ -1,4 +1,8 @@
-﻿using NUnit.Framework;
+﻿using System.Threading.Tasks;
+using Moq;
+using NUnit.Framework;
+using Quilt4Net.Core;
+using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Tests
 {
@@ -6,17 +10,17 @@ namespace Quilt4Net.Tests
     public class SessionTests
     {
         [Test]
-        public void x()
+        public async Task x()
         {
             //Arrange
-            //var session = new Session("c16afb009e283eec78a5e3048315123a");            
-            //session.Authorize("5eaf7bcb45ade283641e761307b561756ba5fb7acb70d6e295d5edc62095632b");
-
-            //var me = session.Members.Me();
-            //var boards = session.Projects.ForMember(me);
+            var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
+            var applicationHelperMock = new Mock<IApplicationHelper>(MockBehavior.Strict);
+            var machineHelperMock = new Mock<IMachineHelper>(MockBehavior.Strict);
+            var userHelperMock = new Mock<IUserHelper>(MockBehavior.Strict);
+            var session = new Session(webApiClientMock.Object, applicationHelperMock.Object, machineHelperMock.Object, userHelperMock.Object);
 
             //Act
-            //var response = session.Register();
+            await session.RegisterAsync("MyProjectApiKey", "MyEnvironment");
 
             //Assert
             //Assert.That(response, Is.Not.Null);
