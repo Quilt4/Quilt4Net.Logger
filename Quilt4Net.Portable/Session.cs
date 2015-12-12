@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Interfaces;
@@ -10,14 +9,16 @@ namespace Quilt4Net.Core
     public abstract class Session : ISession
     {
         private readonly IWebApiClient _webApiClient;
+        private readonly IConfiguration _configuration;
         private readonly IApplicationHelper _applicationHelper;
         private readonly IMachineHelper _machineHelper;
         private readonly IUserHelper _userHelper;
         private Guid _sessionKey;
 
-        internal Session(IWebApiClient webApiClient, IApplicationHelper applicationHelper, IMachineHelper machineHelper, IUserHelper userHelper)
+        internal Session(IWebApiClient webApiClient, IConfiguration configuration, IApplicationHelper applicationHelper, IMachineHelper machineHelper, IUserHelper userHelper)
         {
             _webApiClient = webApiClient;
+            _configuration = configuration;
             _applicationHelper = applicationHelper;
             _machineHelper = machineHelper;
             _userHelper = userHelper;
@@ -25,9 +26,7 @@ namespace Quilt4Net.Core
 
         public bool IsRegistered => _sessionKey != Guid.Empty;
 
-        public abstract Task RegisterAsync(string projectApiKey, string environment);
-
-        public virtual async Task RegisterAsync(string projectApiKey, string environment, Assembly firstAssembly)
+        public async Task RegisterAsync()
         {
             if (_sessionKey != Guid.Empty) throw new InvalidOperationException("The session has already been registered.");
 
@@ -36,12 +35,12 @@ namespace Quilt4Net.Core
             var registerSessionRequest = new SessionData
             {
                 SessionKey = _sessionKey,
-                ProjectApiKey = projectApiKey,
+                ProjectApiKey = _configuration.ProjectApiKey,
                 ClientStartTime = DateTime.UtcNow,
-                Environment = environment,
-                Application = _applicationHelper.GetApplicationData(projectApiKey, firstAssembly),
+                Environment = _configuration.Session.Environment,
+                Application = _applicationHelper.GetApplicationData(),
                 Machine = _machineHelper.GetMachineData(),
-                User = _userHelper.GetUser(),                
+                User = _userHelper.GetUser(),
             };
 
             await _webApiClient.CreateAsync("Client/Session", registerSessionRequest);

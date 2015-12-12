@@ -10,12 +10,14 @@ namespace Quilt4Net
         private readonly Lazy<Project> _project;
         private readonly Lazy<ISession> _session;
         private readonly Lazy<Issue> _issue;
+        private readonly Lazy<IConfiguration> _configuration;
 
         public Client(IWebApiClient webApiClient)
         {
+            _configuration = new Lazy<IConfiguration>(() => new Configuration());
             _user = new Lazy<User>(() => new User(webApiClient));
             _project = new Lazy<Project>(() => new Project(webApiClient));
-            _session = new Lazy<ISession>(() => new Session(webApiClient, new ApplicationHelper(new Configuration()), new MachineHelper(), new UserHelper()));
+            _session = new Lazy<ISession>(() => new Session(webApiClient, _configuration.Value, new ApplicationHelper(_configuration.Value), new MachineHelper(), new UserHelper()));
             _issue = new Lazy<Issue>(() => new Issue(webApiClient));
         }
 
@@ -23,5 +25,6 @@ namespace Quilt4Net
         public Project Project => _project.Value;
         public ISession Session => _session.Value;
         public Issue Issue => _issue.Value;
+        public IConfiguration Configuration => _configuration.Value;
     }
 }

@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Tharga.Toolkit.Console.Command.Base;
 
@@ -29,8 +28,9 @@ namespace Quilt4Net.Sample.Console.Commands.Session
             var projectKey = QueryParam("Project", GetParam(paramList, index++), (await _client.Project.GetListAsync()).ToDictionary(x => x.ProjectKey, x => x.Name));
             var project = await _client.Project.GetAsync(projectKey);
             var environment = QueryParam<string>("Environment", GetParam(paramList, index++));
-            var firstAssembly = typeof(RegisterSessionsCommand).GetTypeInfo().Assembly;
-            await _client.Session.RegisterAsync(project.ProjectApiKey, environment, firstAssembly);
+            _client.Configuration.ProjectApiKey = project.ProjectApiKey;
+            _client.Configuration.Session.Environment = environment;
+            await _client.Session.RegisterAsync();
             return true;
         }
     }
