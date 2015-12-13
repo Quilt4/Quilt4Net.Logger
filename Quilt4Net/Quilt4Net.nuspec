@@ -12,9 +12,10 @@
     <tags>quilt4 log analyze exceptions quality splunk dynatrace</tags>
     <dependencies>
       <dependency id="BouncyCastle-PCL" version="1.0.0.6" />
+      <dependency id="Newtonsoft.Json" version="7.0.1" />
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\$configuration$\Quilt4Net.Core.dll" target="lib\net45\" />
+    <file src="bin\$configuration$\Quilt4Net.Core.dll" target="lib\net45\" />	
   </files>
 </package>
