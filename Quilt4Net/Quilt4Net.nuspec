@@ -17,6 +17,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\$configuration$\Quilt4Net.Core.dll" target="lib\net45\" />	
+    <file src="bin\$configuration$\Quilt4Net.Core.dll" target="lib\net45\" />
+	<file src="Transformations\*.xdt" target="content" />
   </files>
 </package>
