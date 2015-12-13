@@ -10,6 +10,9 @@
     <iconUrl>https://www.quilt4net.com/Images/Quilt4NetIcon-48.png</iconUrl>
     <language>en-US</language>
     <tags>quilt4 log analyze exceptions quality splunk dynatrace</tags>
+    <dependencies>
+      <dependency id="BouncyCastle-PCL" version="1.0.0.6" />
+    </dependencies>
   </metadata>
   <files>
     <file src="bin\$configuration$\Quilt4Net.Core.dll" target="lib\net45\" />
