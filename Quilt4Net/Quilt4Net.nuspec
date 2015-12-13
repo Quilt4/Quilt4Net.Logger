@@ -12,6 +12,6 @@
     <tags>quilt4 log analyze exceptions quality splunk dynatrace</tags>
   </metadata>
   <files>
-    <file src="Quilt4Net.Core.dll" target="lib\net45\" />
+    <file src="bin\$configuration$\Quilt4Net.Core.dll" target="lib\net45\" />
   </files>
 </package>
