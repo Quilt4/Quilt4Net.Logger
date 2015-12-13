@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <configSections>
+    <sectionGroup name="Tharga" xdt:Transform="Insert">
+      <section name="Quilt4Net" type="Tharga.Quilt4Net.ConfigSection, Tharga.Quilt4Net" />
+    </sectionGroup>
+  </configSections>
+</configuration>
