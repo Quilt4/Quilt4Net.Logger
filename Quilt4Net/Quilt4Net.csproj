@@ -67,8 +67,8 @@
     <Compile Include="UserHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Quilt4Net.Portable\Quilt4Net.Core.csproj">
-      <Project>{6D022F03-0708-4F5F-A436-4931CD106DC7}</Project>
+    <ProjectReference Include="..\Quilt4Net.Core\Quilt4Net.Core.csproj">
+      <Project>{6d022f03-0708-4f5f-a436-4931cd106dc7}</Project>
       <Name>Quilt4Net.Core</Name>
     </ProjectReference>
   </ItemGroup>

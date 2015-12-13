@@ -9,6 +9,9 @@
     <projectUrl>https://www.quilt4.com/</projectUrl>
     <iconUrl>https://www.quilt4net.com/Images/Quilt4NetIcon-48.png</iconUrl>
     <language>en-US</language>
-    <tags>log analyze exceptions usage quality splunk dynatrace</tags>
+    <tags>quilt4 log analyze exceptions quality splunk dynatrace</tags>
   </metadata>
+  <files>
+    <file src="Quilt4Net.Core.dll" target="lib\net45\" />
+  </files>
 </package>
