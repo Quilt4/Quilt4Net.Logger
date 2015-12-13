@@ -12,6 +12,11 @@ namespace Quilt4Net
         private readonly Lazy<Issue> _issue;
         private readonly Lazy<IConfiguration> _configuration;
 
+        public Client(Uri address, TimeSpan timeout)
+            : this(new WebApiClient(address, timeout))
+        {
+        }
+
         public Client(IWebApiClient webApiClient)
         {
             _configuration = new Lazy<IConfiguration>(() => new Configuration());
