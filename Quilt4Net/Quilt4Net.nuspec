@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>Quilt4Net</title>
+    <authors>Quilt4Net</authors>
+    <description>Assure quality in .net systems.</description>
+    <projectUrl>https://www.quilt4.com/</projectUrl>
+    <iconUrl>https://www.quilt4net.com/Images/Quilt4NetIcon-48.png</iconUrl>
+    <language>en-US</language>
+    <tags>log analyze exceptions usage quality splunk dynatrace</tags>
+  </metadata>
+</package>
