@@ -60,6 +60,7 @@ Thumbs.db
  
 #NuGet
 packages/
+*.nupkg
 
 # NCrunch
 *.crunchsolution.cache
