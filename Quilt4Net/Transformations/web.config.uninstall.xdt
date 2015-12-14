@@ -4,4 +4,4 @@
     <sectionGroup name="Tharga" xdt:Transform="Remove" xdt:Locator="Match(name)" />
   </configSections>
   <Tharga xdt:Transform="Remove" />
- </configuration>
+</configuration>

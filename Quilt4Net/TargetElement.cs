@@ -27,7 +27,7 @@ namespace Quilt4Net
             get
             {
                 var configurationProperty = new ConfigurationProperty("Timeout", typeof(TimeSpan?), null);
-                return (TimeSpan?)base[configurationProperty] ?? new TimeSpan(0, 0, 100);
+                return (TimeSpan?)base[configurationProperty] ?? new TimeSpan(0, 0, 60);
             }
 
             set { this["Timeout"] = value; }
