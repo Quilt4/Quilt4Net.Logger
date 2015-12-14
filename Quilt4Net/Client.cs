@@ -13,7 +13,7 @@ namespace Quilt4Net
         private readonly Lazy<IConfiguration> _configuration;
 
         public Client(string address = "https://www.quilt4.com/", int timeoutInSeconds = 30)
-            : this(new WebApiClient(new Uri(address), new TimeSpan(0,0,0, timeoutInSeconds)))
+            : this(new WebApiClient(new Uri(address), new TimeSpan(0, 0, 0, timeoutInSeconds)))
         {
         }
 

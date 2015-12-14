@@ -1,6 +1,4 @@
-using System.Linq;
 using System.Threading.Tasks;
-using Quilt4Net.Core;
 using Tharga.Toolkit.Console.Command.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Session
@@ -33,11 +31,12 @@ namespace Quilt4Net.Sample.Console.Commands.Session
             //_client.Configuration.ProjectApiKey = project.ProjectApiKey;
             //_client.Configuration.Session.Environment = environment;
 
-            _client.Configuration.ProjectApiKey = "BL2VV8LVF0C9GWRTX6CS03R7IK1PYT7E";
+            //_client.Configuration.ProjectApiKey = "BL2VV8LVF0C9GWRTX6CS03R7IK1PYT7E";
 
             //await _client.Session.RegisterAsync();
 
-            _client.Session.RegisterStart();
+            //_client.Session.RegisterStart();
+            var s = _client.Session.Register();
 
             //var response = _client.Session.Register();
             //OutputInformation(response.Elapsed.TotalMilliseconds.ToString("0") + "ms");

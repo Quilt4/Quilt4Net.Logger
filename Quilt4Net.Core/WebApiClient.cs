@@ -27,9 +27,14 @@ namespace Quilt4Net.Core
             var jsonFormatter = new JsonMediaTypeFormatter();
             var content = new ObjectContent<T>(data, jsonFormatter);
 
+            //TODO: Implement execute around, and dispose the client after the call.
             var client = GetHttpClient(requestUri);
 
-            await client.PostAsync(requestUri, content);
+            var response = await client.PostAsync(requestUri, content);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new InvalidOperationException(response.ToString());
+            }
         }
 
         public async Task<IEnumerable<TResult>> ReadAsync<TResult>(string controller)
@@ -39,7 +44,9 @@ namespace Quilt4Net.Core
             var client = GetHttpClient(requestUri);
             var response = await client.GetAsync(requestUri);
             if (!response.IsSuccessStatusCode)
-                throw new InvalidOperationException();
+            {
+                throw new InvalidOperationException(response.ToString());
+            }
 
             var result = response.Content.ReadAsAsync<IEnumerable<TResult>>().Result;
             return result;
@@ -52,7 +59,9 @@ namespace Quilt4Net.Core
             var client = GetHttpClient(requestUri);
             var response = await client.GetAsync(requestUri);
             if (!response.IsSuccessStatusCode)
-                throw new InvalidOperationException();
+            {
+                throw new InvalidOperationException(response.ToString());
+            }
 
             var result = response.Content.ReadAsAsync<TResult>().Result;
             return result;
@@ -76,7 +85,11 @@ namespace Quilt4Net.Core
 
             var client = GetHttpClient(requestUri);
 
-            await client.DeleteAsync(requestUri);
+            var response = await client.DeleteAsync(requestUri);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new InvalidOperationException(response.ToString());
+            }
         }
 
         public async Task ExecuteCommandAsync<T>(string controller, string action, T data)
@@ -89,7 +102,9 @@ namespace Quilt4Net.Core
             var client = GetHttpClient(requestUri, content.ToString());
             var response = await client.PostAsync(requestUri, content);
             if (!response.IsSuccessStatusCode)
-                throw new InvalidOperationException();
+            {
+                throw new InvalidOperationException(response.ToString());
+            }
         }
 
         public async Task<TResult> ExecuteQueryAsync<T, TResult>(string controller, string action, T data)
@@ -102,7 +117,9 @@ namespace Quilt4Net.Core
             var client = GetHttpClient(requestUri, content.ToString());
             var response = await client.PostAsync(requestUri, content);
             if (!response.IsSuccessStatusCode)
-                throw new InvalidOperationException();
+            {
+                throw new InvalidOperationException(response.ToString());
+            }
 
             var result = response.Content.ReadAsAsync<TResult>().Result;
             return result;

@@ -18,12 +18,13 @@ namespace Quilt4Net.Sample.Console
         {
             _console = new ClientConsole();
 
-            var port = 29660;
-            var address = new Uri($"http://localhost:{port}/");
-            var client = new Client(new WebApiClient(address, new TimeSpan(0, 0, 0, 30)));
+            //var port = 29660;
+            //var address = new Uri($"http://localhost:{port}/");
+            //var client = new Client(new WebApiClient(address, new TimeSpan(0, 0, 0, 30)));
+            var client = new Client("http://www.thargelion.se");
             client.Session.SessionRegisteredEvent += Session_SessionRegisteredEvent;
 
-            _console.WriteLine("Using serer " + address, OutputLevel.Information, null);
+            //_console.WriteLine("Using serer " + address, OutputLevel.Information, null);
 
             var rootCommand = new RootCommand(_console);
             rootCommand.RegisterCommand(new UserCommands(client));

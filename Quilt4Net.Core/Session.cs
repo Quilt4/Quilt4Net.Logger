@@ -71,7 +71,18 @@ namespace Quilt4Net.Core
                         User = _userHelper.GetUser(),
                     };
 
-                    Task.Run(() => _webApiClient.CreateAsync("Client/Session", registerSessionRequest)).Wait();
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await _webApiClient.CreateAsync("Client/Session", registerSessionRequest);
+                        }
+                        catch (Exception exception)
+                        {
+                            Debug.WriteLine(exception.Message);
+                            throw;
+                        }
+                    }).Wait();
                 }
                 catch (Exception exception)
                 {
