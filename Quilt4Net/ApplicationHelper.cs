@@ -7,7 +7,7 @@ using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net
 {
-    public class ApplicationHelper : Core.ApplicationHelper
+    internal class ApplicationHelper : Core.ApplicationHelper
     {
         private readonly object _syncRoot = new object();
 
@@ -25,7 +25,7 @@ namespace Quilt4Net
                     if (_firstAssembly == null)
                     {
                         _firstAssembly = Assembly.GetEntryAssembly();
-                        if (_firstAssembly == null) throw ExpectedIssues.GetException(ExpectedIssues.CannotAutomaticallyRetrieveAssembly);
+                        if (_firstAssembly == null) throw new ExpectedIssues(Configuration).GetException(ExpectedIssues.CannotAutomaticallyRetrieveAssembly);
                     }
                 }
             }

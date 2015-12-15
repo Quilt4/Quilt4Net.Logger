@@ -5,7 +5,7 @@ using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core
 {
-    public abstract class ApplicationHelper : IApplicationHelper
+    internal abstract class ApplicationHelper : IApplicationHelper
     {
         protected readonly IConfiguration Configuration;
         protected Assembly _firstAssembly;
@@ -23,10 +23,8 @@ namespace Quilt4Net.Core
             return Configuration.ProjectApiKey;
         }
 
-        public ApplicationData GetApplicationData() //string projectApiKey, Assembly firstAssembly)
+        public ApplicationData GetApplicationData()
         {
-            //SetFirstAssembly(firstAssembly);
-
             var applicationName = GetApplicationName();
             var applicationVersion = GetApplicationVersion();
             var supportToolkitNameVersion = GetSupportToolkitNameVersion();
@@ -56,6 +54,10 @@ namespace Quilt4Net.Core
 
         private string GetApplicationName()
         {
+            if (!string.IsNullOrEmpty(Configuration.ApplicationName))
+            {
+                return Configuration.ApplicationName;
+            }
             return GetFirstAssembly().GetName().Name;
         }
 

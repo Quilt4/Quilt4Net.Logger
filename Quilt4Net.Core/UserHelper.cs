@@ -3,7 +3,7 @@ using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core
 {
-    public abstract class UserHelper : IUserHelper
+    internal abstract class UserHelper : IUserHelper
     {
         protected abstract string GetUserName();
         protected abstract string GetUserSid();

@@ -1,7 +1,8 @@
-﻿using System.Reflection;
+﻿using System;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
+using Quilt4Net.Core;
 using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Interfaces;
 
@@ -11,29 +12,37 @@ namespace Quilt4Net.Tests
     public class SessionTests
     {
         [Test]
-        public async Task x()
+        public async Task When_registering_session()
         {
             //Arrange
-            var projectApiKey = "MyProjectApiKey";
-            //var assembly = Assembly.GetExecutingAssembly();
-            var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
-            webApiClientMock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<SessionData>())).Returns(() => { return Task.Run(() => { }); });
+            Exception exception = null;
             var configurationMock = new Mock<IConfiguration>(MockBehavior.Strict);
-            configurationMock.SetupGet(x => x.ProjectApiKey).Returns(projectApiKey);
-            configurationMock.SetupGet(x => x.Session.Environment).Returns("MyEnvironment");
+            configurationMock.SetupGet(x => x.Target.Location).Returns("https://www.quilt4.com/");
+            configurationMock.SetupGet(x => x.ProjectApiKey).Returns("ABC123");
+            configurationMock.SetupGet(x => x.Session.Environment).Returns("Test");
+            //var webApiClient = new WebApiClient(configurationMock.Object);
+            var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
+            webApiClientMock.Setup(x => x.CreateAsync<SessionData>(It.IsAny<string>(), It.IsAny<SessionData>())).Returns(new Task<SessionData>(() => { return new SessionData();}));
             var applicationHelperMock = new Mock<IApplicationHelper>(MockBehavior.Strict);
-            applicationHelperMock.Setup(x => x.GetApplicationData()).Returns(new ApplicationData { Fingerprint = "A1" });
+            applicationHelperMock.Setup(x => x.GetApplicationData()).Returns(() => new ApplicationData());
             var machineHelperMock = new Mock<IMachineHelper>(MockBehavior.Strict);
-            machineHelperMock.Setup(x => x.GetMachineData()).Returns(new MachineData { Name = "B1" });
+            machineHelperMock.Setup(x => x.GetMachineData()).Returns(() => new MachineData());
             var userHelperMock = new Mock<IUserHelper>(MockBehavior.Strict);
-            userHelperMock.Setup(x => x.GetUser()).Returns(new UserData { Fingerprint = "C1", UserName = "C2"});
+            userHelperMock.Setup(x => x.GetUser()).Returns(() => new UserData());
             var session = new Session(webApiClientMock.Object, configurationMock.Object, applicationHelperMock.Object, machineHelperMock.Object, userHelperMock.Object);
 
             //Act
-            await session.RegisterAsync();
+            try
+            {
+                await session.RegisterAsync();
+            }
+            catch (Exception exp)
+            {
+                exception = exp;
+            }
 
             //Assert
-            webApiClientMock.Verify(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<SessionData>()), Times.Once);
-        }
+            Assert.That(exception, Is.Null, exception.Message);
+        }        
     }
 }

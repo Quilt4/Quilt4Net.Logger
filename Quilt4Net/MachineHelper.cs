@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Quilt4Net
 {
-    public class MachineHelper : Core.MachineHelper
+    internal class MachineHelper : Core.MachineHelper
     {
         protected override string GetMachineName()
         {

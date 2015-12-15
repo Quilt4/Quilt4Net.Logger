@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core
 {
-    public static class ExpectedIssues
+    internal class ExpectedIssues
     {
+        private readonly IConfiguration _configuration;
         public const int ProjectApiKeyNotSet = 1001;
         public const int UnknownType = 1002;
         public const int CannotSetProjectApiKey = 1003;
@@ -22,8 +24,9 @@ namespace Quilt4Net.Core
 
         private static readonly Dictionary<int, string> _data = new Dictionary<int, string>();
 
-        static ExpectedIssues()
+        internal ExpectedIssues(IConfiguration configuration)
         {
+            _configuration = configuration;
             _data.Add(ProjectApiKeyNotSet, "The client token has not been set.");
             _data.Add(UnknownType, "Unknown type.");
             _data.Add(CannotSetProjectApiKey, "Cannot set client token to null, use string.Empty instead.");
@@ -60,7 +63,7 @@ namespace Quilt4Net.Core
             }
         }
 
-        public static Exception GetException(int code, Exception innerEception = null)
+        public Exception GetException(int code, Exception innerEception = null)
         {
             Exception exception;
             switch (code)
@@ -120,16 +123,15 @@ namespace Quilt4Net.Core
             //return exp;
         }
 
-        private static string GetMessage(int code)
+        private string GetMessage(int code)
         {
             var response = string.Format("{0} Issue code #{1}. Visit {2} for more information", _data[code], code, GetHelpLink(code));
             return response;
         }
 
-        private static string GetHelpLink(int code)
+        private string GetHelpLink(int code)
         {
-            throw new NotImplementedException();
-            //return string.Format("{1}Help/Details/{0}", code, Configuration.Target.Location);
+            return string.Format("{1}Help/Details/{0}", code, _configuration.Target.Location);
         }
     }
 }

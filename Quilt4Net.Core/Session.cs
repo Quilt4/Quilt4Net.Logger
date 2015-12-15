@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Quilt4Net.Core.DataTransfer;
+using Quilt4Net.Core.Events;
 using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core
@@ -37,22 +39,30 @@ namespace Quilt4Net.Core
 
         public void RegisterStart()
         {
-            Task.Run(() =>
+            Task.Run(async() =>
             {
-                var response = RegisterEx(false);
+                var response = await RegisterEx(false);
                 OnSessionRegisteredEvent(new SessionRegisteredEventArgs(response));
             });
         }
 
         public SessionResponse Register()
         {
-            return RegisterEx(true);
+            var result = Task<SessionResponse>.Run(async () =>
+            {
+                var response = await RegisterEx(false);
+                OnSessionRegisteredEvent(new SessionRegisteredEventArgs(response));
+                return response;
+            }).Result;
+
+            return result;
         }
 
-        private SessionResponse RegisterEx(bool doThrow)
+        private async Task<SessionResponse>  RegisterEx(bool doThrow)
         {
-            lock (_syncRoot)
-            {
+            //TODO: Use a Mutex here
+            //lock (_syncRoot)
+            //{
                 var response = new SessionResponse();
 
                 try
@@ -71,18 +81,18 @@ namespace Quilt4Net.Core
                         User = _userHelper.GetUser(),
                     };
 
-                    Task.Run(async () =>
-                    {
-                        try
-                        {
+                    //Task.Run(async () =>
+                    //{
+                    //    try
+                    //    {
                             await _webApiClient.CreateAsync("Client/Session", registerSessionRequest);
-                        }
-                        catch (Exception exception)
-                        {
-                            Debug.WriteLine(exception.Message);
-                            throw;
-                        }
-                    }).Wait();
+                    //    }
+                    //    catch (Exception exception)
+                    //    {
+                    //        Debug.WriteLine(exception.Message);
+                    //        throw;
+                    //    }
+                    //}).Wait();
                 }
                 catch (Exception exception)
                 {
@@ -98,7 +108,7 @@ namespace Quilt4Net.Core
                 }
 
                 return response;
-            }
+            //}
         }
 
         public async Task<IEnumerable<SessionData>> GetListAsync()
@@ -109,45 +119,6 @@ namespace Quilt4Net.Core
         protected virtual void OnSessionRegisteredEvent(SessionRegisteredEventArgs e)
         {
             SessionRegisteredEvent?.Invoke(this, e);
-        }
-    }
-
-    public class SessionRegisteredEventArgs : EventArgs
-    {
-        private readonly SessionResponse _sessionResponse;
-
-        public SessionRegisteredEventArgs(SessionResponse sessionResponse)
-        {
-            _sessionResponse = sessionResponse;
-        }
-
-        public TimeSpan Elapsed => _sessionResponse.Elapsed;
-        public bool IsSuccess => _sessionResponse.IsSuccess;
-        public string ErrorMessage => _sessionResponse.ErrorMessage;
-    }
-
-    public class SessionResponse
-    {
-        private readonly Stopwatch _stopWatch = new Stopwatch();
-        private Exception _exception;
-
-        public SessionResponse()
-        {
-            _stopWatch.Start();
-        }
-
-        public TimeSpan Elapsed => _stopWatch.Elapsed;
-        public bool IsSuccess => _exception == null;
-        public string ErrorMessage => _exception?.Message;
-
-        public void SetException(Exception exception)
-        {
-            _exception = exception;
-        }
-
-        public void SetCompleted()
-        {
-            _stopWatch.Stop();
         }
     }
 

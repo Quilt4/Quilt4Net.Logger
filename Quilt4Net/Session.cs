@@ -8,5 +8,14 @@ namespace Quilt4Net
             : base(webApiClient, configuration, applicationHelper, machineHelper, userHelper)
         {
         }
+
+        public static ISession Instance
+        {
+            get
+            {
+                var client = new Client();
+                return client.Session;
+            }
+        }
     }
 }

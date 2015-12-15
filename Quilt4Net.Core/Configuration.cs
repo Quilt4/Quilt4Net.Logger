@@ -50,7 +50,11 @@ namespace Quilt4Net.Core
 
             set
             {
-                if (value == null) throw ExpectedIssues.GetException(ExpectedIssues.CannotSetProjectApiKey);
+                if (value == null)
+                {
+                    throw new ExpectedIssues(this).GetException(ExpectedIssues.CannotSetProjectApiKey);
+                }
+
                 _projectApiKey = value;
             }
         }
@@ -76,7 +80,7 @@ namespace Quilt4Net.Core
             set { _useBuildTime = value; }
         }
 
-        internal virtual string ApplicationName
+        public virtual string ApplicationName
         {
             get
             {
@@ -86,7 +90,7 @@ namespace Quilt4Net.Core
             set { _applicationName = value; }
         }
 
-        internal virtual string ApplicationVersion
+        public virtual string ApplicationVersion
         {
             get
             {

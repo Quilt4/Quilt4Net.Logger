@@ -4,7 +4,7 @@ using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core
 {
-    public abstract class MachineHelper : IMachineHelper
+    internal abstract class MachineHelper : IMachineHelper
     {
         protected abstract string GetMachineName();
         protected abstract string GetCpuId();

@@ -1,9 +1,15 @@
 using Quilt4Net.Core;
+using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net
 {
     internal class SessionConfiguration : Core.SessionConfiguration
     {
+        public SessionConfiguration(IConfiguration configuration)
+            : base(configuration)
+        {
+        }
+
         public override string Environment
         {
             get
@@ -24,7 +30,7 @@ namespace Quilt4Net
 
             set
             {
-                if (value == null) throw ExpectedIssues.GetException(ExpectedIssues.CannotSetEnvironment);
+                if (value == null) throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.CannotSetEnvironment);
                 _environment = value;
             }
         }

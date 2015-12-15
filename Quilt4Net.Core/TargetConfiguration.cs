@@ -5,8 +5,14 @@ namespace Quilt4Net.Core
 {
     internal abstract class TargetConfiguration : ITargetConfiguration
     {
+        protected readonly IConfiguration _configuration;
         protected string _location;
         protected TimeSpan? _timeout;
+
+        protected TargetConfiguration(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
 
         public virtual string Location
         {
@@ -29,7 +35,7 @@ namespace Quilt4Net.Core
 
             set
             {
-                if (value == null) throw ExpectedIssues.GetException(ExpectedIssues.CannotSetLocation);
+                if (value == null) throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.CannotSetLocation);
                 _location = value;
                 if (!_location.EndsWith("/")) _location += "/";
             }
@@ -55,7 +61,7 @@ namespace Quilt4Net.Core
 
             set
             {
-                if (value == null) throw ExpectedIssues.GetException(ExpectedIssues.CannotSetTimeout);
+                if (value == null) throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.CannotSetTimeout);
                 _timeout = value;
             }
         }

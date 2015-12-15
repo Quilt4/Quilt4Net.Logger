@@ -2,7 +2,7 @@ using System;
 
 namespace Quilt4Net
 {
-    public class UserHelper : Core.UserHelper
+    internal class UserHelper : Core.UserHelper
     {
         protected override string GetUserName()
         {

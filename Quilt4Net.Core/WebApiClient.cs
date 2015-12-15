@@ -8,16 +8,16 @@ using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core
 {
-    public class WebApiClient : IWebApiClient
+    internal class WebApiClient : IWebApiClient
     {
         private readonly Uri _address;
         private readonly TimeSpan _timeout;
         private Authorization _authorization;
 
-        public WebApiClient(Uri address, TimeSpan timeout)
+        internal WebApiClient(IConfiguration configuration)
         {
-            _address = address;
-            _timeout = timeout;
+            _address = new Uri(configuration.Target.Location);
+            _timeout = configuration.Target.Timeout;
         }
 
         public async Task CreateAsync<T>(string controller, T data)

@@ -4,7 +4,13 @@ namespace Quilt4Net.Core
 {
     internal abstract class SessionConfiguration : ISessionConfiguration
     {
+        protected readonly IConfiguration _configuration;
         protected string _environment;
+
+        protected SessionConfiguration(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
 
         public virtual string Environment
         {
@@ -26,7 +32,7 @@ namespace Quilt4Net.Core
 
             set
             {
-                if (value == null) throw ExpectedIssues.GetException(ExpectedIssues.CannotSetEnvironment);
+                if (value == null) throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.CannotSetEnvironment);
                 _environment = value;
             }
         }

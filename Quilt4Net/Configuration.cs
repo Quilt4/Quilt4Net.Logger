@@ -7,8 +7,8 @@ namespace Quilt4Net
     {
         internal Configuration()
         {
-            Session = new SessionConfiguration();
-            Target = new TargetConfiguration();
+            Session = new SessionConfiguration(this);
+            Target = new TargetConfiguration(this);
         }
 
         public override bool Enabled
@@ -52,12 +52,12 @@ namespace Quilt4Net
 
             set
             {
-                if (value == null) throw ExpectedIssues.GetException(ExpectedIssues.CannotSetProjectApiKey);
+                if (value == null) throw new ExpectedIssues(this).GetException(ExpectedIssues.CannotSetProjectApiKey);
                 _projectApiKey = value;
             }
         }
 
-        internal override string ApplicationName
+        public override string ApplicationName
         {
             get
             {
@@ -78,7 +78,7 @@ namespace Quilt4Net
             set { _applicationName = value; }
         }
 
-        internal override string ApplicationVersion
+        public override string ApplicationVersion
         {
             get
             {
