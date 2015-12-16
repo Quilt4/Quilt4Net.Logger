@@ -26,93 +26,91 @@ namespace Quilt4Net.Core
             _userHelper = userHelper;
         }
 
-        public event EventHandler<SessionRegisteredEventArgs> SessionRegisteredEvent;
+        public event EventHandler<SessionRegisterStartedEventArgs> SessionRegisteredStartedEvent;
+        public event EventHandler<SessionRegisterCompletedEventArgs> SessionRegisteredCompletedEvent;
 
         public bool IsRegistered => _sessionKey != Guid.Empty;
 
         public async Task<SessionResponse> RegisterAsync()
         {
-            return await RegisterEx(true);
+            return await RegisterEx(GetProjectApiKey(), true);
         }
 
         public void RegisterStart()
         {
+            var projectApiKey = GetProjectApiKey();
+
             Task.Run(async() =>
             {
-                var response = await RegisterEx(false);
-                OnSessionRegisteredEvent(new SessionRegisteredEventArgs(response));
+                var response = await RegisterEx(projectApiKey, false);
             });
         }
 
         public SessionResponse Register()
         {
-            var result = Task<SessionResponse>.Run(async () =>
+            try
             {
-                var response = await RegisterEx(false);
-                OnSessionRegisteredEvent(new SessionRegisteredEventArgs(response));
+                var response = RegisterEx(GetProjectApiKey(), true).Result;
                 return response;
-            }).Result;
-
-            return result;
+            }
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
+            }
         }
 
-        private async Task<SessionResponse>  RegisterEx(bool doThrow)
+        private string GetProjectApiKey()
+        {
+            var projectApiKey = _configuration.ProjectApiKey;
+            if (string.IsNullOrEmpty(projectApiKey))
+            {
+                throw new ExpectedIssues.ProjectApiKeyNotSetException("?2");
+            }
+            return projectApiKey;
+        }
+
+        private async Task<SessionResponse> RegisterEx(string projectApiKey, bool doThrow)
         {
             //TODO: Use a Mutex here
-            //lock (_syncRoot)
-            //{
-                var response = new SessionResponse();
 
-                try
-                {
-                    if (_sessionKey != Guid.Empty) throw new InvalidOperationException("The session has already been registered.");
-                    _sessionKey = Guid.NewGuid();
+            var response = new SessionResponse();
+            SessionData request = null;
 
-                    var projectApiKey = _configuration.ProjectApiKey;
-                    if (string.IsNullOrEmpty(projectApiKey))
-                    {
-                        throw new ExpectedIssues.ProjectApiKeyNotSetException("?2");
-                    }
+            try
+            {
+                if (_sessionKey != Guid.Empty) throw new InvalidOperationException("The session has already been registered.");
+                _sessionKey = Guid.NewGuid();
 
-                    var registerSessionRequest = new SessionData
-                    {
-                        SessionKey = _sessionKey,
-                        ProjectApiKey = projectApiKey,
-                        ClientStartTime = DateTime.UtcNow,
-                        Environment = _configuration.Session != null ? _configuration.Session.Environment : string.Empty,
-                        Application = _applicationHelper.GetApplicationData(),
-                        Machine = _machineHelper.GetMachineData(),
-                        User = _userHelper.GetUser(),
-                    };
+                request = new SessionData
+                                                 {
+                                                     SessionKey = _sessionKey,
+                                                     ProjectApiKey = projectApiKey,
+                                                     ClientStartTime = DateTime.UtcNow,
+                                                     Environment = _configuration.Session != null ? _configuration.Session.Environment : string.Empty,
+                                                     Application = _applicationHelper.GetApplicationData(),
+                                                     Machine = _machineHelper.GetMachineData(),
+                                                     User = _userHelper.GetUser(),
+                                                 };
 
-                    //Task.Run(async () =>
-                    //{
-                    //    try
-                    //    {
-                            await _webApiClient.CreateAsync("Client/Session", registerSessionRequest);
-                    //    }
-                    //    catch (Exception exception)
-                    //    {
-                    //        Debug.WriteLine(exception.Message);
-                    //        throw;
-                    //    }
-                    //}).Wait();
-                }
-                catch (Exception exception)
-                {
-                    _sessionKey = Guid.Empty;
-                    response.SetException(exception);
+                OnSessionRegisteredStartedEvent(new SessionRegisterStartedEventArgs(request));
 
-                    if (doThrow)
-                        throw;
-                }
-                finally
-                {
-                    response.SetCompleted();
-                }
+                await _webApiClient.CreateAsync("Client/Session", request);
+            }
+            catch (Exception exception)
+            {
+                _sessionKey = Guid.Empty;
+                response.SetException(exception);
 
-                return response;
-            //}
+                if (doThrow)
+                    throw;
+            }
+            finally
+            {
+                response.SetCompleted();
+                OnSessionRegisteredEvent(new SessionRegisterCompletedEventArgs(request, response));
+            }
+
+            return response;
         }
 
         public async Task<IEnumerable<SessionData>> GetListAsync()
@@ -120,9 +118,14 @@ namespace Quilt4Net.Core
             throw new NotImplementedException();
         }
 
-        protected virtual void OnSessionRegisteredEvent(SessionRegisteredEventArgs e)
+        protected virtual void OnSessionRegisteredEvent(SessionRegisterCompletedEventArgs e)
         {
-            SessionRegisteredEvent?.Invoke(this, e);
+            SessionRegisteredCompletedEvent?.Invoke(this, e);
+        }
+
+        protected virtual void OnSessionRegisteredStartedEvent(SessionRegisterStartedEventArgs e)
+        {
+            SessionRegisteredStartedEvent?.Invoke(this, e);
         }
     }
 

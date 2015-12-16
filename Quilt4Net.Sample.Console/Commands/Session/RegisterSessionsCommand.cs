@@ -32,20 +32,11 @@ namespace Quilt4Net.Sample.Console.Commands.Session
             //_client.Configuration.ProjectApiKey = project.ProjectApiKey;
             //_client.Configuration.Session.Environment = environment;
 
-            if (string.IsNullOrEmpty(_client.Configuration.ProjectApiKey))
-            {
-                throw new InvalidOperationException("No ProjectApiKey has been set.");
-            }
-
-            //_client.Configuration.ProjectApiKey = "BL2VV8LVF0C9GWRTX6CS03R7IK1PYT7E";
-
-            //await _client.Session.RegisterAsync();
+            _client.Configuration.ProjectApiKey = "BL2VV8LVF0C9GWRTX6CS03R7IK1PYT7E";
 
             //_client.Session.RegisterStart();
-            var s = _client.Session.Register();
-
-            //var response = _client.Session.Register();
-            //OutputInformation(response.Elapsed.TotalMilliseconds.ToString("0") + "ms");
+            var response = await _client.Session.RegisterAsync();
+            OutputInformation(response.Elapsed.TotalMilliseconds.ToString("0") + "ms");
 
             return true;
         }

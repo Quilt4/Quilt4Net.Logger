@@ -8,7 +8,7 @@ namespace Quilt4Net.Core.Interfaces
 {
     public interface ISession
     {
-        event EventHandler<SessionRegisteredEventArgs> SessionRegisteredEvent;
+        event EventHandler<SessionRegisterCompletedEventArgs> SessionRegisteredCompletedEvent;
         bool IsRegistered { get; }
         Task<SessionResponse> RegisterAsync();
         void RegisterStart();

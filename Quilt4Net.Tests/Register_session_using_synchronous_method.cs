@@ -8,10 +8,10 @@ using Quilt4Net.Core.Interfaces;
 namespace Quilt4Net.Tests
 {
     [TestFixture]
-    public class SessionTests
+    public class Register_session_using_synchronous_method
     {
         [Test]
-        public async Task When_registering_session_with_no_projectApiKey_set()
+        public void When_registering_session_with_no_projectApiKey_set()
         {
             //Arrange
             var configurationMock = new Mock<IConfiguration>(MockBehavior.Default);
@@ -19,7 +19,7 @@ namespace Quilt4Net.Tests
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
             webApiClientMock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<SessionData>())).Returns(Task.FromResult(default(SessionData)));
 
-            var session = GivenThereIsASession(webApiClientMock, configurationMock);
+            var session = Register_session_setup.GivenThereIsASession(webApiClientMock, configurationMock, null, null);
 
             ExpectedIssues.ProjectApiKeyNotSetException exception = null;
             SessionResponse response = null;
@@ -27,7 +27,7 @@ namespace Quilt4Net.Tests
             //Act
             try
             {
-                response = await session.RegisterAsync();
+                response = session.Register();
             }
             catch (ExpectedIssues.ProjectApiKeyNotSetException exp)
             {
@@ -41,7 +41,7 @@ namespace Quilt4Net.Tests
         }
 
         [Test]
-        public async Task When_registering_session()
+        public void When_registering_session()
         {
             //Arrange
             var configurationMock = new Mock<IConfiguration>(MockBehavior.Default);
@@ -50,10 +50,10 @@ namespace Quilt4Net.Tests
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
             webApiClientMock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<SessionData>())).Returns(Task.FromResult(default(SessionData)));
 
-            var session = GivenThereIsASession(webApiClientMock, configurationMock);
+            var session = Register_session_setup.GivenThereIsASession(webApiClientMock, configurationMock, null, null);
 
             //Act
-            var response = await session.RegisterAsync();
+            var response = session.Register();
 
             //Assert
             Assert.That(response, Is.Not.Null);
@@ -61,18 +61,6 @@ namespace Quilt4Net.Tests
             Assert.That(response.ErrorMessage, Is.Null);
             Assert.That(response.Elapsed.Ticks, Is.GreaterThan(1));
             webApiClientMock.Verify(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<SessionData>()), Times.Once);
-        }
-
-        private static Session GivenThereIsASession(Mock<IWebApiClient> webApiClientMock, Mock<IConfiguration> configurationMock)
-        {
-            var applicationHelperMock = new Mock<IApplicationHelper>(MockBehavior.Strict);
-            applicationHelperMock.Setup(x => x.GetApplicationData()).Returns(() => new ApplicationData());
-            var machineHelperMock = new Mock<IMachineHelper>(MockBehavior.Strict);
-            machineHelperMock.Setup(x => x.GetMachineData()).Returns(() => new MachineData());
-            var userHelperMock = new Mock<IUserHelper>(MockBehavior.Strict);
-            userHelperMock.Setup(x => x.GetUser()).Returns(() => new UserData());
-            var session = new Session(webApiClientMock.Object, configurationMock.Object, applicationHelperMock.Object, machineHelperMock.Object, userHelperMock.Object);
-            return session;
         }
     }
 }

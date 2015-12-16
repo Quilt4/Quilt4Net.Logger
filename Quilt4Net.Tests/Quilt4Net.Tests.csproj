@@ -70,7 +70,10 @@
     <Compile Include="..\Build\AssemblyVersionInfo.cs">
       <Link>Properties\AssemblyVersionInfo.cs</Link>
     </Compile>
-    <Compile Include="SessionTests.cs" />
+    <Compile Include="Register_session_setup.cs" />
+    <Compile Include="Register_session_using_async_method.cs" />
+    <Compile Include="Register_session_using_start_method.cs" />
+    <Compile Include="Register_session_using_synchronous_method.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
