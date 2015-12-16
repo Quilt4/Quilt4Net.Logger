@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Events;
@@ -70,12 +68,18 @@ namespace Quilt4Net.Core
                     if (_sessionKey != Guid.Empty) throw new InvalidOperationException("The session has already been registered.");
                     _sessionKey = Guid.NewGuid();
 
+                    var projectApiKey = _configuration.ProjectApiKey;
+                    if (string.IsNullOrEmpty(projectApiKey))
+                    {
+                        throw new ExpectedIssues.ProjectApiKeyNotSetException("?2");
+                    }
+
                     var registerSessionRequest = new SessionData
                     {
                         SessionKey = _sessionKey,
-                        ProjectApiKey = _configuration.ProjectApiKey,
+                        ProjectApiKey = projectApiKey,
                         ClientStartTime = DateTime.UtcNow,
-                        Environment = _configuration.Session.Environment,
+                        Environment = _configuration.Session != null ? _configuration.Session.Environment : string.Empty,
                         Application = _applicationHelper.GetApplicationData(),
                         Machine = _machineHelper.GetMachineData(),
                         User = _userHelper.GetUser(),

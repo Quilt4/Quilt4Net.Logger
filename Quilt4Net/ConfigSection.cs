@@ -11,6 +11,7 @@ namespace Quilt4Net
         {
         }
 
+        //TODO: Inject this, instead of having it as a singleton.
         public static ConfigSection Instance
         {
             get { return _instance.Value; }
