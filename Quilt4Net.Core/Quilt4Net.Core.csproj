@@ -52,6 +52,7 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="DataTransfer\ApplicationData.cs" />
     <Compile Include="DataTransfer\CreateUserRequest.cs" />
+    <Compile Include="DataTransfer\IssueResponse.cs" />
     <Compile Include="DataTransfer\LoginRequest.cs" />
     <Compile Include="DataTransfer\LoginData.cs" />
     <Compile Include="DataTransfer\MachineData.cs" />
@@ -59,6 +60,8 @@
     <Compile Include="DataTransfer\SessionData.cs" />
     <Compile Include="DataTransfer\SessionResponse.cs" />
     <Compile Include="DataTransfer\UserData.cs" />
+    <Compile Include="Events\IssueRegisterCompletedEventArgs.cs" />
+    <Compile Include="Events\IssueRegisterStartedEventArgs.cs" />
     <Compile Include="Events\SessionRegisterCompletedEventArgs.cs" />
     <Compile Include="Events\SessionRegisterStartedEventArgs.cs" />
     <Compile Include="ExpectedIssues.cs" />
@@ -66,6 +69,7 @@
     <Compile Include="Interfaces\IApplicationHelper.cs" />
     <Compile Include="Interfaces\IClient.cs" />
     <Compile Include="Interfaces\IConfiguration.cs" />
+    <Compile Include="Interfaces\IIssue.cs" />
     <Compile Include="Interfaces\IMachineHelper.cs" />
     <Compile Include="Interfaces\ISession.cs" />
     <Compile Include="Interfaces\ISessionConfiguration.cs" />

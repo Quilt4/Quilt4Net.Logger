@@ -9,7 +9,6 @@ namespace Quilt4Net.Core
 {
     public abstract class Session : ISession
     {
-        private readonly object _syncRoot = new object();
         private readonly IWebApiClient _webApiClient;
         private readonly IConfiguration _configuration;
         private readonly IApplicationHelper _applicationHelper;
@@ -42,7 +41,7 @@ namespace Quilt4Net.Core
 
             Task.Run(async() =>
             {
-                var response = await RegisterEx(projectApiKey, false);
+                await RegisterEx(projectApiKey, false);
             });
         }
 
