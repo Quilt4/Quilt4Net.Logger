@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Tharga.Toolkit.Console.Command.Base;
 
@@ -30,6 +31,11 @@ namespace Quilt4Net.Sample.Console.Commands.Session
             //OutputInformation("ProjectApiKey: {0}", project.ProjectApiKey);
             //_client.Configuration.ProjectApiKey = project.ProjectApiKey;
             //_client.Configuration.Session.Environment = environment;
+
+            if (string.IsNullOrEmpty(_client.Configuration.ProjectApiKey))
+            {
+                throw new InvalidOperationException("No ProjectApiKey has been set.");
+            }
 
             //_client.Configuration.ProjectApiKey = "BL2VV8LVF0C9GWRTX6CS03R7IK1PYT7E";
 

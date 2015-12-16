@@ -32,9 +32,9 @@ namespace Quilt4Net.Core
 
         public bool IsRegistered => _sessionKey != Guid.Empty;
 
-        public async Task RegisterAsync()
+        public async Task<SessionResponse> RegisterAsync()
         {
-            await Task.Run(() => { RegisterEx(true); });
+            return await RegisterEx(true);
         }
 
         public void RegisterStart()

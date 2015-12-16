@@ -10,7 +10,7 @@ namespace Quilt4Net.Core.Interfaces
     {
         event EventHandler<SessionRegisteredEventArgs> SessionRegisteredEvent;
         bool IsRegistered { get; }
-        Task RegisterAsync();
+        Task<SessionResponse> RegisterAsync();
         void RegisterStart();
         SessionResponse Register();
         Task<IEnumerable<SessionData>> GetListAsync();

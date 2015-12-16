@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using Quilt4Net.Core;
 using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Interfaces;
 
@@ -18,11 +17,11 @@ namespace Quilt4Net.Tests
             Exception exception = null;
             var configurationMock = new Mock<IConfiguration>(MockBehavior.Strict);
             configurationMock.SetupGet(x => x.Target.Location).Returns("https://www.quilt4.com/");
+            configurationMock.SetupGet(x => x.Target.Timeout).Returns(new TimeSpan(0, 0, 0, 1));
             configurationMock.SetupGet(x => x.ProjectApiKey).Returns("ABC123");
             configurationMock.SetupGet(x => x.Session.Environment).Returns("Test");
-            //var webApiClient = new WebApiClient(configurationMock.Object);
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
-            webApiClientMock.Setup(x => x.CreateAsync<SessionData>(It.IsAny<string>(), It.IsAny<SessionData>())).Returns(new Task<SessionData>(() => { return new SessionData();}));
+            webApiClientMock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<SessionData>())).Returns(Task.FromResult(default(SessionData)));
             var applicationHelperMock = new Mock<IApplicationHelper>(MockBehavior.Strict);
             applicationHelperMock.Setup(x => x.GetApplicationData()).Returns(() => new ApplicationData());
             var machineHelperMock = new Mock<IMachineHelper>(MockBehavior.Strict);
@@ -30,11 +29,12 @@ namespace Quilt4Net.Tests
             var userHelperMock = new Mock<IUserHelper>(MockBehavior.Strict);
             userHelperMock.Setup(x => x.GetUser()).Returns(() => new UserData());
             var session = new Session(webApiClientMock.Object, configurationMock.Object, applicationHelperMock.Object, machineHelperMock.Object, userHelperMock.Object);
+            SessionResponse response = null;
 
             //Act
             try
             {
-                await session.RegisterAsync();
+                response = await session.RegisterAsync();                
             }
             catch (Exception exp)
             {
@@ -42,7 +42,10 @@ namespace Quilt4Net.Tests
             }
 
             //Assert
-            Assert.That(exception, Is.Null, exception.Message);
-        }        
+            Assert.That(exception, Is.Null);
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.IsSuccess, Is.EqualTo(true));
+            webApiClientMock.Verify(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<SessionData>()), Times.Once);
+        }
     }
 }
