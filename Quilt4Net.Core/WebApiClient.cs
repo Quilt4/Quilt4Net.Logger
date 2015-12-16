@@ -27,28 +27,30 @@ namespace Quilt4Net.Core
             var jsonFormatter = new JsonMediaTypeFormatter();
             var content = new ObjectContent<T>(data, jsonFormatter);
 
-            //TODO: Implement execute around, and dispose the client after the call.
-            var client = GetHttpClient(requestUri);
-
-            var response = await client.PostAsync(requestUri, content);
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new InvalidOperationException(response.ToString());
-            }
+            await Execute(async client =>
+                {
+                    var response = await client.PostAsync(requestUri, content);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        throw new InvalidOperationException(response.ToString());
+                    }
+                });
         }
 
         public async Task<IEnumerable<TResult>> ReadAsync<TResult>(string controller)
         {
             string requestUri = $"api/{controller}";
 
-            var client = GetHttpClient(requestUri);
-            var response = await client.GetAsync(requestUri);
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new InvalidOperationException(response.ToString());
-            }
+            var result = await Execute(async client =>
+                {
+                    var response = await client.GetAsync(requestUri);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        throw new InvalidOperationException(response.ToString());
+                    }
 
-            var result = response.Content.ReadAsAsync<IEnumerable<TResult>>().Result;
+                    return response.Content.ReadAsAsync<IEnumerable<TResult>>().Result;
+                });
             return result;
         }
 
@@ -56,14 +58,16 @@ namespace Quilt4Net.Core
         {
             string requestUri = $"api/{controller}/{id}";
 
-            var client = GetHttpClient(requestUri);
-            var response = await client.GetAsync(requestUri);
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new InvalidOperationException(response.ToString());
-            }
+            var result = await Execute(async client =>
+                {
+                    var response = await client.GetAsync(requestUri);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        throw new InvalidOperationException(response.ToString());
+                    }
 
-            var result = response.Content.ReadAsAsync<TResult>().Result;
+                    return response.Content.ReadAsAsync<TResult>().Result;
+                });
             return result;
         }
 
@@ -74,22 +78,24 @@ namespace Quilt4Net.Core
             var jsonFormatter = new JsonMediaTypeFormatter();
             var content = new ObjectContent<T>(data, jsonFormatter);
 
-            var client = GetHttpClient(requestUri);
-
-            await client.PutAsync(requestUri, content);
+            await Execute(async client =>
+                {
+                    await client.PutAsync(requestUri, content);
+                });
         }
 
         public async Task DeleteAsync(string controller, string id)
         {
             string requestUri = $"api/{controller}/{id}";
 
-            var client = GetHttpClient(requestUri);
-
-            var response = await client.DeleteAsync(requestUri);
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new InvalidOperationException(response.ToString());
-            }
+            await Execute(async client =>
+                {
+                    var response = await client.DeleteAsync(requestUri);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        throw new InvalidOperationException(response.ToString());
+                    }
+                });
         }
 
         public async Task ExecuteCommandAsync<T>(string controller, string action, T data)
@@ -99,12 +105,14 @@ namespace Quilt4Net.Core
             var jsonFormatter = new JsonMediaTypeFormatter();
             var content = new ObjectContent<T>(data, jsonFormatter);
 
-            var client = GetHttpClient(requestUri, content.ToString());
-            var response = await client.PostAsync(requestUri, content);
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new InvalidOperationException(response.ToString());
-            }
+            await Execute(async client =>
+                {
+                    var response = await client.PostAsync(requestUri, content);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        throw new InvalidOperationException(response.ToString());
+                    }
+                });
         }
 
         public async Task<TResult> ExecuteQueryAsync<T, TResult>(string controller, string action, T data)
@@ -114,14 +122,16 @@ namespace Quilt4Net.Core
             var jsonFormatter = new JsonMediaTypeFormatter();
             var content = new ObjectContent<T>(data, jsonFormatter);
 
-            var client = GetHttpClient(requestUri, content.ToString());
-            var response = await client.PostAsync(requestUri, content);
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new InvalidOperationException(response.ToString());
-            }
+            var result = await Execute(async client =>
+                {
+                    var response = await client.PostAsync(requestUri, content);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        throw new InvalidOperationException(response.ToString());
+                    }
 
-            var result = response.Content.ReadAsAsync<TResult>().Result;
+                    return response.Content.ReadAsAsync<TResult>().Result;
+                });
             return result;
         }
 
@@ -132,7 +142,24 @@ namespace Quilt4Net.Core
 
         public bool IsAuthorized => _authorization != null;
 
-        private HttpClient GetHttpClient(string requestUri, string content = null)
+        private async Task Execute(Func<HttpClient, Task> action)
+        {
+            using (var client = GetHttpClient())
+            {
+                await action(client);
+            }
+        }
+
+        private async Task<T> Execute<T>(Func<HttpClient, Task<T>> action)
+        {
+            using (var client = GetHttpClient())
+            {
+                var response = await action(client);
+                return response;
+            }
+        }
+
+        private HttpClient GetHttpClient()
         {
             var client = new HttpClient { BaseAddress = _address };
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
