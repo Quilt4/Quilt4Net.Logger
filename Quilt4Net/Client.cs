@@ -25,6 +25,7 @@ namespace Quilt4Net
             _user = new Lazy<User>(() => new User(_webApiClient));
             _project = new Lazy<Project>(() => new Project(_webApiClient));
             _session = new Lazy<ISession>(() => new Session(_webApiClient, _configuration, new ApplicationHelper(_configuration), new MachineHelper(), new UserHelper()));
+            _issue = new Lazy<IIssue>(() => new Issue(_session, webApiClient, _configuration.Value));
             _issue = new Lazy<IIssue>(() => new Issue(_webApiClient));
         }
 

@@ -14,6 +14,7 @@ namespace Quilt4Net.Core.Interfaces
         Task<SessionResponse> RegisterAsync();
         void RegisterStart();
         SessionResponse Register();
+        Guid GetSessionKey();
         Task<IEnumerable<SessionData>> GetListAsync();
     }
 }

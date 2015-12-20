@@ -60,6 +60,15 @@ namespace Quilt4Net.Core
 
         private string GetProjectApiKey()
         {
+            if (!IsRegistered)
+            {
+                var response = Register();
+            }
+
+            return _sessionKey;
+        }
+
+        {
             var projectApiKey = _configuration.ProjectApiKey;
             if (string.IsNullOrEmpty(projectApiKey))
             {
@@ -94,6 +103,7 @@ namespace Quilt4Net.Core
                 OnSessionRegisteredStartedEvent(new SessionRegisterStartedEventArgs(request));
 
                 await _webApiClient.CreateAsync("Client/Session", request);
+                            //TODO: Wait for response from server here.
             }
             catch (Exception exception)
             {
@@ -105,7 +115,7 @@ namespace Quilt4Net.Core
             }
             finally
             {
-                response.SetCompleted();
+                    response.SetCompleted(_sessionKey);
                 OnSessionRegisteredEvent(new SessionRegisterCompletedEventArgs(request, response));
             }
 
@@ -121,10 +131,38 @@ namespace Quilt4Net.Core
         {
             SessionRegisteredCompletedEvent?.Invoke(this, e);
         }
+    public class IssueResponse
+    {
+        private readonly Stopwatch _stopWatch = new Stopwatch();
+        private Exception _exception;
 
-        protected virtual void OnSessionRegisteredStartedEvent(SessionRegisterStartedEventArgs e)
+        public IssueResponse()
+        {
+            _stopWatch.Start();
+        }
+
+        public TimeSpan Elapsed => _stopWatch.Elapsed;
+        public bool IsSuccess => _exception == null;
+        public string ErrorMessage => _exception?.Message;
+
+        public void SetException(Exception exception)
+        {
+            _exception = exception;
+        }
+
+        public void SetCompleted()
+        {
+            _stopWatch.Stop();
+        }
+    }
+
+        private Guid _sessionKey;
+        public Guid SessionKey => _sessionKey;
+
+        public void SetCompleted(Guid sessionKey)
         {
             SessionRegisteredStartedEvent?.Invoke(this, e);
+            _sessionKey = sessionKey;
         }
     }
 

@@ -20,6 +20,8 @@ namespace Quilt4Net.Sample.Console.Commands.Issue
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
+            var response = _client.Issue.Register("Some warning.", Core.Issue.MessageIssueLevel.Warning);
+
             //var index = 0;
             //var projectKey = QueryParam("Project", GetParam(paramList, index++), (await _client.Project.GetListAsync()).ToDictionary(x => x.ProjectKey, x => x.Name));
             //var project = await _client.Project.GetAsync(projectKey);
