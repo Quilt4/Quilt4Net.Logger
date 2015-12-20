@@ -97,13 +97,13 @@ namespace Quilt4Net.Core
         public static WebException GetException(WebException exception)
         {
             throw new NotImplementedException();
-            //var response = exception.Response as HttpWebResponse;
+            //var result = exception.result as HttpWebResponse;
             //var serializer = new JavaScriptSerializer();
             //dynamic message = exception.Message;
             //var dic = new Dictionary<string, string>();
-            //if (response != null && (response.StatusDescription.StartsWith("{") && response.StatusDescription.EndsWith("}")))
+            //if (result != null && (result.StatusDescription.StartsWith("{") && result.StatusDescription.EndsWith("}")))
             //{
-            //    var d = serializer.DeserializeObject(response.StatusDescription) as dynamic;
+            //    var d = serializer.DeserializeObject(result.StatusDescription) as dynamic;
             //    message = d["Message"];
             //    if (d["Data"] != null)
             //    {
@@ -114,7 +114,7 @@ namespace Quilt4Net.Core
             //    }
             //}
 
-            //var exp = new WebException(string.Format("{0}{2}{1}", exception.Message, message, Environment.NewLine), exception, exception.Status, exception.Response);
+            //var exp = new WebException(string.Format("{0}{2}{1}", exception.Message, message, Environment.NewLine), exception, exception.Status, exception.result);
             //foreach (var item in dic)
             //{
             //    exp.Data.Add(item.Key, item.Value);

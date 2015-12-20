@@ -1,14 +1,12 @@
-namespace Quilt4Net.Core.DataTransfer
+﻿namespace Quilt4Net.Core.DataTransfer
 {
-    public class LoginData
+    internal class LoginData
     {
-        private LoginData()
+        internal LoginData()
         {
         }
 
-        public string access_token { get; set; }
-        public string token_type { get; set; }
-        public string expires_in { get; set; }
-        public string userName { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
     }
 }

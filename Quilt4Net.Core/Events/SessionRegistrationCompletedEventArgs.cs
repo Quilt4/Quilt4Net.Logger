@@ -5,13 +5,13 @@ namespace Quilt4Net.Core.Events
 {
     public class SessionRegistrationCompletedEventArgs : EventArgs
     {
-        public SessionRegistrationCompletedEventArgs(SessionRequest request, SessionResponse response)
+        public SessionRegistrationCompletedEventArgs(SessionData data, SessionResult result)
         {
-            Request = request;
-            Response = response;
+            Data = data;
+            Result = result;
         }
 
-        public SessionRequest Request { get; }
-        public SessionResponse Response { get; }
+        public SessionData Data { get; }
+        public SessionResult Result { get; }
     }
 }

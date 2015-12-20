@@ -37,10 +37,9 @@ namespace Quilt4Net.Sample.Console
 
         private static void SessionSessionRegistrationCompletedEvent(object sender, SessionRegistrationCompletedEventArgs e)
         {
-            var message = string.Format("{0} {1}ms", e.Response.ErrorMessage ?? "OK.", e.Response.Elapsed.TotalMilliseconds.ToString("0"));
-            var outputLevel = e.Response.IsSuccess ? OutputLevel.Information : OutputLevel.Error;
+            var message = string.Format("{0} {1}ms", e.Result.ErrorMessage ?? "OK.", e.Result.Elapsed.TotalMilliseconds.ToString("0"));
+            var outputLevel = e.Result.IsSuccess ? OutputLevel.Information : OutputLevel.Error;
             _console.WriteLine(message, outputLevel, null);
         }
-
     }
 }

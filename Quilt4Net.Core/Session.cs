@@ -30,7 +30,7 @@ namespace Quilt4Net.Core
 
         public bool IsRegistered => _sessionKey != Guid.Empty;
 
-        public async Task<SessionResponse> RegisterAsync()
+        public async Task<SessionResult> RegisterAsync()
         {
             return await RegisterEx(GetProjectApiKey(), true);
         }
@@ -45,7 +45,7 @@ namespace Quilt4Net.Core
             });
         }
 
-        public SessionResponse Register()
+        public SessionResult Register()
         {
             try
             {
@@ -78,19 +78,19 @@ namespace Quilt4Net.Core
             return projectApiKey;
         }
 
-        private async Task<SessionResponse> RegisterEx(string projectApiKey, bool doThrow)
+        private async Task<SessionResult> RegisterEx(string projectApiKey, bool doThrow)
         {
             //TODO: Use a Mutex here
 
-            var response = new SessionResponse();
-            SessionRequest request = null;
+            var response = new SessionResult();
+            SessionData data = null;
 
             try
             {
                 if (_sessionKey != Guid.Empty) throw new InvalidOperationException("The session has already been registered.");
                 _sessionKey = Guid.NewGuid();
 
-                request = new SessionRequest
+                data = new SessionData
                 {
                     SessionKey = _sessionKey,
                     ProjectApiKey = projectApiKey,
@@ -101,10 +101,10 @@ namespace Quilt4Net.Core
                     User = _userHelper.GetUser(),
                 };
 
-                OnSessionRegistrationStartedEvent(new SessionRegistrationStartedEventArgs(request));
+                OnSessionRegistrationStartedEvent(new SessionRegistrationStartedEventArgs(data));
 
-                await _webApiClient.CreateAsync("Client/Session", request);
-                //TODO: Wait for response from server here.
+                await _webApiClient.CreateAsync("Client/Session", data);
+                //TODO: Wait for result from server here.
             }
             catch (Exception exception)
             {
@@ -117,13 +117,13 @@ namespace Quilt4Net.Core
             finally
             {
                 response.SetCompleted(_sessionKey);
-                OnSessionRegistrationCompletedEvent(new SessionRegistrationCompletedEventArgs(request, response));
+                OnSessionRegistrationCompletedEvent(new SessionRegistrationCompletedEventArgs(data, response));
             }
 
             return response;
         }
 
-        public async Task<IEnumerable<SessionRequest>> GetListAsync()
+        public async Task<IEnumerable<SessionData>> GetListAsync()
         {
             throw new NotImplementedException();
         }

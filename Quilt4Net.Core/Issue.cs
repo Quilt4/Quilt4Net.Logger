@@ -25,7 +25,7 @@ namespace Quilt4Net.Core
         public event EventHandler<IssueRegistrationStartedEventArgs> IssueRegistrationStartedEvent;
         public event EventHandler<IssueRegistrationCompletedEventArgs> IssueRegistrationCompletedEvent;
 
-        public async Task<IssueResponse> RegisterAsync(string message, MessageIssueLevel issueLevel, string userHandle = null, IDictionary<string, string> data = null)
+        public async Task<IssueResult> RegisterAsync(string message, MessageIssueLevel issueLevel, string userHandle = null, IDictionary<string, string> data = null)
         {
             var issueData = PrepareIssueData(message, issueLevel, userHandle, data);
             return await RegisterEx(false, issueData);
@@ -37,14 +37,14 @@ namespace Quilt4Net.Core
             Task.Run(() => RegisterEx(false, issueData));
         }
 
-        public IssueResponse Register(string message, MessageIssueLevel issueLevel, string userHandle = null, IDictionary<string, string> data = null)
+        public IssueResult Register(string message, MessageIssueLevel issueLevel, string userHandle = null, IDictionary<string, string> data = null)
         {
             var issueData = PrepareIssueData(message, issueLevel, userHandle, data);
             var respnse = Task.Run(async () => await RegisterEx(false, issueData)).Result;
             return respnse;
         }
 
-        public async Task<IssueResponse> RegisterAsync(Exception exception, ExceptionIssueLevel issueLevel = Issue.ExceptionIssueLevel.Error, string userHandle = null)
+        public async Task<IssueResult> RegisterAsync(Exception exception, ExceptionIssueLevel issueLevel = Issue.ExceptionIssueLevel.Error, string userHandle = null)
         {
             var issueData = PrepareIssueData(exception, issueLevel, userHandle);
             var respnse = await RegisterEx(true, issueData);
@@ -57,27 +57,27 @@ namespace Quilt4Net.Core
             Task.Run(() => RegisterEx(false, issueData));
         }
 
-        public IssueResponse Register(Exception exception, ExceptionIssueLevel issueLevel = Issue.ExceptionIssueLevel.Error, string userHandle = null)
+        public IssueResult Register(Exception exception, ExceptionIssueLevel issueLevel = Issue.ExceptionIssueLevel.Error, string userHandle = null)
         {
             var issueData = PrepareIssueData(exception, issueLevel, userHandle);
             var respnse = Task.Run(async () => await RegisterEx(false, issueData)).Result;
             return respnse;
         }
 
-        private async Task<IssueResponse> RegisterEx(bool doThrow, IssueRequest request)
+        private async Task<IssueResult> RegisterEx(bool doThrow, IssueData data)
         {
             //TODO: Use a Mutex here
 
-            var response = new IssueResponse();
+            var response = new IssueResult();
 
             try
             {
-                request.SessionKey = _session.Value.GetSessionKey();
+                data.SessionKey = _session.Value.GetSessionKey();
 
-                OnIssueRegistrationStartedEvent(new IssueRegistrationStartedEventArgs(request));
+                OnIssueRegistrationStartedEvent(new IssueRegistrationStartedEventArgs(data));
 
-                await _webApiClient.CreateAsync("Client/Issue", request);
-                //TODO: Wait for response from server here. (We should get a Ticket here)
+                await _webApiClient.CreateAsync("Client/Issue", data);
+                //TODO: Wait for result from server here. (We should get a Ticket here)
             }
             catch (Exception exception)
             {
@@ -89,17 +89,17 @@ namespace Quilt4Net.Core
             finally
             {
                 response.SetCompleted();
-                OnIssueRegistrationCompletedEvent(new IssueRegistrationCompletedEventArgs(request, response));
+                OnIssueRegistrationCompletedEvent(new IssueRegistrationCompletedEventArgs(data, response));
             }
 
             return response;
         }
 
-        private IssueRequest PrepareIssueData(Exception exception, ExceptionIssueLevel issueLevel, string userHandle)
+        private IssueData PrepareIssueData(Exception exception, ExceptionIssueLevel issueLevel, string userHandle)
         {
             var issueType = CreateIssueTypeData(exception, issueLevel);
 
-            var issueData = new IssueRequest
+            var issueData = new IssueData
             {
                 ProjectApiKey = _configuration.ProjectApiKey,
                 Data = exception.Data.Cast<DictionaryEntry>().Where(x => x.Value != null).ToDictionary(item => item.Key.ToString(), item => item.Value.ToString()),
@@ -126,7 +126,7 @@ namespace Quilt4Net.Core
             return issueType;
         }
 
-        private IssueRequest PrepareIssueData(string message, MessageIssueLevel issueLevel, string userHandle, IDictionary<string, string> data)
+        private IssueData PrepareIssueData(string message, MessageIssueLevel issueLevel, string userHandle, IDictionary<string, string> data)
         {            
             var issueType = new IssueTypeData
             {
@@ -137,14 +137,14 @@ namespace Quilt4Net.Core
                 Type = null,
             };
 
-            var issueData = new IssueRequest
+            var issueData = new IssueData
             {
                 ProjectApiKey = _configuration.ProjectApiKey,
                 Data = data,
                 UserHandle = userHandle,
                 ClientTime = DateTime.UtcNow,
                 IssueKey = Guid.NewGuid(),
-                IssueThreadKey = null, //TODO: Provide Issue Thread Key
+                IssueThreadKey = null,
                 IssueType = issueType,              
             };
 
@@ -200,35 +200,6 @@ namespace Quilt4Net.Core
         protected virtual void OnIssueRegistrationCompletedEvent(IssueRegistrationCompletedEventArgs e)
         {
             IssueRegistrationCompletedEvent?.Invoke(this, e);
-        }
-    }
-
-    internal static class IssueLevelExtension
-    {
-        internal static IssueLevel ToIssueLevel(this Issue.ExceptionIssueLevel issueLevel, IConfiguration configuration)
-        {
-            IssueLevel il;
-            if (!Enum.TryParse(issueLevel.ToString(), true, out il)) throw new ExpectedIssues(configuration).GetException(ExpectedIssues.CannotParseIssueLevelException).AddData("IssueLevel", issueLevel);
-
-            return il;
-        }
-
-        internal static IssueLevel ToIssueLevel(this Issue.MessageIssueLevel issueLevel, IConfiguration configuration)
-        {
-            IssueLevel il;
-            if (!Enum.TryParse(issueLevel.ToString(), true, out il)) throw new ExpectedIssues(configuration).GetException(ExpectedIssues.CannotParseIssueLevelMessage).AddData("issueLevel", issueLevel);
-
-            return il;
-        }
-    }
-
-    public static class ExceptionExtensions
-    {
-        public static T AddData<T>(this T item, object key, object value) where T : Exception
-        {
-            if (item.Data.Contains(key)) item.Data.Remove(key);
-            item.Data.Add(key, value);
-            return item;
         }
     }
 }

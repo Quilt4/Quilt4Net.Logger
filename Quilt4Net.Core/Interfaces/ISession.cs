@@ -10,11 +10,11 @@ namespace Quilt4Net.Core.Interfaces
     {
         event EventHandler<SessionRegistrationStartedEventArgs> SessionRegistrationStartedEvent;
         event EventHandler<SessionRegistrationCompletedEventArgs> SessionRegistrationCompletedEvent;
-        Task<SessionResponse> RegisterAsync();
+        Task<SessionResult> RegisterAsync();
         void RegisterStart();
-        SessionResponse Register();
+        SessionResult Register();
         bool IsRegistered { get; }
         Guid GetSessionKey();
-        Task<IEnumerable<SessionRequest>> GetListAsync();
+        Task<IEnumerable<SessionData>> GetListAsync();
     }
 }

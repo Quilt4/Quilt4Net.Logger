@@ -19,14 +19,14 @@ namespace Quilt4Net.Tests
             var configurationMock = new Mock<IConfiguration>(MockBehavior.Default);
 
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
-            webApiClientMock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(default(SessionRequest)));
+            webApiClientMock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<SessionData>())).Returns(Task.FromResult(default(SessionData)));
 
             var callbackEvent = new AutoResetEvent(false);
 
             var session = Register_session_setup.GivenThereIsASession(webApiClientMock, configurationMock, null, (e) => { callbackEvent.Set(); });
 
             ExpectedIssues.ProjectApiKeyNotSetException exception = null;
-            SessionResponse response = null;
+            SessionResult result = null;
 
             //Act
             try
@@ -51,16 +51,16 @@ namespace Quilt4Net.Tests
             configurationMock.SetupGet(x => x.ProjectApiKey).Returns("ABC123");
 
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
-            webApiClientMock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(default(SessionRequest)));
+            webApiClientMock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<SessionData>())).Returns(Task.FromResult(default(SessionData)));
 
             var callbackEvent = new AutoResetEvent(false);
 
             var session = Register_session_setup.GivenThereIsASession(webApiClientMock, configurationMock, null, (e) =>
                 {
                     Assert.That(e, Is.Not.Null);
-                    Assert.That(e.Response.IsSuccess, Is.EqualTo(true));
-                    Assert.That(e.Response.ErrorMessage, Is.Null);
-                    Assert.That(e.Response.Elapsed.Ticks, Is.GreaterThan(1));
+                    Assert.That(e.Result.IsSuccess, Is.EqualTo(true));
+                    Assert.That(e.Result.ErrorMessage, Is.Null);
+                    Assert.That(e.Result.Elapsed.Ticks, Is.GreaterThan(1));
                     callbackEvent.Set();
                 });
 
