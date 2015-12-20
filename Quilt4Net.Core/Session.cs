@@ -58,7 +58,7 @@ namespace Quilt4Net.Core
             }
         }
 
-        private string GetProjectApiKey()
+        public Guid GetSessionKey()
         {
             if (!IsRegistered)
             {
@@ -68,16 +68,17 @@ namespace Quilt4Net.Core
             return _sessionKey;
         }
 
-        {
-            var projectApiKey = _configuration.ProjectApiKey;
-            if (string.IsNullOrEmpty(projectApiKey))
-            {
-                throw new ExpectedIssues.ProjectApiKeyNotSetException("?2");
-            }
-            return projectApiKey;
-        }
+private string GetProjectApiKey()
+{
+    var projectApiKey = _configuration.ProjectApiKey;
+    if (string.IsNullOrEmpty(projectApiKey))
+    {
+        throw new ExpectedIssues.ProjectApiKeyNotSetException("?2");
+    }
+    return projectApiKey;
+}
 
-        private async Task<SessionResponse> RegisterEx(string projectApiKey, bool doThrow)
+private async Task<SessionResponse> RegisterEx(string projectApiKey, bool doThrow)
         {
             //TODO: Use a Mutex here
 
@@ -100,7 +101,8 @@ namespace Quilt4Net.Core
                                                      User = _userHelper.GetUser(),
                                                  };
 
-                OnSessionRegisteredStartedEvent(new SessionRegisterStartedEventArgs(request));
+                //TODO: Fire event here
+                //OnSessionRegisteredStartedEvent(new SessionRegisterStartedEventArgs(request));
 
                 await _webApiClient.CreateAsync("Client/Session", request);
                             //TODO: Wait for response from server here.
@@ -131,77 +133,5 @@ namespace Quilt4Net.Core
         {
             SessionRegisteredCompletedEvent?.Invoke(this, e);
         }
-    public class IssueResponse
-    {
-        private readonly Stopwatch _stopWatch = new Stopwatch();
-        private Exception _exception;
-
-        public IssueResponse()
-        {
-            _stopWatch.Start();
-        }
-
-        public TimeSpan Elapsed => _stopWatch.Elapsed;
-        public bool IsSuccess => _exception == null;
-        public string ErrorMessage => _exception?.Message;
-
-        public void SetException(Exception exception)
-        {
-            _exception = exception;
-        }
-
-        public void SetCompleted()
-        {
-            _stopWatch.Stop();
-        }
     }
-
-        private Guid _sessionKey;
-        public Guid SessionKey => _sessionKey;
-
-        public void SetCompleted(Guid sessionKey)
-        {
-            SessionRegisteredStartedEvent?.Invoke(this, e);
-            _sessionKey = sessionKey;
-        }
-    }
-
-    //internal class StopwatchHighPrecision
-    //{
-    //    private readonly long _frequency;
-    //    private readonly long _start;
-    //    private long _segment;
-
-    //    [DllImport("Kernel32.dll")]
-    //    private static extern void QueryPerformanceCounter(ref long ticks);
-
-    //    [DllImport("Kernel32.dll")]
-    //    private static extern bool QueryPerformanceFrequency(out long lpFrequency);
-
-    //    public StopwatchHighPrecision()
-    //    {
-    //        QueryPerformanceFrequency(out _frequency);
-    //        QueryPerformanceCounter(ref _start);
-    //        _segment = _start;
-    //    }
-
-    //    public long ElapsedTotal
-    //    {
-    //        get
-    //        {
-    //            QueryPerformanceCounter(ref _segment);
-    //            return (_segment - _start) * 10000000 / _frequency;
-    //        }
-    //    }
-
-    //    public long ElapsedSegment
-    //    {
-    //        get
-    //        {
-    //            var last = _segment;
-    //            QueryPerformanceCounter(ref _segment);
-    //            return (_segment - last) * 10000000 / _frequency;
-    //        }
-    //    }
-    //}
 }

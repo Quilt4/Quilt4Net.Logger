@@ -19,7 +19,7 @@ namespace Quilt4Net.Core.DataTransfer
             _exception = exception;
         }
 
-        public void SetCompleted()
+        public void SetCompleted(Guid sessionGuid)
         {
             _stopWatch.Stop();
         }

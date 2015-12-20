@@ -28,7 +28,7 @@ namespace Quilt4Net.Sample.Console.Commands.Issue
             //var environment = QueryParam<string>("Environment", GetParam(paramList, index++));
             //await _client.Session.RegisterAsync(); //project.ProjectApiKey, environment);
 
-            var response = await _client.Issue.RegisterAsync();
+            //var response = await _client.Issue.RegisterAsync();
 
             return true;
         }

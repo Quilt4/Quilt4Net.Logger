@@ -8,8 +8,8 @@ namespace Quilt4Net.Core.Interfaces
 {
     public interface IIssue
     {
-        event EventHandler<IssueRegisterStartedEventArgs> IssueRegisteredStartedEvent;
-        event EventHandler<IssueRegisterCompletedEventArgs> IssueRegisteredCompletedEvent;
+        //event EventHandler<IssueRegisterStartedEventArgs> IssueRegisteredStartedEvent;
+        //event EventHandler<IssueRegisterCompletedEventArgs> IssueRegisteredCompletedEvent;
         Task<IssueResponse> RegisterAsync(string message, Issue.MessageIssueLevel issueLevel, string userHandle = null, IDictionary<string, string> data = null);
         void RegisterStart(string message, Issue.MessageIssueLevel issueLevel, string userHandle = null, IDictionary<string, string> data = null);
         IssueResponse Register(string message, Issue.MessageIssueLevel issueLevel, string userHandle = null, IDictionary<string, string> data = null);
