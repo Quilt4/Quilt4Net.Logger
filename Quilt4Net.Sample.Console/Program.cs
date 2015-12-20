@@ -23,7 +23,7 @@ namespace Quilt4Net.Sample.Console
             //var address = new Uri($"http://localhost:{port}/");
             //var client = new Client(new WebApiClient(address, new TimeSpan(0, 0, 0, 30)));
             var client = new Client();
-            client.Session.SessionRegisteredCompletedEvent += SessionSessionRegisteredCompletedEvent;
+            client.Session.SessionRegistrationCompletedEvent += SessionSessionRegistrationCompletedEvent;
 
             //_console.WriteLine("Using serer " + address, OutputLevel.Information, null);
 
@@ -35,7 +35,7 @@ namespace Quilt4Net.Sample.Console
             new CommandEngine(rootCommand).Run(args);
         }
 
-        private static void SessionSessionRegisteredCompletedEvent(object sender, SessionRegisterCompletedEventArgs e)
+        private static void SessionSessionRegistrationCompletedEvent(object sender, SessionRegistrationCompletedEventArgs e)
         {
             var message = string.Format("{0} {1}ms", e.Response.ErrorMessage ?? "OK.", e.Response.Elapsed.TotalMilliseconds.ToString("0"));
             var outputLevel = e.Response.IsSuccess ? OutputLevel.Information : OutputLevel.Error;

@@ -10,7 +10,7 @@ namespace Quilt4Net.Core.DataTransfer
         Error,
     }
 
-    public class IssueData
+    public class IssueRequest
     {
         public string ProjectApiKey { get; set; }
         public Guid IssueKey { get; set; }
@@ -31,9 +31,9 @@ namespace Quilt4Net.Core.DataTransfer
         public IssueTypeData Inner { get; set; }
     }
 
-    public class SessionData
+    public class SessionRequest
     {
-        internal SessionData()
+        internal SessionRequest()
         {
         }
 

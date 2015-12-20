@@ -8,13 +8,13 @@ namespace Quilt4Net.Core.Interfaces
 {
     public interface ISession
     {
-        event EventHandler<SessionRegisterStartedEventArgs> SessionRegisteredStartedEvent;
-        event EventHandler<SessionRegisterCompletedEventArgs> SessionRegisteredCompletedEvent;
-        bool IsRegistered { get; }
+        event EventHandler<SessionRegistrationStartedEventArgs> SessionRegistrationStartedEvent;
+        event EventHandler<SessionRegistrationCompletedEventArgs> SessionRegistrationCompletedEvent;
         Task<SessionResponse> RegisterAsync();
         void RegisterStart();
         SessionResponse Register();
+        bool IsRegistered { get; }
         Guid GetSessionKey();
-        Task<IEnumerable<SessionData>> GetListAsync();
+        Task<IEnumerable<SessionRequest>> GetListAsync();
     }
 }
