@@ -50,6 +50,7 @@
     <Compile Include="Authorization.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="DataTransfer\ApplicationData.cs" />
+    <Compile Include="DataTransfer\IssueResponse.cs" />
     <Compile Include="DataTransfer\RegisterBindingModel.cs" />
     <Compile Include="DataTransfer\IssueLevel.cs" />
     <Compile Include="DataTransfer\IssueRequest.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="DataTransfer\MachineData.cs" />
     <Compile Include="DataTransfer\ProjectData.cs" />
     <Compile Include="DataTransfer\SessionRequest.cs" />
+    <Compile Include="DataTransfer\SessionResponse.cs" />
     <Compile Include="DataTransfer\SessionResult.cs" />
     <Compile Include="DataTransfer\UserData.cs" />
     <Compile Include="Events\IssueRegistrationCompletedEventArgs.cs" />

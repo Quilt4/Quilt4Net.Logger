@@ -4,13 +4,8 @@ using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core.DataTransfer
 {
-    public class IssueRequest : IIssueData
+    public class IssueResponse : IIssueData
     {
-        internal IssueRequest()
-        {
-        }
-
-        public string ProjectApiKey { get; set; }
         public Guid IssueKey { get; set; }
         public Guid SessionKey { get; set; }
         public DateTime ClientTime { get; set; }
@@ -18,5 +13,7 @@ namespace Quilt4Net.Core.DataTransfer
         public IssueTypeData IssueType { get; set; }
         public Guid? IssueThreadKey { get; set; }
         public string UserHandle { get; set; }
+        public DateTime ServerTime { get; set; }
+        public string Ticket { get; set; }
     }
 }
