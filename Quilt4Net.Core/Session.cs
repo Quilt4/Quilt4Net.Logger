@@ -83,14 +83,14 @@ namespace Quilt4Net.Core
             //TODO: Use a Mutex here
 
             var response = new SessionResult();
-            SessionData data = null;
+            SessionRequest request = null;
 
             try
             {
                 if (_sessionKey != Guid.Empty) throw new InvalidOperationException("The session has already been registered.");
                 _sessionKey = Guid.NewGuid();
 
-                data = new SessionData
+                request = new SessionRequest
                 {
                     SessionKey = _sessionKey,
                     ProjectApiKey = projectApiKey,
@@ -101,10 +101,10 @@ namespace Quilt4Net.Core
                     User = _userHelper.GetUser(),
                 };
 
-                OnSessionRegistrationStartedEvent(new SessionRegistrationStartedEventArgs(data));
+                OnSessionRegistrationStartedEvent(new SessionRegistrationStartedEventArgs(request));
 
-                await _webApiClient.CreateAsync("Client/Session", data);
-                //TODO: Wait for result from server here.
+                await _webApiClient.CreateAsync("Client/Session", request);
+                //TODO: Wait for result from server here. (Server time should come from the service)
             }
             catch (Exception exception)
             {
@@ -116,14 +116,14 @@ namespace Quilt4Net.Core
             }
             finally
             {
-                response.SetCompleted(_sessionKey);
-                OnSessionRegistrationCompletedEvent(new SessionRegistrationCompletedEventArgs(data, response));
+                response.SetCompleted(null); //TODO: Provide the response object here
+                OnSessionRegistrationCompletedEvent(new SessionRegistrationCompletedEventArgs(request, response));
             }
 
             return response;
         }
 
-        public async Task<IEnumerable<SessionData>> GetListAsync()
+        public async Task<IEnumerable<SessionRequest>> GetListAsync()
         {
             throw new NotImplementedException();
         }

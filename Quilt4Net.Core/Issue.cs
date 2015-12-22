@@ -64,7 +64,7 @@ namespace Quilt4Net.Core
             return respnse;
         }
 
-        private async Task<IssueResult> RegisterEx(bool doThrow, IssueData data)
+        private async Task<IssueResult> RegisterEx(bool doThrow, IssueRequest request)
         {
             //TODO: Use a Mutex here
 
@@ -72,15 +72,16 @@ namespace Quilt4Net.Core
 
             try
             {
-                data.SessionKey = _session.Value.GetSessionKey();
+                request.SessionKey = _session.Value.GetSessionKey();
 
-                OnIssueRegistrationStartedEvent(new IssueRegistrationStartedEventArgs(data));
+                OnIssueRegistrationStartedEvent(new IssueRegistrationStartedEventArgs(request));
 
-                await _webApiClient.CreateAsync("Client/Issue", data);
+                await _webApiClient.CreateAsync("Client/Issue", request);
                 //TODO: Wait for result from server here. (We should get a Ticket here)
             }
             catch (Exception exception)
             {
+                //TODO: Also store the issues that was not registered to the server in a list, so that they can be inspected from the client side.
                 response.SetException(exception);
 
                 if (doThrow)
@@ -88,18 +89,18 @@ namespace Quilt4Net.Core
             }
             finally
             {
-                response.SetCompleted();
-                OnIssueRegistrationCompletedEvent(new IssueRegistrationCompletedEventArgs(data, response));
+                response.SetCompleted(null); //TODO: Provide the response object here
+                OnIssueRegistrationCompletedEvent(new IssueRegistrationCompletedEventArgs(request, response));
             }
 
             return response;
         }
 
-        private IssueData PrepareIssueData(Exception exception, ExceptionIssueLevel issueLevel, string userHandle)
+        private IssueRequest PrepareIssueData(Exception exception, ExceptionIssueLevel issueLevel, string userHandle)
         {
             var issueType = CreateIssueTypeData(exception, issueLevel);
 
-            var issueData = new IssueData
+            var issueData = new IssueRequest
             {
                 ProjectApiKey = _configuration.ProjectApiKey,
                 Data = exception.Data.Cast<DictionaryEntry>().Where(x => x.Value != null).ToDictionary(item => item.Key.ToString(), item => item.Value.ToString()),
@@ -126,7 +127,7 @@ namespace Quilt4Net.Core
             return issueType;
         }
 
-        private IssueData PrepareIssueData(string message, MessageIssueLevel issueLevel, string userHandle, IDictionary<string, string> data)
+        private IssueRequest PrepareIssueData(string message, MessageIssueLevel issueLevel, string userHandle, IDictionary<string, string> data)
         {            
             var issueType = new IssueTypeData
             {
@@ -137,7 +138,7 @@ namespace Quilt4Net.Core
                 Type = null,
             };
 
-            var issueData = new IssueData
+            var issueData = new IssueRequest
             {
                 ProjectApiKey = _configuration.ProjectApiKey,
                 Data = data,

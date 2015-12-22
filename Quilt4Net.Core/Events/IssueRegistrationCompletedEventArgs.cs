@@ -5,13 +5,13 @@ namespace Quilt4Net.Core.Events
 {
     public class IssueRegistrationCompletedEventArgs : EventArgs
     {
-        public IssueRegistrationCompletedEventArgs(IssueData data, IssueResult result)
+        public IssueRegistrationCompletedEventArgs(IssueRequest request, IssueResult result)
         {
-            Data = data;
+            Request = request;
             Result = result;
         }
 
-        public IssueData Data { get; }
+        public IssueRequest Request { get; }
         public IssueResult Result { get; }
     }
 }

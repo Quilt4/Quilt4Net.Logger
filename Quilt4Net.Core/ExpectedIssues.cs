@@ -94,34 +94,34 @@ namespace Quilt4Net.Core
             return exception;
         }
 
-        public static WebException GetException(WebException exception)
-        {
-            throw new NotImplementedException();
-            //var result = exception.result as HttpWebResponse;
-            //var serializer = new JavaScriptSerializer();
-            //dynamic message = exception.Message;
-            //var dic = new Dictionary<string, string>();
-            //if (result != null && (result.StatusDescription.StartsWith("{") && result.StatusDescription.EndsWith("}")))
-            //{
-            //    var d = serializer.DeserializeObject(result.StatusDescription) as dynamic;
-            //    message = d["Message"];
-            //    if (d["Data"] != null)
-            //    {
-            //        foreach (var data in d["Data"])
-            //        {
-            //            dic.Add(data.Key, data.Value);
-            //        }
-            //    }
-            //}
+        //public static WebException GetException(WebException exception)
+        //{
+        //    throw new NotImplementedException();
+        //    //var result = exception.result as HttpWebResponse;
+        //    //var serializer = new JavaScriptSerializer();
+        //    //dynamic message = exception.Message;
+        //    //var dic = new Dictionary<string, string>();
+        //    //if (result != null && (result.StatusDescription.StartsWith("{") && result.StatusDescription.EndsWith("}")))
+        //    //{
+        //    //    var d = serializer.DeserializeObject(result.StatusDescription) as dynamic;
+        //    //    message = d["Message"];
+        //    //    if (d["Data"] != null)
+        //    //    {
+        //    //        foreach (var data in d["Data"])
+        //    //        {
+        //    //            dic.Add(data.Key, data.Value);
+        //    //        }
+        //    //    }
+        //    //}
 
-            //var exp = new WebException(string.Format("{0}{2}{1}", exception.Message, message, Environment.NewLine), exception, exception.Status, exception.result);
-            //foreach (var item in dic)
-            //{
-            //    exp.Data.Add(item.Key, item.Value);
-            //}
+        //    //var exp = new WebException(string.Format("{0}{2}{1}", exception.Message, message, Environment.NewLine), exception, exception.Status, exception.result);
+        //    //foreach (var item in dic)
+        //    //{
+        //    //    exp.Data.Add(item.Key, item.Value);
+        //    //}
 
-            //return exp;
-        }
+        //    //return exp;
+        //}
 
         private string GetMessage(int code)
         {

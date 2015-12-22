@@ -52,14 +52,14 @@
     <Compile Include="DataTransfer\ApplicationData.cs" />
     <Compile Include="DataTransfer\RegisterBindingModel.cs" />
     <Compile Include="DataTransfer\IssueLevel.cs" />
-    <Compile Include="DataTransfer\IssueData.cs" />
+    <Compile Include="DataTransfer\IssueRequest.cs" />
     <Compile Include="DataTransfer\IssueResult.cs" />
     <Compile Include="DataTransfer\IssueTypeData.cs" />
     <Compile Include="DataTransfer\LoginData.cs" />
     <Compile Include="DataTransfer\LoginResult.cs" />
     <Compile Include="DataTransfer\MachineData.cs" />
     <Compile Include="DataTransfer\ProjectData.cs" />
-    <Compile Include="DataTransfer\SessionData.cs" />
+    <Compile Include="DataTransfer\SessionRequest.cs" />
     <Compile Include="DataTransfer\SessionResult.cs" />
     <Compile Include="DataTransfer\UserData.cs" />
     <Compile Include="Events\IssueRegistrationCompletedEventArgs.cs" />

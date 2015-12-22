@@ -32,11 +32,9 @@ namespace Quilt4Net.Sample.Console.Commands.Session
             //_client.Configuration.ProjectApiKey = project.ProjectApiKey;
             //_client.Configuration.Session.Environment = environment;
 
-            _client.Configuration.ProjectApiKey = "BL2VV8LVF0C9GWRTX6CS03R7IK1PYT7E";
-
             //_client.Session.RegisterStart();
             var response = await _client.Session.RegisterAsync();
-            OutputInformation(response.Elapsed.TotalMilliseconds.ToString("0") + "ms");
+            OutputEvent("Session registration took " + response.Elapsed.TotalMilliseconds.ToString("0") + "ms.");
 
             return true;
         }

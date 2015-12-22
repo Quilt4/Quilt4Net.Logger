@@ -1,4 +1,5 @@
-﻿using Quilt4Net.Core.Events;
+﻿using System;
+using Quilt4Net.Core.Events;
 using Quilt4Net.Sample.Console.Commands.Issue;
 using Quilt4Net.Sample.Console.Commands.Project;
 using Quilt4Net.Sample.Console.Commands.Session;
@@ -22,8 +23,18 @@ namespace Quilt4Net.Sample.Console
             //var port = 29660;
             //var address = new Uri($"http://localhost:{port}/");
             //var client = new Client(new WebApiClient(address, new TimeSpan(0, 0, 0, 30)));
-            var client = new Client();
+            //var configuration = new Configuration();
+            //var client = new Client(Configuration.Instance);
+
+            Configuration.Instance.ProjectApiKey = "BL2VV8LVF0C9GWRTX6CS03R7IK1PYT7E";
+            Configuration.Instance.Target.Location = "http://localhost:29660";
+            Configuration.Instance.Session.Environment = "Manual Test";
+            var client = Client.Instance;
+
+            client.Session.SessionRegistrationStartedEvent += Session_SessionRegistrationStartedEvent;
             client.Session.SessionRegistrationCompletedEvent += SessionSessionRegistrationCompletedEvent;
+            client.Issue.IssueRegistrationStartedEvent += Issue_IssueRegistrationStartedEvent;
+            client.Issue.IssueRegistrationCompletedEvent += Issue_IssueRegistrationCompletedEvent;
 
             //_console.WriteLine("Using serer " + address, OutputLevel.Information, null);
 
@@ -35,11 +46,28 @@ namespace Quilt4Net.Sample.Console
             new CommandEngine(rootCommand).Run(args);
         }
 
+        private static void Session_SessionRegistrationStartedEvent(object sender, SessionRegistrationStartedEventArgs e)
+        {
+            _console.WriteLine("Starting to register session.", OutputLevel.Information, ConsoleColor.DarkCyan);
+        }
+
         private static void SessionSessionRegistrationCompletedEvent(object sender, SessionRegistrationCompletedEventArgs e)
         {
-            var message = string.Format("{0} {1}ms", e.Result.ErrorMessage ?? "OK.", e.Result.Elapsed.TotalMilliseconds.ToString("0"));
+            var message = $"{e.Result.ErrorMessage ?? "Session registered in "} {e.Result.Elapsed.TotalMilliseconds.ToString("0")}ms.";
             var outputLevel = e.Result.IsSuccess ? OutputLevel.Information : OutputLevel.Error;
-            _console.WriteLine(message, outputLevel, null);
+            _console.WriteLine(message, outputLevel, ConsoleColor.DarkCyan);
+        }
+
+        private static void Issue_IssueRegistrationStartedEvent(object sender, IssueRegistrationStartedEventArgs e)
+        {
+            _console.WriteLine("Starting to register issue.", OutputLevel.Information, ConsoleColor.DarkCyan);
+        }
+
+        private static void Issue_IssueRegistrationCompletedEvent(object sender, IssueRegistrationCompletedEventArgs e)
+        {
+            var message = $"{e.Result.ErrorMessage ?? "Issue registered in "} {e.Result.Elapsed.TotalMilliseconds.ToString("0")}ms.";
+            var outputLevel = e.Result.IsSuccess ? OutputLevel.Information : OutputLevel.Error;
+            _console.WriteLine(message, outputLevel, ConsoleColor.DarkCyan);
         }
     }
 }

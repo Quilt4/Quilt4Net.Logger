@@ -6,6 +6,28 @@ using Quilt4Net.Core.Events;
 
 namespace Quilt4Net.Core.Interfaces
 {
+    public interface ISessionData
+    {
+        Guid SessionKey { get; }
+        DateTime ClientStartTime { get; }
+        string Environment { get; }
+        ApplicationData Application { get; }
+        MachineData Machine { get; }
+        UserData User { get; }
+    }
+
+    public interface IIssueData
+    {
+        Guid IssueKey { get; }
+        Guid SessionKey { get; }
+        DateTime ClientTime { get; }
+        IDictionary<string, string> Data { get; }
+        IssueTypeData IssueType { get; }
+        Guid? IssueThreadKey { get; }
+        string UserHandle { get; }
+
+    }
+
     public interface IIssue
     {
         event EventHandler<IssueRegistrationStartedEventArgs> IssueRegistrationStartedEvent;

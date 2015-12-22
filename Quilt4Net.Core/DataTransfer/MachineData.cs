@@ -8,8 +8,8 @@ namespace Quilt4Net.Core.DataTransfer
         {
         }
 
-        public string Fingerprint { get; set; }
-        public string Name { get; set; }
-        public IDictionary<string, string> Data { get; set; }
+        public string Fingerprint { get; internal set; }
+        public string Name { get; internal set; }
+        public IDictionary<string, string> Data { get; internal set; }
     }
 }

@@ -7,6 +7,7 @@ namespace Quilt4Net.Core.DataTransfer
     {
         private readonly Stopwatch _stopWatch;
         private Exception _exception;
+        private SessionResponse _response;
 
         internal SessionResult()
         {
@@ -19,13 +20,15 @@ namespace Quilt4Net.Core.DataTransfer
             _exception = exception;
         }
 
-        public void SetCompleted(Guid sessionGuid)
+        public void SetCompleted(SessionResponse response)
         {
+            _response = response;
             _stopWatch.Stop();
         }
 
         public bool IsSuccess => _exception == null;
         public string ErrorMessage => _exception?.Message;
         public TimeSpan Elapsed => _stopWatch.Elapsed;
+        public SessionResponse Response => _response;
     }
 }

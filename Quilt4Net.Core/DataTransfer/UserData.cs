@@ -6,7 +6,7 @@
         {
         }
 
-        public string Fingerprint { get; set; }
-        public string UserName { get; set; }
+        public string Fingerprint { get; internal set; }
+        public string UserName { get; internal set; }
     }
 }

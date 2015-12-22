@@ -3,12 +3,29 @@ using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net
 {
-    internal class Configuration : Core.Configuration
+    public class Configuration : Core.Configuration
     {
-        internal Configuration()
+        private static IConfiguration _instance;
+
+        public Configuration()
         {
             Session = new SessionConfiguration(this);
             Target = new TargetConfiguration(this);
+        }
+
+        public static IConfiguration Instance
+        {
+            get
+            {
+                //TODO: Use locking here
+
+                if (_instance == null)
+                {
+                    _instance = new Configuration();
+                }
+
+                return _instance;
+            }
         }
 
         public override bool Enabled

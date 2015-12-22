@@ -6,6 +6,8 @@ namespace Quilt4Net
 {
     public class Client
     {
+        private static Client _instance;
+
         private readonly IConfiguration _configuration;
         private readonly IWebApiClient _webApiClient;
         private readonly Lazy<User> _user;
@@ -13,12 +15,7 @@ namespace Quilt4Net
         private readonly Lazy<ISession> _session;
         private readonly Lazy<IIssue> _issue;
 
-        public Client()
-            : this(new Configuration())
-        {
-        }
-
-        private Client(IConfiguration configuration)
+        public Client(IConfiguration configuration)
         {
             _configuration = configuration;
             _webApiClient = new WebApiClient(_configuration);
@@ -26,6 +23,19 @@ namespace Quilt4Net
             _project = new Lazy<Project>(() => new Project(_webApiClient));
             _session = new Lazy<ISession>(() => new Session(_webApiClient, _configuration, new ApplicationHelper(_configuration), new MachineHelper(), new UserHelper()));
             _issue = new Lazy<IIssue>(() => new Issue(_session, _webApiClient, _configuration));
+        }
+
+        public static Client Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new Client(Quilt4Net.Configuration.Instance);
+                }
+
+                return _instance;
+            }
         }
 
         public IConfiguration Configuration => _configuration;

@@ -5,11 +5,11 @@ namespace Quilt4Net.Core.Events
 {
     public class IssueRegistrationStartedEventArgs : EventArgs
     {
-        public IssueRegistrationStartedEventArgs(IssueData data)
+        public IssueRegistrationStartedEventArgs(IssueRequest request)
         {
-            Data = data;
+            Request = request;
         }
 
-        public IssueData Data { get; }
+        public IssueRequest Request { get; }
     }
 }

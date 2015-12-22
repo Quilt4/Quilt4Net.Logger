@@ -2,7 +2,7 @@
 
 namespace Quilt4Net.Core
 {
-    internal abstract class Configuration : IConfiguration
+    public abstract class Configuration : IConfiguration
     {
         internal static readonly object SyncRoot = new object();
         protected string _projectApiKey;

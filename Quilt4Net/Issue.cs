@@ -10,12 +10,6 @@ namespace Quilt4Net
         {
         }
 
-        public static IIssue Instance
-        {
-            get
-            {
-                return Session.Client.Issue;
-            }
-        }
+        public static IIssue Instance => Client.Instance.Issue;
     }
 }
