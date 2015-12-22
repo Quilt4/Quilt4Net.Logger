@@ -16,28 +16,28 @@ namespace Quilt4Net.Core
             _webApiClient = webApiClient;
         }
 
-        public async Task<IEnumerable<ProjectData>> GetListAsync()
+        public async Task<IEnumerable<ProjectResponse>> GetListAsync()
         {
-            var result = await _webApiClient.ReadAsync<ProjectData>(_controller);
+            var result = await _webApiClient.ReadAsync<ProjectResponse>(_controller);
             return result;
         }
 
-        public async Task<ProjectData> GetAsync(Guid projectKey)
+        public async Task<ProjectResponse> GetAsync(Guid projectKey)
         {
-            var response = await _webApiClient.ReadAsync<ProjectData>(_controller, projectKey.ToString());
+            var response = await _webApiClient.ReadAsync<ProjectResponse>(_controller, projectKey.ToString());
             return response;
         }
 
         public async Task<Guid> CreateAsync(string projectName, string dashboardColor = null)
         {
             var projectKey = Guid.NewGuid();
-            await _webApiClient.CreateAsync(_controller, new ProjectData { ProjectKey = projectKey, Name = projectName, DashboardColor = dashboardColor });
+            await _webApiClient.CreateAsync(_controller, new ProjectRequest { ProjectKey = projectKey, Name = projectName, DashboardColor = dashboardColor });
             return projectKey;
         }
 
         public async Task UpdateAsync(Guid projectKey, string projectName, string dashboardColor)
         {
-            await _webApiClient.UpdateAsync(_controller, projectKey.ToString(), new ProjectData { ProjectKey = projectKey, Name = projectName, DashboardColor = dashboardColor });
+            await _webApiClient.UpdateAsync(_controller, projectKey.ToString(), new ProjectRequest { ProjectKey = projectKey, Name = projectName, DashboardColor = dashboardColor });
         }
 
         public async Task DeleteAsync(Guid projectKey)

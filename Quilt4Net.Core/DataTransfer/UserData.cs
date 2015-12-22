@@ -2,11 +2,7 @@
 {
     public class UserData
     {
-        internal UserData()
-        {
-        }
-
-        public string Fingerprint { get; internal set; }
-        public string UserName { get; internal set; }
+        public string Fingerprint { get; set; }
+        public string UserName { get; set; }
     }
 }

@@ -2,14 +2,10 @@
 {
     public class IssueTypeData
     {
-        internal IssueTypeData()
-        {
-        }
-
-        public string Message { get; internal set; }
-        public string StackTrace { get; internal set; }
-        public IssueLevel IssueLevel { get; internal set; }
-        public string Type { get; internal set; }
-        public IssueTypeData Inner { get; internal set; }
+        public string Message { get; set; }
+        public string StackTrace { get; set; }
+        public IssueLevel IssueLevel { get; set; }
+        public string Type { get; set; }
+        public IssueTypeData Inner { get; set; }
     }
 }
