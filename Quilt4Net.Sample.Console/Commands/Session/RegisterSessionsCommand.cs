@@ -14,13 +14,13 @@ namespace Quilt4Net.Sample.Console.Commands.Session
             _client = client;
         }
 
-        //public override bool CanExecute()
-        //{
-        //    if (!_client.User.IsAuthorized)
-        //        return false;
+        public override bool CanExecute()
+        {
+            //if (!_client.User.IsAuthorized)
+            //    return false;
 
-        //    return !_client.Session.IsRegistered;
-        //}
+            return !_client.Session.IsRegistered;
+        }
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
@@ -34,7 +34,10 @@ namespace Quilt4Net.Sample.Console.Commands.Session
 
             //_client.Session.RegisterStart();
             var response = await _client.Session.RegisterAsync();
-            OutputEvent("Session registration took " + response.Elapsed.TotalMilliseconds.ToString("0") + "ms.");
+            if (response.IsSuccess)
+                OutputInformation("Session registration took " + response.Elapsed.TotalMilliseconds.ToString("0") + "ms.");
+            else
+                OutputError(response.ErrorMessage + " (" + response.Elapsed.TotalMilliseconds.ToString("0") + "ms)");
 
             return true;
         }

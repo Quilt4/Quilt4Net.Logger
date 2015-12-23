@@ -13,15 +13,18 @@ namespace Quilt4Net.Sample.Console.Commands.Issue
             _client = client;
         }
 
-        public override bool CanExecute()
-        {
-            return !_client.Session.IsRegistered;
-        }
+        //public override bool CanExecute()
+        //{
+        //    return !_client.Session.IsRegistered;
+        //}
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
             var response = await _client.Issue.RegisterAsync("Some warning.", Core.Issue.MessageIssueLevel.Warning);
-            OutputEvent("Issue registration took " + response.Elapsed.TotalMilliseconds.ToString("0") + "ms.");
+            if ( response.IsSuccess)
+                OutputInformation("Issue registration took " + response.Elapsed.TotalMilliseconds.ToString("0") + "ms.");
+            else
+                OutputError(response.ErrorMessage + " (" + response.Elapsed.TotalMilliseconds.ToString("0") + "ms)");
 
             //var index = 0;
             //var projectKey = QueryParam("Project", GetParam(paramList, index++), (await _client.Project.GetListAsync()).ToDictionary(x => x.ProjectKey, x => x.Name));

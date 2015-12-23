@@ -135,7 +135,7 @@ namespace Quilt4Net.Core
                 IssueLevel = issueLevel.ToIssueLevel(_configuration),
                 Inner = null,
                 StackTrace = null,
-                Type = null,
+                Type = "Message",
             };
 
             var issueData = new IssueRequest
