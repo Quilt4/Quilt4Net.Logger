@@ -17,7 +17,7 @@ namespace Quilt4Net.Tests
             var configurationMock = new Mock<IConfiguration>(MockBehavior.Default);
 
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
-            webApiClientMock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(default(SessionRequest)));
+            webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(default(SessionResponse)));
 
             var session = Register_session_setup.GivenThereIsASession(webApiClientMock, configurationMock, null, null);
 
@@ -37,7 +37,7 @@ namespace Quilt4Net.Tests
             //Assert
             Assert.That(exception, Is.Not.Null);
             Assert.That(result, Is.Null);
-            webApiClientMock.Verify(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<SessionRequest>()), Times.Never);
+            webApiClientMock.Verify(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>()), Times.Never);
         }
 
         [Test]
@@ -48,7 +48,7 @@ namespace Quilt4Net.Tests
             configurationMock.SetupGet(x => x.ProjectApiKey).Returns("ABC123");
 
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
-            webApiClientMock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(default(SessionRequest)));
+            webApiClientMock.Setup(x => x.CreateAsync<SessionRequest,SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(default(SessionResponse)));
 
             var session = Register_session_setup.GivenThereIsASession(webApiClientMock, configurationMock, null, null);
 
@@ -60,7 +60,7 @@ namespace Quilt4Net.Tests
             Assert.That(response.IsSuccess, Is.EqualTo(true));
             Assert.That(response.ErrorMessage, Is.Null);
             Assert.That(response.Elapsed.Ticks, Is.GreaterThan(1));
-            webApiClientMock.Verify(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<SessionRequest>()), Times.Once);
+            webApiClientMock.Verify(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>()), Times.Once);
         }
     }
 }

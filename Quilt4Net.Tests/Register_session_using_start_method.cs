@@ -19,7 +19,7 @@ namespace Quilt4Net.Tests
             var configurationMock = new Mock<IConfiguration>(MockBehavior.Default);
 
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
-            webApiClientMock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(default(SessionRequest)));
+            webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(default(SessionResponse)));
 
             var callbackEvent = new AutoResetEvent(false);
 
@@ -51,7 +51,7 @@ namespace Quilt4Net.Tests
             configurationMock.SetupGet(x => x.ProjectApiKey).Returns("ABC123");
 
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
-            webApiClientMock.Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(default(SessionRequest)));
+            webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(default(SessionResponse)));
 
             var callbackEvent = new AutoResetEvent(false);
 

@@ -58,11 +58,37 @@ namespace Quilt4Net.Core
             }
         }
 
-        public Guid GetSessionKey()
+        public async Task EndAsync()
+        {
+            if (!IsRegistered) return;
+            await EndEx(await GetSessionKey());
+        }
+
+        public void End()
+        {
+            if (!IsRegistered) return;
+
+            try
+            {
+                EndEx(GetSessionKey().Result).Wait();
+            }
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
+            }
+        }
+
+        private async Task EndEx(Guid sessionKey)
+        {
+            //TODO: Call service to end the session
+            throw new NotImplementedException();
+        }
+
+        public async Task<Guid> GetSessionKey()
         {
             if (!IsRegistered)
             {
-                var response = Register();
+                var response = await RegisterEx(GetProjectApiKey(), true);
             }
 
             return _sessionKey;
@@ -82,8 +108,10 @@ namespace Quilt4Net.Core
         {
             //TODO: Use a Mutex here
 
-            var response = new SessionResult();
+            var result = new SessionResult();
             SessionRequest request = null;
+
+            SessionResponse response = null;
 
             try
             {
@@ -103,24 +131,23 @@ namespace Quilt4Net.Core
 
                 OnSessionRegistrationStartedEvent(new SessionRegistrationStartedEventArgs(request));
 
-                await _webApiClient.CreateAsync("Client/Session", request);
-                //TODO: Wait for result from server here. (Server time should come from the service)
+                response = await _webApiClient.CreateAsync<SessionRequest, SessionResponse>("Client/Session", request);
             }
             catch (Exception exception)
             {
                 _sessionKey = Guid.Empty;
-                response.SetException(exception);
+                result.SetException(exception);
 
                 if (doThrow)
                     throw;
             }
             finally
             {
-                response.SetCompleted(null); //TODO: Provide the response object here
-                OnSessionRegistrationCompletedEvent(new SessionRegistrationCompletedEventArgs(request, response));
+                result.SetCompleted(response);
+                OnSessionRegistrationCompletedEvent(new SessionRegistrationCompletedEventArgs(request, result));
             }
 
-            return response;
+            return result;
         }
 
         public async Task<IEnumerable<SessionRequest>> GetListAsync()

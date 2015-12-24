@@ -68,32 +68,32 @@ namespace Quilt4Net.Core
         {
             //TODO: Use a Mutex here
 
-            var response = new IssueResult();
+            var result = new IssueResult();
+            IssueResponse response = null;
 
             try
             {
-                request.SessionKey = _session.Value.GetSessionKey();
+                request.SessionKey = await _session.Value.GetSessionKey();
 
                 OnIssueRegistrationStartedEvent(new IssueRegistrationStartedEventArgs(request));
 
-                await _webApiClient.CreateAsync("Client/Issue", request);
-                //TODO: Wait for result from server here. (We should get a Ticket here)
+                response = await _webApiClient.CreateAsync<IssueRequest, IssueResponse>("Client/Issue", request);                
             }
             catch (Exception exception)
             {
                 //TODO: Also store the issues that was not registered to the server in a list, so that they can be inspected from the client side.
-                response.SetException(exception);
+                result.SetException(exception);
 
                 if (doThrow)
                     throw;
             }
             finally
             {
-                response.SetCompleted(null); //TODO: Provide the response object here
-                OnIssueRegistrationCompletedEvent(new IssueRegistrationCompletedEventArgs(request, response));
+                result.SetCompleted(response);
+                OnIssueRegistrationCompletedEvent(new IssueRegistrationCompletedEventArgs(request, result));
             }
 
-            return response;
+            return result;
         }
 
         private IssueRequest PrepareIssueData(Exception exception, ExceptionIssueLevel issueLevel, string userHandle)

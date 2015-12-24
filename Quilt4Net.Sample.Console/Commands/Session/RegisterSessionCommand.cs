@@ -4,11 +4,11 @@ using Tharga.Toolkit.Console.Command.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Session
 {
-    internal class RegisterSessionsCommand : ActionCommandBase
+    internal class RegisterSessionCommand : ActionCommandBase
     {
         private readonly Client _client;
 
-        public RegisterSessionsCommand(Client client)
+        public RegisterSessionCommand(Client client)
             : base("Register", "Register session")
         {
             _client = client;

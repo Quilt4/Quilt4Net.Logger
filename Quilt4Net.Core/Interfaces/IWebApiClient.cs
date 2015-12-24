@@ -7,6 +7,7 @@ namespace Quilt4Net.Core.Interfaces
     {
         //CRUD style operations
         Task CreateAsync<T>(string controller, T data);
+        Task<TResult> CreateAsync<T, TResult>(string controller, T data);
         Task<IEnumerable<TResult>> ReadAsync<TResult>(string controller);
         Task<TResult> ReadAsync<TResult>(string controller, string id);
         Task UpdateAsync<T>(string controller, string id, T data);
@@ -15,6 +16,8 @@ namespace Quilt4Net.Core.Interfaces
         //CQRS style operations
         Task ExecuteCommandAsync<T>(string controller, string action, T data);
         Task<TResult> ExecuteQueryAsync<T, TResult>(string controller, string action, T data);
+
+        //Authorization
         void SetAuthorization(string tokenType, string accessToken);
         bool IsAuthorized { get; }
     }

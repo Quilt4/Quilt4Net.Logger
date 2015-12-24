@@ -37,6 +37,27 @@ namespace Quilt4Net.Core
                 });
         }
 
+        public async Task<TResult> CreateAsync<T, TResult>(string controller, T data)
+        {
+            string requestUri = $"api/{controller}";
+
+            var jsonFormatter = new JsonMediaTypeFormatter();
+            var content = new ObjectContent<T>(data, jsonFormatter);
+
+            var result = await Execute(async client =>
+            {
+                var response = await client.PostAsync(requestUri, content);
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new InvalidOperationException(response.ToString());
+                }
+
+                return response.Content.ReadAsAsync<TResult>().Result;
+            });
+
+            return result;
+        }
+
         public async Task<IEnumerable<TResult>> ReadAsync<TResult>(string controller)
         {
             string requestUri = $"api/{controller}";

@@ -8,7 +8,8 @@ namespace Quilt4Net.Sample.Console.Commands.Session
             : base("Session")
         {
             RegisterCommand(new ListSessionsCommand(client));
-            RegisterCommand(new RegisterSessionsCommand(client));
+            RegisterCommand(new RegisterSessionCommand(client));
+            RegisterCommand(new EndSessionCommand(client));
         }
     }
 }

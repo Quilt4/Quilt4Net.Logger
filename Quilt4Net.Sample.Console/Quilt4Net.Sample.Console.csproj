@@ -75,8 +75,9 @@
     <Compile Include="Commands\Project\GetProjectCommand.cs" />
     <Compile Include="Commands\Project\ListProjectsCommand.cs" />
     <Compile Include="Commands\Issue\IssueCommands.cs" />
+    <Compile Include="Commands\Session\EndSessionCommand.cs" />
     <Compile Include="Commands\Session\ListSessionsCommand.cs" />
-    <Compile Include="Commands\Session\RegisterSessionsCommand.cs" />
+    <Compile Include="Commands\Session\RegisterSessionCommand.cs" />
     <Compile Include="Commands\Session\SessionCommands.cs" />
     <Compile Include="Commands\Project\UpdateProjectCommand.cs" />
     <Compile Include="Commands\User\CreateUserCommand.cs" />
