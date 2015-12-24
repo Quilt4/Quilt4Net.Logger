@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
 using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core
@@ -22,7 +21,7 @@ namespace Quilt4Net.Core
         public const int CannotSetTimeout = 1012;
         public const int Timeout = 1013;
 
-        private static readonly Dictionary<int, string> _data = new Dictionary<int, string>();
+        private readonly Dictionary<int, string> _data = new Dictionary<int, string>();
 
         internal ExpectedIssues(IConfiguration configuration)
         {
@@ -42,7 +41,7 @@ namespace Quilt4Net.Core
             _data.Add(Timeout, "WebAPI call timed out.");
         }
 
-        public static string GetTitle(int code)
+        public string GetTitle(int code)
         {
             return _data[code];
         }
@@ -55,7 +54,7 @@ namespace Quilt4Net.Core
             }
         }
 
-        internal class FirstAssemblyException : Exception
+        private class FirstAssemblyException : Exception
         {
             public FirstAssemblyException(string message)
                 : base(message)
@@ -79,7 +78,6 @@ namespace Quilt4Net.Core
                 case CannotSetProjectApiKey:
                 case CannotSetEnvironment:
                 case CannotSetTimeout:
-                    //exception = new ConfigurationErrorsException(GetMessage(code), innerEception);
                     exception = new InvalidOperationException(GetMessage(code), innerEception);
                     break;
                 case Timeout:
@@ -93,39 +91,10 @@ namespace Quilt4Net.Core
             exception.HelpLink = GetHelpLink(code);
             return exception;
         }
-
-        //public static WebException GetException(WebException exception)
-        //{
-        //    throw new NotImplementedException();
-        //    //var result = exception.result as HttpWebResponse;
-        //    //var serializer = new JavaScriptSerializer();
-        //    //dynamic message = exception.Message;
-        //    //var dic = new Dictionary<string, string>();
-        //    //if (result != null && (result.StatusDescription.StartsWith("{") && result.StatusDescription.EndsWith("}")))
-        //    //{
-        //    //    var d = serializer.DeserializeObject(result.StatusDescription) as dynamic;
-        //    //    message = d["Message"];
-        //    //    if (d["Data"] != null)
-        //    //    {
-        //    //        foreach (var data in d["Data"])
-        //    //        {
-        //    //            dic.Add(data.Key, data.Value);
-        //    //        }
-        //    //    }
-        //    //}
-
-        //    //var exp = new WebException(string.Format("{0}{2}{1}", exception.Message, message, Environment.NewLine), exception, exception.Status, exception.result);
-        //    //foreach (var item in dic)
-        //    //{
-        //    //    exp.Data.Add(item.Key, item.Value);
-        //    //}
-
-        //    //return exp;
-        //}
-
+        
         private string GetMessage(int code)
         {
-            var response = string.Format("{0} Issue code #{1}. Visit {2} for more information", _data[code], code, GetHelpLink(code));
+            var response = $"{_data[code]} Issue code #{code}. Visit {GetHelpLink(code)} for more information";
             return response;
         }
 

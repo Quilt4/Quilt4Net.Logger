@@ -8,17 +8,28 @@ namespace Quilt4Net.Core
     internal abstract class ApplicationHelper : IApplicationHelper
     {
         protected readonly IConfiguration Configuration;
-        protected Assembly _firstAssembly;
+        protected Assembly FirstAssembly;
 
-        public ApplicationHelper(IConfiguration configuration)
+        protected ApplicationHelper(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        protected abstract Assembly GetFirstAssembly();
+        protected virtual Assembly GetFirstAssembly()
+        {
+            if (FirstAssembly == null) throw new InvalidOperationException("No first assembly has been set.");
+            return FirstAssembly;
+        }
+
+        public virtual void SetFirstAssembly(Assembly firstAssembly)
+        {
+            if (FirstAssembly != null) throw new InvalidOperationException("Cannot change first assembly once it has been set.");
+            FirstAssembly = firstAssembly;
+        }
+
         protected abstract DateTime? GetBuildTime();
 
-        protected string GetProjectApiKey()
+        private string GetProjectApiKey()
         {
             return Configuration.ProjectApiKey;
         }
@@ -49,7 +60,7 @@ namespace Quilt4Net.Core
         {
             var currentAssembly = typeof(ApplicationHelper).GetTypeInfo().Assembly;
             var toolkitName = currentAssembly.GetName();
-            return string.Format("{0} {1}", toolkitName.Name, toolkitName.Version);
+            return $"{toolkitName.Name} {toolkitName.Version}";
         }
 
         private string GetApplicationName()
@@ -61,40 +72,13 @@ namespace Quilt4Net.Core
             return GetFirstAssembly().GetName().Name;
         }
 
-        protected virtual bool IsClickOnce { get { return false; } }
+        protected virtual bool IsClickOnce => false;
 
         protected virtual string GetApplicationVersion()
         {
             var assemblyVersion = GetFirstAssembly().GetName().Version;
-            var clickOnceVersion = (Version)null;
-            if (IsClickOnce)
-            {
-                throw new NotSupportedException();
-            }
-            var applicationVersion = clickOnceVersion ?? assemblyVersion;
+            var applicationVersion = assemblyVersion;
             return applicationVersion.ToString();
         }
-
-        //private void SetFirstAssembly(Assembly firstAssembly)
-        //{
-        //    _firstAssembly = firstAssembly;
-        //}
-
-        //private Assembly GetFirstAssembly()
-        //{
-        //    if (_firstAssembly == null)
-        //    {
-        //        lock (_syncRoot)
-        //        {
-        //            if (_firstAssembly == null)
-        //            {
-        //                //_firstAssembly = Assembly.GetEntryAssembly(); //TODO: This only works for regular .NET assemblies
-        //                if (_firstAssembly == null) throw ExpectedIssues.GetException(ExpectedIssues.CannotAutomaticallyRetrieveAssembly);
-        //            }
-        //        }
-        //    }
-
-        //    return _firstAssembly;
-        //}
     }
 }

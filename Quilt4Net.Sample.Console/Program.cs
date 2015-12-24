@@ -44,6 +44,8 @@ namespace Quilt4Net.Sample.Console
             rootCommand.RegisterCommand(new SessionCommands(client));
             rootCommand.RegisterCommand(new IssueCommands(client));
             new CommandEngine(rootCommand).Run(args);
+
+            client.Dispose();
         }
 
         private static void Session_SessionRegistrationStartedEvent(object sender, SessionRegistrationStartedEventArgs e)
@@ -53,8 +55,9 @@ namespace Quilt4Net.Sample.Console
 
         private static void SessionSessionRegistrationCompletedEvent(object sender, SessionRegistrationCompletedEventArgs e)
         {
-            var message = $"{e.Result.ErrorMessage ?? "Session registered in "} {e.Result.Elapsed.TotalMilliseconds.ToString("0")}ms.";
+            var message = $"Session {e.Result.ErrorMessage ?? "registered in "}{e.Result.Elapsed.TotalMilliseconds.ToString("0")}ms.";
             var outputLevel = e.Result.IsSuccess ? OutputLevel.Information : OutputLevel.Error;
+            //TODO: Have a way of outputing an exception using Tharga Console
             _console.WriteLine(message, outputLevel, ConsoleColor.DarkCyan);
         }
 
@@ -65,8 +68,9 @@ namespace Quilt4Net.Sample.Console
 
         private static void Issue_IssueRegistrationCompletedEvent(object sender, IssueRegistrationCompletedEventArgs e)
         {
-            var message = $"{e.Result.ErrorMessage ?? "Issue registered in "} {e.Result.Elapsed.TotalMilliseconds.ToString("0")}ms.";
+            var message = $"Issue {e.Result.ErrorMessage ?? "registered in "}{e.Result.Elapsed.TotalMilliseconds.ToString("0")}ms.";
             var outputLevel = e.Result.IsSuccess ? OutputLevel.Information : OutputLevel.Error;
+            //TODO: Have a way of outputing an exception using Tharga Console
             _console.WriteLine(message, outputLevel, ConsoleColor.DarkCyan);
         }
     }

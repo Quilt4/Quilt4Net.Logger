@@ -28,6 +28,7 @@ namespace Quilt4Net.Core.DataTransfer
 
         public bool IsSuccess => _exception == null;
         public string ErrorMessage => _exception?.Message;
+        public Exception Exception => _exception;
         public TimeSpan Elapsed => _stopWatch.Elapsed;
         public IssueResponse Response => _response;
     }

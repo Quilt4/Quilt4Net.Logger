@@ -18,27 +18,27 @@ namespace Quilt4Net
 
         protected override Assembly GetFirstAssembly()
         {
-            if (_firstAssembly == null)
+            if (FirstAssembly == null)
             {
                 lock (_syncRoot)
                 {
-                    if (_firstAssembly == null)
+                    if (FirstAssembly == null)
                     {
-                        _firstAssembly = Assembly.GetEntryAssembly();
-                        if (_firstAssembly == null) throw new ExpectedIssues(Configuration).GetException(ExpectedIssues.CannotAutomaticallyRetrieveAssembly);
+                        FirstAssembly = Assembly.GetEntryAssembly();
+                        if (FirstAssembly == null) throw new ExpectedIssues(Configuration).GetException(ExpectedIssues.CannotAutomaticallyRetrieveAssembly);
                     }
                 }
             }
 
-            return _firstAssembly;
+            return FirstAssembly;
         }
 
         protected override DateTime? GetBuildTime()
         {
             if (!Configuration.UseBuildTime) return null;
 
-            const int PeHeaderOffset = 60;
-            const int LinkerTimestampOffset = 8;
+            const int peHeaderOffset = 60;
+            const int linkerTimestampOffset = 8;
 
             FileStream s = null;
             var b = new byte[2048];
@@ -51,11 +51,11 @@ namespace Quilt4Net
             }
             finally
             {
-                if (s != null) s.Close();
+                s?.Close();
             }
 
-            var i = BitConverter.ToInt32(b, PeHeaderOffset);
-            var secondsSince1970 = BitConverter.ToInt32(b, i + LinkerTimestampOffset);
+            var i = BitConverter.ToInt32(b, peHeaderOffset);
+            var secondsSince1970 = BitConverter.ToInt32(b, i + linkerTimestampOffset);
             var dt = new DateTime(1970, 1, 1, 0, 0, 0);
             dt = dt.AddSeconds(secondsSince1970);
             dt = dt.AddHours(TimeZone.CurrentTimeZone.GetUtcOffset(dt).Hours);
@@ -67,16 +67,10 @@ namespace Quilt4Net
         {
             var currentAssembly = Assembly.GetExecutingAssembly();
             var toolkitName = currentAssembly.GetName();
-            return string.Format("{0} {1}", toolkitName.Name, toolkitName.Version);
+            return $"{toolkitName.Name} {toolkitName.Version}";
         }
 
-        protected override bool IsClickOnce
-        {
-            get
-            {
-                return ApplicationDeployment.IsNetworkDeployed;
-            }
-        }
+        protected override bool IsClickOnce => ApplicationDeployment.IsNetworkDeployed;
 
         protected override string GetApplicationVersion()
         {

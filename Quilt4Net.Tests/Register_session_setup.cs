@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.Remoting.Channels;
 using Moq;
 using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Events;
@@ -9,7 +8,7 @@ namespace Quilt4Net.Tests
 {
     public static class Register_session_setup
     {
-        internal  static Session GivenThereIsASession(Mock<IWebApiClient> webApiClientMock, Mock<IConfiguration> configurationMock, Action<SessionRegistrationStartedEventArgs> sessionStartedAction, Action<SessionRegistrationCompletedEventArgs> sessionCompletedAction)
+        internal static Session GivenThereIsASession(Mock<IWebApiClient> webApiClientMock, Mock<IConfiguration> configurationMock, Action<SessionRegistrationStartedEventArgs> sessionStartedAction, Action<SessionRegistrationCompletedEventArgs> sessionCompletedAction)
         {
             var applicationHelperMock = new Mock<IApplicationHelper>(MockBehavior.Strict);
             applicationHelperMock.Setup(x => x.GetApplicationData()).Returns(() => new ApplicationData());

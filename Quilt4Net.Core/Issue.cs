@@ -28,7 +28,7 @@ namespace Quilt4Net.Core
         public async Task<IssueResult> RegisterAsync(string message, MessageIssueLevel issueLevel, string userHandle = null, IDictionary<string, string> data = null)
         {
             var issueData = PrepareIssueData(message, issueLevel, userHandle, data);
-            return await RegisterEx(false, issueData);
+            return await RegisterEx(true, issueData);
         }
 
         public void RegisterStart(string message, MessageIssueLevel issueLevel, string userHandle = null, IDictionary<string, string> data = null)
@@ -39,29 +39,43 @@ namespace Quilt4Net.Core
 
         public IssueResult Register(string message, MessageIssueLevel issueLevel, string userHandle = null, IDictionary<string, string> data = null)
         {
-            var issueData = PrepareIssueData(message, issueLevel, userHandle, data);
-            var respnse = Task.Run(async () => await RegisterEx(false, issueData)).Result;
-            return respnse;
+            try
+            {
+                var issueData = PrepareIssueData(message, issueLevel, userHandle, data);
+                var response = RegisterEx(true, issueData).Result;
+                return response;
+            }
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
+            }
         }
 
-        public async Task<IssueResult> RegisterAsync(Exception exception, ExceptionIssueLevel issueLevel = Issue.ExceptionIssueLevel.Error, string userHandle = null)
+        public async Task<IssueResult> RegisterAsync(Exception exception, ExceptionIssueLevel issueLevel = ExceptionIssueLevel.Error, string userHandle = null)
         {
             var issueData = PrepareIssueData(exception, issueLevel, userHandle);
             var respnse = await RegisterEx(true, issueData);
             return respnse;
         }
 
-        public void RegisterStart(Exception exception, ExceptionIssueLevel issueLevel = Issue.ExceptionIssueLevel.Error, string userHandle = null)
+        public void RegisterStart(Exception exception, ExceptionIssueLevel issueLevel = ExceptionIssueLevel.Error, string userHandle = null)
         {
             var issueData = PrepareIssueData(exception, issueLevel, userHandle);
             Task.Run(() => RegisterEx(false, issueData));
         }
 
-        public IssueResult Register(Exception exception, ExceptionIssueLevel issueLevel = Issue.ExceptionIssueLevel.Error, string userHandle = null)
+        public IssueResult Register(Exception exception, ExceptionIssueLevel issueLevel = ExceptionIssueLevel.Error, string userHandle = null)
         {
-            var issueData = PrepareIssueData(exception, issueLevel, userHandle);
-            var respnse = Task.Run(async () => await RegisterEx(false, issueData)).Result;
-            return respnse;
+            try
+            {
+                var issueData = PrepareIssueData(exception, issueLevel, userHandle);
+                var response = RegisterEx(true, issueData).Result;
+                return response;
+            }
+            catch (AggregateException exp)
+            {
+                throw exp.InnerException;
+            }
         }
 
         private async Task<IssueResult> RegisterEx(bool doThrow, IssueRequest request)
@@ -102,7 +116,6 @@ namespace Quilt4Net.Core
 
             var issueData = new IssueRequest
             {
-                ProjectApiKey = _configuration.ProjectApiKey,
                 Data = exception.Data.Cast<DictionaryEntry>().Where(x => x.Value != null).ToDictionary(item => item.Key.ToString(), item => item.Value.ToString()),
                 UserHandle = userHandle,
                 ClientTime = DateTime.UtcNow,
@@ -140,7 +153,6 @@ namespace Quilt4Net.Core
 
             var issueData = new IssueRequest
             {
-                ProjectApiKey = _configuration.ProjectApiKey,
                 Data = data,
                 UserHandle = userHandle,
                 ClientTime = DateTime.UtcNow,

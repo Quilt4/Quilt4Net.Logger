@@ -66,6 +66,8 @@
     <Compile Include="DataTransfer\UserData.cs" />
     <Compile Include="Events\IssueRegistrationCompletedEventArgs.cs" />
     <Compile Include="Events\IssueRegistrationStartedEventArgs.cs" />
+    <Compile Include="Events\SessionEndCompletedEventArgs.cs" />
+    <Compile Include="Events\SessionEndStartedEventArgs.cs" />
     <Compile Include="Events\SessionRegistrationCompletedEventArgs.cs" />
     <Compile Include="Events\SessionRegistrationStartedEventArgs.cs" />
     <Compile Include="ExceptionExtensions.cs" />

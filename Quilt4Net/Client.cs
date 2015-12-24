@@ -4,7 +4,7 @@ using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net
 {
-    public class Client
+    public class Client : IDisposable
     {
         private static Client _instance;
 
@@ -44,5 +44,13 @@ namespace Quilt4Net
         public Project Project => _project.Value;
         public ISession Session => _session.Value;
         public IIssue Issue => _issue.Value;
+
+        public void Dispose()
+        {
+            if (_session.IsValueCreated)
+            {
+                _session.Value.End();
+            }
+        }
     }
 }

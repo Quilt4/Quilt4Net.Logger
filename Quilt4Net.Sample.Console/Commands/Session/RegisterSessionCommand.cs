@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using Tharga.Toolkit.Console.Command.Base;
 
@@ -33,7 +34,7 @@ namespace Quilt4Net.Sample.Console.Commands.Session
             //_client.Configuration.Session.Environment = environment;
 
             //_client.Session.RegisterStart();
-            var response = await _client.Session.RegisterAsync();
+            var response = await _client.Session.RegisterAsync(Assembly.GetExecutingAssembly());
             if (response.IsSuccess)
                 OutputInformation("Session registration took " + response.Elapsed.TotalMilliseconds.ToString("0") + "ms.");
             else

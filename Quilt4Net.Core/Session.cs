@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Events;
@@ -27,12 +28,20 @@ namespace Quilt4Net.Core
 
         public event EventHandler<SessionRegistrationStartedEventArgs> SessionRegistrationStartedEvent;
         public event EventHandler<SessionRegistrationCompletedEventArgs> SessionRegistrationCompletedEvent;
+        public event EventHandler<SessionEndStartedEventArgs> SessionEndStartedEvent;
+        public event EventHandler<SessionEndCompletedEventArgs> SessionEndCompletedEvent;
 
         public bool IsRegistered => _sessionKey != Guid.Empty;
 
         public async Task<SessionResult> RegisterAsync()
         {
             return await RegisterEx(GetProjectApiKey(), true);
+        }
+
+        public async Task<SessionResult> RegisterAsync(Assembly firstAssembly)
+        {
+            _applicationHelper.SetFirstAssembly(firstAssembly);
+            return await RegisterAsync();
         }
 
         public void RegisterStart()
@@ -43,6 +52,12 @@ namespace Quilt4Net.Core
             {
                 await RegisterEx(projectApiKey, false);
             });
+        }
+
+        public void RegisterStart(Assembly firstAssembly)
+        {
+            _applicationHelper.SetFirstAssembly(firstAssembly);
+            RegisterStart();
         }
 
         public SessionResult Register()
@@ -56,6 +71,12 @@ namespace Quilt4Net.Core
             {
                 throw exception.InnerException;
             }
+        }
+
+        public SessionResult Register(Assembly firstAssembly)
+        {
+            _applicationHelper.SetFirstAssembly(firstAssembly);
+            return Register();
         }
 
         public async Task EndAsync()
@@ -80,8 +101,26 @@ namespace Quilt4Net.Core
 
         private async Task EndEx(Guid sessionKey)
         {
-            //TODO: Call service to end the session
-            throw new NotImplementedException();
+            //TODO: Use a Mutex here
+
+            var result = new EndSesionResult();
+
+            try
+            {
+                OnSessionEndStartedEvent(new SessionEndStartedEventArgs(sessionKey));
+
+                await _webApiClient.ExecuteCommandAsync("Client/Session", "End", sessionKey);
+            }
+            catch (Exception exception)
+            {
+                result.SetException(exception);
+                throw;
+            }
+            finally
+            {
+                result.SetCompleted();
+                OnSessionEndCompletedEvent(new SessionEndCompletedEventArgs(sessionKey, result));
+            }
         }
 
         public async Task<Guid> GetSessionKey()
@@ -89,6 +128,8 @@ namespace Quilt4Net.Core
             if (!IsRegistered)
             {
                 var response = await RegisterEx(GetProjectApiKey(), true);
+                if (_sessionKey != response.Response.SessionKey) throw new InvalidOperationException("The session key returned and stored differs.");
+                return response.Response.SessionKey;
             }
 
             return _sessionKey;
@@ -99,7 +140,7 @@ namespace Quilt4Net.Core
             var projectApiKey = _configuration.ProjectApiKey;
             if (string.IsNullOrEmpty(projectApiKey))
             {
-                throw new ExpectedIssues.ProjectApiKeyNotSetException("?2");
+                throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.ProjectApiKeyNotSet);
             }
             return projectApiKey;
         }
@@ -163,6 +204,16 @@ namespace Quilt4Net.Core
         protected virtual void OnSessionRegistrationCompletedEvent(SessionRegistrationCompletedEventArgs e)
         {
             SessionRegistrationCompletedEvent?.Invoke(this, e);
+        }
+
+        protected virtual void OnSessionEndStartedEvent(SessionEndStartedEventArgs e)
+        {
+            SessionEndStartedEvent?.Invoke(this, e);
+        }
+
+        protected virtual void OnSessionEndCompletedEvent(SessionEndCompletedEventArgs e)
+        {
+            SessionEndCompletedEvent?.Invoke(this, e);
         }
     }
 }

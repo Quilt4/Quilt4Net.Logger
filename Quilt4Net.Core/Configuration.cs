@@ -41,7 +41,7 @@ namespace Quilt4Net.Core
                 {
                     if (_projectApiKey == null)
                     {
-                        throw new ExpectedIssues.ProjectApiKeyNotSetException("?1");
+                        throw new ExpectedIssues(this).GetException(ExpectedIssues.ProjectApiKeyNotSet);
                     }
                 }
 
