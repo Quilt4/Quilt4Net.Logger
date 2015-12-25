@@ -1,13 +1,14 @@
 using System.Threading.Tasks;
+using Quilt4Net.Core.Interfaces;
 using Tharga.Toolkit.Console.Command.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.User
 {
     internal class LogoutUserCommand : ActionCommandBase
     {
-        private readonly Client _client;
+        private readonly IClient _client;
 
-        public LogoutUserCommand(Client client)
+        public LogoutUserCommand(IClient client)
             : base("Logout", "Logout user")
         {
             _client = client;

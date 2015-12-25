@@ -1,14 +1,15 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Quilt4Net.Core.Interfaces;
 using Tharga.Toolkit.Console.Command.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Session
 {
     internal class ListSessionsCommand : ActionCommandBase
     {
-        private readonly Client _client;
+        private readonly IClient _client;
 
-        public ListSessionsCommand(Client client)
+        public ListSessionsCommand(IClient client)
             : base("List", "List sessions")
         {
             _client = client;

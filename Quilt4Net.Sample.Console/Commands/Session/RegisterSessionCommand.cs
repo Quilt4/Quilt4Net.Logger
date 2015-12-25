@@ -1,15 +1,15 @@
-using System;
 using System.Reflection;
 using System.Threading.Tasks;
+using Quilt4Net.Core.Interfaces;
 using Tharga.Toolkit.Console.Command.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Session
 {
     internal class RegisterSessionCommand : ActionCommandBase
     {
-        private readonly Client _client;
+        private readonly IClient _client;
 
-        public RegisterSessionCommand(Client client)
+        public RegisterSessionCommand(IClient client)
             : base("Register", "Register session")
         {
             _client = client;

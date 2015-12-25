@@ -1,10 +1,11 @@
-﻿using Tharga.Toolkit.Console.Command.Base;
+﻿using Quilt4Net.Core.Interfaces;
+using Tharga.Toolkit.Console.Command.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Project
 {
     internal class ProjectCommands : ContainerCommandBase
     {
-        public ProjectCommands(Client client)
+        public ProjectCommands(IClient client)
             : base("Project")
         {
             RegisterCommand(new CreateProjectCommand(client));

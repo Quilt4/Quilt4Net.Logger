@@ -1,13 +1,14 @@
 using System.Threading.Tasks;
+using Quilt4Net.Core.Interfaces;
 using Tharga.Toolkit.Console.Command.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.User
 {
     internal class LoginUserCommand : ActionCommandBase
     {
-        private readonly Client _client;
+        private readonly IClient _client;
 
-        public LoginUserCommand(Client client)
+        public LoginUserCommand(IClient client)
             : base("Login", "Login user")
         {
             _client = client;

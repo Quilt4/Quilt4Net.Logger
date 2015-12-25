@@ -15,7 +15,7 @@ namespace Quilt4Net.Core
             var response = Convert.ToBase64String(hashBytes);
             return response;
 
-            //TODO: Move this code to .NET override class
+            //Note: Move this code to .NET override class
             //var inputBytes = Encoding.Default.GetBytes(input);
             //var provider = new MD5CryptoServiceProvider();
             //var hash = provider.ComputeHash(inputBytes);

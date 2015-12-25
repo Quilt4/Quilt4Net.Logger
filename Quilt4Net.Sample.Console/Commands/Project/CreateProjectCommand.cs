@@ -1,13 +1,14 @@
 using System.Threading.Tasks;
+using Quilt4Net.Core.Interfaces;
 using Tharga.Toolkit.Console.Command.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Project
 {
     internal class CreateProjectCommand : ActionCommandBase
     {
-        private readonly Client _client;
+        private readonly IClient _client;
 
-        public CreateProjectCommand(Client client)
+        public CreateProjectCommand(IClient client)
             : base("Create", "Create a new project")
         {
             _client = client;

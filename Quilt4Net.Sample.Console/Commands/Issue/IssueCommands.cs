@@ -1,10 +1,11 @@
-﻿using Tharga.Toolkit.Console.Command.Base;
+﻿using Quilt4Net.Core.Interfaces;
+using Tharga.Toolkit.Console.Command.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Issue
 {
     internal class IssueCommands : ContainerCommandBase
     {
-        public IssueCommands(Client client)
+        public IssueCommands(IClient client)
             : base("Issue")
         {
             RegisterCommand(new RegisterIssueCommand(client));

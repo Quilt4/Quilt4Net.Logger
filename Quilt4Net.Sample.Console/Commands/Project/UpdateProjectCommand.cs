@@ -1,14 +1,15 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Quilt4Net.Core.Interfaces;
 using Tharga.Toolkit.Console.Command.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Project
 {
     internal class UpdateProjectCommand : ActionCommandBase
     {
-        private readonly Client _client;
+        private readonly IClient _client;
 
-        public UpdateProjectCommand(Client client)
+        public UpdateProjectCommand(IClient client)
             : base("Update", "Update a project")
         {
             _client = client;

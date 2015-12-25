@@ -101,26 +101,28 @@ namespace Quilt4Net.Core
 
         private async Task EndEx(Guid sessionKey)
         {
-            //TODO: Use a Mutex here
-
-            var result = new EndSesionResult();
-
-            try
+            await new MyMutex("Session").ExecuteAsync(async () =>
             {
-                OnSessionEndStartedEvent(new SessionEndStartedEventArgs(sessionKey));
+                var result = new EndSesionResult();
 
-                await _webApiClient.ExecuteCommandAsync("Client/Session", "End", sessionKey);
-            }
-            catch (Exception exception)
-            {
-                result.SetException(exception);
-                throw;
-            }
-            finally
-            {
-                result.SetCompleted();
-                OnSessionEndCompletedEvent(new SessionEndCompletedEventArgs(sessionKey, result));
-            }
+                try
+                {
+                    OnSessionEndStartedEvent(new SessionEndStartedEventArgs(sessionKey));
+
+                    await _webApiClient.ExecuteCommandAsync("Client/Session", "End", sessionKey);
+                }
+                catch (Exception exception)
+                {
+                    result.SetException(exception);
+                    throw;
+                }
+                finally
+                {
+                    result.SetCompleted();
+                    OnSessionEndCompletedEvent(new SessionEndCompletedEventArgs(sessionKey, result));
+                    _sessionKey = Guid.Empty;
+                }
+            });
         }
 
         public async Task<Guid> GetSessionKey()
@@ -147,48 +149,51 @@ namespace Quilt4Net.Core
 
         private async Task<SessionResult> RegisterEx(string projectApiKey, bool doThrow)
         {
-            //TODO: Use a Mutex here
-
-            var result = new SessionResult();
-            SessionRequest request = null;
-
-            SessionResponse response = null;
-
-            try
+            var sessionResult = await new MyMutex("Session").ExecuteAsync(async () =>
             {
-                if (_sessionKey != Guid.Empty) throw new InvalidOperationException("The session has already been registered.");
-                _sessionKey = Guid.NewGuid();
+                var result = new SessionResult();
+                SessionRequest request = null;
 
-                request = new SessionRequest
+                SessionResponse response = null;
+
+                try
                 {
-                    SessionKey = _sessionKey,
-                    ProjectApiKey = projectApiKey,
-                    ClientStartTime = DateTime.UtcNow,
-                    Environment = _configuration.Session != null ? _configuration.Session.Environment : string.Empty,
-                    Application = _applicationHelper.GetApplicationData(),
-                    Machine = _machineHelper.GetMachineData(),
-                    User = _userHelper.GetUser(),
-                };
+                    if (_sessionKey != Guid.Empty) throw new InvalidOperationException("The session has already been registered.");
+                    _sessionKey = Guid.NewGuid();
 
-                OnSessionRegistrationStartedEvent(new SessionRegistrationStartedEventArgs(request));
+                    request = new SessionRequest
+                    {
+                        SessionKey = _sessionKey,
+                        ProjectApiKey = projectApiKey,
+                        ClientStartTime = DateTime.UtcNow,
+                        Environment = _configuration.Session != null ? _configuration.Session.Environment : string.Empty,
+                        Application = _applicationHelper.GetApplicationData(),
+                        Machine = _machineHelper.GetMachineData(),
+                        User = _userHelper.GetUser(),
+                    };
 
-                response = await _webApiClient.CreateAsync<SessionRequest, SessionResponse>("Client/Session", request);
-            }
-            catch (Exception exception)
-            {
-                _sessionKey = Guid.Empty;
-                result.SetException(exception);
+                    OnSessionRegistrationStartedEvent(new SessionRegistrationStartedEventArgs(request));
 
-                if (doThrow)
-                    throw;
-            }
-            finally
-            {
-                result.SetCompleted(response);
-                OnSessionRegistrationCompletedEvent(new SessionRegistrationCompletedEventArgs(request, result));
-            }
+                    response = await _webApiClient.CreateAsync<SessionRequest, SessionResponse>("Client/Session", request);
+                }
+                catch (Exception exception)
+                {
+                    _sessionKey = Guid.Empty;
+                    result.SetException(exception);
 
-            return result;
+                    if (doThrow)
+                        throw;
+                }
+                finally
+                {
+                    result.SetCompleted(response);
+                    OnSessionRegistrationCompletedEvent(new SessionRegistrationCompletedEventArgs(request, result));
+                }
+
+                return result;
+
+            });
+            return sessionResult;
         }
 
         public async Task<IEnumerable<SessionRequest>> GetListAsync()

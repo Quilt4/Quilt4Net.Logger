@@ -1,22 +1,18 @@
 using System.Threading.Tasks;
+using Quilt4Net.Core.Interfaces;
 using Tharga.Toolkit.Console.Command.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Issue
 {
     internal class RegisterIssueCommand : ActionCommandBase
     {
-        private readonly Client _client;
+        private readonly IClient _client;
 
-        public RegisterIssueCommand(Client client)
+        public RegisterIssueCommand(IClient client)
             : base("Register", "Register issue")
         {
             _client = client;
         }
-
-        //public override bool CanExecute()
-        //{
-        //    return !_client.Session.IsRegistered;
-        //}
 
         public override async Task<bool> InvokeAsync(string paramList)
         {

@@ -17,11 +17,15 @@ namespace Quilt4Net
         {
             get
             {
-                //TODO: Use locking here
-
                 if (_instance == null)
                 {
-                    _instance = new Configuration();
+                    lock (SyncRoot)
+                    {
+                        if (_instance == null)
+                        {
+                            _instance = new Configuration();
+                        }
+                    }
                 }
 
                 return _instance;

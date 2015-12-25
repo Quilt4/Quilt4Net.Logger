@@ -6,7 +6,7 @@ using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core
 {
-    public class Project
+    public class Project : IProject
     {
         private readonly IWebApiClient _webApiClient;
         private readonly string _controller = "Client/Project";

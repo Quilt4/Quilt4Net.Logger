@@ -80,8 +80,6 @@ namespace Quilt4Net.Core
 
         private async Task<IssueResult> RegisterEx(bool doThrow, IssueRequest request)
         {
-            //TODO: Use a Mutex here
-
             var result = new IssueResult();
             IssueResponse response = null;
 

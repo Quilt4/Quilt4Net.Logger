@@ -16,27 +16,20 @@ namespace Quilt4Net.Sample.Console
 
         static void Main(string[] args)
         {
-            //Quilt4Net.Session.Instance.SessionRegisteredEvent += Instance_SessionRegisteredEvent;
-
             _console = new ClientConsole();
-
-            //var port = 29660;
-            //var address = new Uri($"http://localhost:{port}/");
-            //var client = new Client(new WebApiClient(address, new TimeSpan(0, 0, 0, 30)));
-            //var configuration = new Configuration();
-            //var client = new Client(Configuration.Instance);
 
             Configuration.Instance.ProjectApiKey = "BL2VV8LVF0C9GWRTX6CS03R7IK1PYT7E";
             Configuration.Instance.Target.Location = "http://localhost:29660";
             Configuration.Instance.Session.Environment = "Manual Test";
             var client = Client.Instance;
+            
+            //Session.Instance.Register()
+            //Issue.Instance.Register()
 
             client.Session.SessionRegistrationStartedEvent += Session_SessionRegistrationStartedEvent;
             client.Session.SessionRegistrationCompletedEvent += SessionSessionRegistrationCompletedEvent;
             client.Issue.IssueRegistrationStartedEvent += Issue_IssueRegistrationStartedEvent;
             client.Issue.IssueRegistrationCompletedEvent += Issue_IssueRegistrationCompletedEvent;
-
-            //_console.WriteLine("Using serer " + address, OutputLevel.Information, null);
 
             var rootCommand = new RootCommand(_console);
             rootCommand.RegisterCommand(new UserCommands(client));

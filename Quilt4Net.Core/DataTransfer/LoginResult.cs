@@ -1,6 +1,8 @@
+using Quilt4Net.Core.Interfaces;
+
 namespace Quilt4Net.Core.DataTransfer
 {
-    public class LoginResult
+    public class LoginResult : ILoginResult
     {
         private LoginResult()
         {

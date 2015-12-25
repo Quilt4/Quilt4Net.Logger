@@ -1,14 +1,15 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Quilt4Net.Core.Interfaces;
 using Tharga.Toolkit.Console.Command.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Project
 {
     internal class ListProjectsCommand : ActionCommandBase
     {
-        private readonly Client _client;
+        private readonly IClient _client;
 
-        public ListProjectsCommand(Client client)
+        public ListProjectsCommand(IClient client)
             : base("List", "List projects")
         {
             _client = client;

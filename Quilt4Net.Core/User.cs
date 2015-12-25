@@ -4,7 +4,7 @@ using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core
 {
-    public class User
+    public class User : IUser
     {
         private readonly IWebApiClient _webApiClient;
 
@@ -20,7 +20,7 @@ namespace Quilt4Net.Core
             await _webApiClient.ExecuteCommandAsync("Account", "Register", new RegisterBindingModel { UserName = userName, Email = email, Password = password, ConfirmPassword = password });
         }
 
-        public async Task<LoginResult> LoginAsync(string username, string password)
+        public async Task<ILoginResult> LoginAsync(string username, string password)
         {
             var response = await _webApiClient.ExecuteQueryAsync<LoginData, LoginResult>("Account", "Login", new LoginData { Username = username, Password = password });
             _webApiClient.SetAuthorization(response.token_type, response.access_token);

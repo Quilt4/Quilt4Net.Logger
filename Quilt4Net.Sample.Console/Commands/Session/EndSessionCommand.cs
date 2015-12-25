@@ -1,13 +1,14 @@
 using System.Threading.Tasks;
+using Quilt4Net.Core.Interfaces;
 using Tharga.Toolkit.Console.Command.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Session
 {
     internal class EndSessionCommand : ActionCommandBase
     {
-        private readonly Client _client;
+        private readonly IClient _client;
 
-        public EndSessionCommand(Client client)
+        public EndSessionCommand(IClient client)
             : base("End", "End session.")
         {
             _client = client;
