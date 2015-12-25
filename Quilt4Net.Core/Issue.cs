@@ -78,6 +78,12 @@ namespace Quilt4Net.Core
             }
         }
 
+        public Task<IEnumerable<IssueResponse>> GetListAsync()
+        {
+            //TODO: Implement
+            throw new NotImplementedException();
+        }
+
         private async Task<IssueResult> RegisterEx(bool doThrow, IssueRequest request)
         {
             var result = new IssueResult();

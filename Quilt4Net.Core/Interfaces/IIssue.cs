@@ -16,5 +16,6 @@ namespace Quilt4Net.Core.Interfaces
         Task<IssueResult> RegisterAsync(Exception exception, Issue.ExceptionIssueLevel issueLevel = Issue.ExceptionIssueLevel.Error, string userHandle = null);
         void RegisterStart(Exception exception, Issue.ExceptionIssueLevel issueLevel = Issue.ExceptionIssueLevel.Error, string userHandle = null);
         IssueResult Register(Exception exception, Issue.ExceptionIssueLevel issueLevel = Issue.ExceptionIssueLevel.Error, string userHandle = null);
+        Task<IEnumerable<IssueResponse>> GetListAsync();
     }
 }

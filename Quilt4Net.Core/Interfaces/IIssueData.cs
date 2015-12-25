@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Quilt4Net.Core.DataTransfer;
 
 namespace Quilt4Net.Core.Interfaces
@@ -13,6 +14,5 @@ namespace Quilt4Net.Core.Interfaces
         IssueTypeData IssueType { get; }
         Guid? IssueThreadKey { get; }
         string UserHandle { get; }
-
     }
 }
