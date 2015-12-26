@@ -8,7 +8,7 @@ namespace Quilt4Net.Core
         protected abstract string GetUserName();
         protected abstract string GetUserSid();
 
-        public UserData GetUser()
+        public UserData GetDataUser()
         {
             var userName = GetUserName();
             var fingerprint = $"UI1:{$"{GetUserSid()}{userName}".ToMd5Hash()}";

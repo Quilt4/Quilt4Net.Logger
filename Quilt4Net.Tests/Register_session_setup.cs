@@ -15,7 +15,7 @@ namespace Quilt4Net.Tests
             var machineHelperMock = new Mock<IMachineHelper>(MockBehavior.Strict);
             machineHelperMock.Setup(x => x.GetMachineData()).Returns(() => new MachineData());
             var userHelperMock = new Mock<IUserHelper>(MockBehavior.Strict);
-            userHelperMock.Setup(x => x.GetUser()).Returns(() => new UserData());
+            userHelperMock.Setup(x => x.GetDataUser()).Returns(() => new UserData());
             var session = new Session(webApiClientMock.Object as IWebApiClient, configurationMock.Object as IConfiguration, applicationHelperMock.Object as IApplicationHelper, machineHelperMock.Object as IMachineHelper, userHelperMock.Object as IUserHelper);
             session.SessionRegistrationStartedEvent += (semder, e) => { sessionStartedAction?.Invoke(e); };
             session.SessionRegistrationCompletedEvent += (sender, e) => { sessionCompletedAction?.Invoke(e); };

@@ -19,7 +19,9 @@ namespace Quilt4Net.Core
         private readonly IUserHelper _userHelper;
         private Guid _sessionKey;
         private bool _ongoingSessionRegistration;
-        private AutoResetEvent _sessionRegistered = new AutoResetEvent(false);
+        private bool _ongoingSessionEnding;
+        private readonly AutoResetEvent _sessionRegistered = new AutoResetEvent(false);
+        private readonly AutoResetEvent _sessionEnded = new AutoResetEvent(false);
 
         internal Session(IWebApiClient webApiClient, IConfiguration configuration, IApplicationHelper applicationHelper, IMachineHelper machineHelper, IUserHelper userHelper)
         {
@@ -86,7 +88,7 @@ namespace Quilt4Net.Core
         public async Task EndAsync()
         {
             if (!IsRegistered) return;
-            await EndEx(await GetSessionKey());
+            await EndEx(await GetSessionKeyAsync());
         }
 
         public void End()
@@ -95,7 +97,7 @@ namespace Quilt4Net.Core
 
             try
             {
-                EndEx(GetSessionKey().Result).Wait();
+                EndEx(GetSessionKeyAsync().Result).Wait();
             }
             catch (AggregateException exception)
             {
@@ -107,8 +109,21 @@ namespace Quilt4Net.Core
         {
             var result = new EndSesionResult();
 
+            lock (_syncRoot)
+            {
+                if (_ongoingSessionEnding)
+                {
+                    _sessionEnded.WaitOne();
+                    return;
+                }
+
+                _ongoingSessionEnding = true;
+            }
+
             try
             {
+                if (_sessionKey == Guid.Empty) throw new InvalidOperationException("There is no active session.");
+
                 OnSessionEndStartedEvent(new SessionEndStartedEventArgs(sessionKey));
 
                 await _webApiClient.ExecuteCommandAsync("Client/Session", "End", sessionKey);
@@ -120,17 +135,24 @@ namespace Quilt4Net.Core
             }
             finally
             {
+                _sessionKey = Guid.Empty;
+                _ongoingSessionEnding = false;
+                _sessionEnded.Set();
                 result.SetCompleted();
                 OnSessionEndCompletedEvent(new SessionEndCompletedEventArgs(sessionKey, result));
-                _sessionKey = Guid.Empty;
             }
         }
 
-        public async Task<Guid> GetSessionKey()
+        public async Task<Guid> GetSessionKeyAsync()
         {
             if (!IsRegistered)
             {
                 var response = await RegisterEx(GetProjectApiKey(), true);
+                if (response == null)
+                {
+                    return _sessionKey;
+                }
+
                 if (_sessionKey != response.Response.SessionKey) throw new InvalidOperationException("The session key returned and stored differs.");
                 return response.Response.SessionKey;
             }
@@ -154,20 +176,20 @@ namespace Quilt4Net.Core
             SessionRequest request = null;
             SessionResponse response = null;
 
-            try
+            lock (_syncRoot)
             {
-                lock (_syncRoot)
+                if (_ongoingSessionRegistration)
                 {
-                    if (_ongoingSessionRegistration)
-                    {
-                        _sessionRegistered.WaitOne();
-                        return result;
-                    }
-
-                    if (_sessionKey != Guid.Empty) throw new InvalidOperationException("The session has already been registered.");
-                    _ongoingSessionRegistration = true;
+                    _sessionRegistered.WaitOne();
+                    return null;
                 }
 
+                _ongoingSessionRegistration = true;
+            }
+
+            try
+            {
+                if (_sessionKey != Guid.Empty) throw new InvalidOperationException("The session has already been registered.");
                 var sessionKey = Guid.NewGuid();
 
                 request = new SessionRequest
@@ -178,7 +200,7 @@ namespace Quilt4Net.Core
                     Environment = _configuration.Session != null ? _configuration.Session.Environment : string.Empty,
                     Application = _applicationHelper.GetApplicationData(),
                     Machine = _machineHelper.GetMachineData(),
-                    User = _userHelper.GetUser(),
+                    User = _userHelper.GetDataUser(),
                 };
 
                 OnSessionRegistrationStartedEvent(new SessionRegistrationStartedEventArgs(request));
