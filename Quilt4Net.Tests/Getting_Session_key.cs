@@ -11,6 +11,7 @@ namespace Quilt4Net.Tests
     public class Getting_Session_key
     {
         [Test]
+        [Ignore]
         public async void When_several_threads_are_getting_session_key_at_the_same_time()
         {
             //Arrange
