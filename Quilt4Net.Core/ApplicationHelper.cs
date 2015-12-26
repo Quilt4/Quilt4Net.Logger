@@ -23,7 +23,11 @@ namespace Quilt4Net.Core
 
         public virtual void SetFirstAssembly(Assembly firstAssembly)
         {
-            if (FirstAssembly != null) throw new InvalidOperationException("Cannot change first assembly once it has been set.");
+            if (FirstAssembly != null && !ReferenceEquals(FirstAssembly, firstAssembly))
+            {
+                throw new InvalidOperationException("Cannot change first assembly once it has been set.");
+            }
+
             FirstAssembly = firstAssembly;
         }
 

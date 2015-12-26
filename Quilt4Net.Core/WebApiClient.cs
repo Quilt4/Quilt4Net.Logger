@@ -10,14 +10,12 @@ namespace Quilt4Net.Core
 {
     internal class WebApiClient : IWebApiClient
     {
-        private readonly Uri _address;
-        private readonly TimeSpan _timeout;
+        private readonly IConfiguration _configuration;
         private Authorization _authorization;
 
         internal WebApiClient(IConfiguration configuration)
         {
-            _address = new Uri(configuration.Target.Location);
-            _timeout = configuration.Target.Timeout;
+            _configuration = configuration;
         }
 
         public async Task CreateAsync<T>(string controller, T data)
@@ -182,11 +180,11 @@ namespace Quilt4Net.Core
 
         private HttpClient GetHttpClient()
         {
-            var client = new HttpClient { BaseAddress = _address };
+            var client = new HttpClient { BaseAddress = new Uri(_configuration.Target.Location) };
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.Timeout = _timeout;
+            client.Timeout = _configuration.Target.Timeout;
 
-            //This is where the hash is supposed to be calculated for the message
+            //TODO: This is where the hash is supposed to be calculated for the message, so that the server can verify that the origin is correct.
             if (_authorization != null)
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(_authorization.TokenType, _authorization.AccessToken);
