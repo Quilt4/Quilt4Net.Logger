@@ -48,6 +48,7 @@ namespace Quilt4Net.Tests
         {
             //Arrange
             var configurationMock = new Mock<IConfiguration>(MockBehavior.Strict);
+            configurationMock.SetupGet(x => x.Enabled).Returns(true);
             configurationMock.SetupGet(x => x.ProjectApiKey).Returns("ABC123");
             configurationMock.SetupGet(x => x.Session.Environment).Returns("Test");
 

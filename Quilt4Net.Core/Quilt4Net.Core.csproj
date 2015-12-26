@@ -91,7 +91,6 @@
     <Compile Include="Issue.cs" />
     <Compile Include="IssueLevelExtension.cs" />
     <Compile Include="MachineHelper.cs" />
-    <Compile Include="MyMutex.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="ProjectApiKeyNotSetException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

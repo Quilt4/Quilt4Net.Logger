@@ -172,6 +172,11 @@ namespace Quilt4Net.Core
 
         private async Task<SessionResult> RegisterEx(string projectApiKey, bool doThrow)
         {
+            if (!_configuration.Enabled)
+            {
+                return null;
+            }
+
             var result = new SessionResult();
             SessionRequest request = null;
             SessionResponse response = null;

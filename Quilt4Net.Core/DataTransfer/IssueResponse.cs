@@ -15,5 +15,6 @@ namespace Quilt4Net.Core.DataTransfer
         public string UserHandle { get; set; }
         public DateTime ServerTime { get; set; }
         public string Ticket { get; set; }
+        public string IssueUrl { get; set; }
     }
 }

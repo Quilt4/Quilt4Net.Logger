@@ -13,5 +13,6 @@ namespace Quilt4Net.Core.DataTransfer
         public ApplicationData Application { get; set; }
         public MachineData Machine { get; set; }
         public UserData User { get; set; }
+        public string SessionUrl { get; set; }
     }
 }

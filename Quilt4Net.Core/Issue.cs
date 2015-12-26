@@ -14,6 +14,7 @@ namespace Quilt4Net.Core
         private readonly Lazy<ISession> _session;
         private readonly IWebApiClient _webApiClient;
         private readonly IConfiguration _configuration;
+        private readonly List<Tuple<IssueRequest, Exception>> _issuesThatFailedToRegister = new List<Tuple<IssueRequest, Exception>>();
 
         internal Issue(Lazy<ISession> session, IWebApiClient webApiClient, IConfiguration configuration)
         {
@@ -99,8 +100,8 @@ namespace Quilt4Net.Core
             }
             catch (Exception exception)
             {
-                //TODO: Also store the issues that was not registered to the server in a list, so that they can be inspected from the client side.
                 result.SetException(exception);
+                _issuesThatFailedToRegister.Add(new Tuple<IssueRequest, Exception>(request, exception));
 
                 if (doThrow)
                     throw;
