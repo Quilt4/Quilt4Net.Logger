@@ -75,6 +75,9 @@
     <Compile Include="Commands\Project\GetProjectCommand.cs" />
     <Compile Include="Commands\Project\ListProjectsCommand.cs" />
     <Compile Include="Commands\Issue\IssueCommands.cs" />
+    <Compile Include="Commands\Service\Log\ListServiceLogCommand.cs" />
+    <Compile Include="Commands\Service\ServiceCommands.cs" />
+    <Compile Include="Commands\Service\Log\ServiceLogCommands.cs" />
     <Compile Include="Commands\Session\EndSessionCommand.cs" />
     <Compile Include="Commands\Session\ListSessionsCommand.cs" />
     <Compile Include="Commands\Session\RegisterSessionCommand.cs" />

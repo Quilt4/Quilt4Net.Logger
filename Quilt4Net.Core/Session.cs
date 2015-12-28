@@ -41,7 +41,7 @@ namespace Quilt4Net.Core
 
         public async Task<SessionResult> RegisterAsync()
         {
-            return await RegisterEx(GetProjectApiKey(), true);
+            return await RegisterEx(GetProjectApiKey());
         }
 
         public async Task<SessionResult> RegisterAsync(Assembly firstAssembly)
@@ -56,7 +56,15 @@ namespace Quilt4Net.Core
 
             Task.Run(async () =>
             {
-                await RegisterEx(projectApiKey, false);
+                try
+                {
+                    await RegisterEx(projectApiKey);
+                }
+                catch (Exception exception)
+                {
+                    //TODO: Just catch specific types here
+                    System.Diagnostics.Debug.WriteLine(exception.Message);
+                }
             });
         }
 
@@ -70,7 +78,7 @@ namespace Quilt4Net.Core
         {
             try
             {
-                var response = RegisterEx(GetProjectApiKey(), true).Result;
+                var response = RegisterEx(GetProjectApiKey()).Result;
                 return response;
             }
             catch (AggregateException exception)
@@ -120,10 +128,10 @@ namespace Quilt4Net.Core
                 _ongoingSessionEnding = true;
             }
 
+            if (_sessionKey == Guid.Empty) throw new InvalidOperationException("There is no active session.");
+
             try
             {
-                if (_sessionKey == Guid.Empty) throw new InvalidOperationException("There is no active session.");
-
                 OnSessionEndStartedEvent(new SessionEndStartedEventArgs(sessionKey));
 
                 await _webApiClient.ExecuteCommandAsync("Client/Session", "End", sessionKey);
@@ -147,7 +155,16 @@ namespace Quilt4Net.Core
         {
             if (!IsRegistered)
             {
-                var response = await RegisterEx(GetProjectApiKey(), true);
+                SessionResult response = null;
+                try
+                {
+                    response = await RegisterEx(GetProjectApiKey());
+                }
+                catch (SessionAlreadyRegisteredException)
+                {
+                    return _sessionKey;
+                }
+
                 if (response == null)
                 {
                     return _sessionKey;
@@ -170,7 +187,7 @@ namespace Quilt4Net.Core
             return projectApiKey;
         }
 
-        private async Task<SessionResult> RegisterEx(string projectApiKey, bool doThrow)
+        private async Task<SessionResult> RegisterEx(string projectApiKey)
         {
             if (!_configuration.Enabled)
             {
@@ -192,9 +209,10 @@ namespace Quilt4Net.Core
                 _ongoingSessionRegistration = true;
             }
 
+            if (_sessionKey != Guid.Empty) throw new SessionAlreadyRegisteredException();
+
             try
             {
-                if (_sessionKey != Guid.Empty) throw new InvalidOperationException("The session has already been registered.");
                 var sessionKey = Guid.NewGuid();
 
                 request = new SessionRequest
@@ -216,9 +234,7 @@ namespace Quilt4Net.Core
             catch (Exception exception)
             {
                 result.SetException(exception);
-
-                if (doThrow)
-                    throw;
+                throw;
             }
             finally
             {
@@ -255,6 +271,14 @@ namespace Quilt4Net.Core
         protected virtual void OnSessionEndCompletedEvent(SessionEndCompletedEventArgs e)
         {
             SessionEndCompletedEvent?.Invoke(this, e);
+        }
+    }
+
+    internal class SessionAlreadyRegisteredException : InvalidOperationException
+    {
+        public SessionAlreadyRegisteredException()
+            : base("The session has already been registered.")
+        {
         }
     }
 }

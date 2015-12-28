@@ -1,7 +1,7 @@
-﻿using System;
-using Quilt4Net.Core.Events;
+﻿using Quilt4Net.Core.Events;
 using Quilt4Net.Sample.Console.Commands.Issue;
 using Quilt4Net.Sample.Console.Commands.Project;
+using Quilt4Net.Sample.Console.Commands.Service;
 using Quilt4Net.Sample.Console.Commands.Session;
 using Quilt4Net.Sample.Console.Commands.User;
 using Tharga.Toolkit.Console;
@@ -26,7 +26,8 @@ namespace Quilt4Net.Sample.Console
             var configuration = new Configuration();
             var client = new Client(configuration);
 
-            configuration.ProjectApiKey = "BL2VV8LVF0C9GWRTX6CS03R7IK1PYT7E";
+            configuration.ProjectApiKey = "6GT3XGE9IZD0LTWDJOJ4X83OK1BGNDK4";
+            configuration.UseBuildTime = true;
             configuration.Target.Location = "http://localhost:29660";
             configuration.Session.Environment = "Manual";
 
@@ -42,6 +43,7 @@ namespace Quilt4Net.Sample.Console
             _rootCommand.RegisterCommand(new ProjectCommands(client));
             _rootCommand.RegisterCommand(new SessionCommands(client));
             _rootCommand.RegisterCommand(new IssueCommands(client));
+            _rootCommand.RegisterCommand(new ServiceCommands(client));
             new CommandEngine(_rootCommand).Run(args);
 
             client.Dispose();
