@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Quilt4Net.Core.DataTransfer;
@@ -53,6 +54,11 @@ namespace Quilt4Net.Core
         public async Task<IEnumerable<UserResponse>> GetListAsync()
         {
             return await _webApiClient.ReadAsync<UserResponse>("Client/User");
+        }
+
+        public async Task InviteAsync(Guid projectKey, string user)
+        {
+            await _webApiClient.ExecuteCommandAsync("Client/User", "Invite", new InviteRequest { ProjectKey = projectKey, User = user });
         }
     }
 }

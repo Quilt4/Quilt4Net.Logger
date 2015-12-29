@@ -12,6 +12,5 @@ namespace Quilt4Net.Core.DataTransfer
         public string StackTrace { get; set; }
         public int Ticket { get; set; }
         public DateTime CreationServerTime { get; set; }
-        public DateTime LastIssueServerTime { get; set; }
     }
 }

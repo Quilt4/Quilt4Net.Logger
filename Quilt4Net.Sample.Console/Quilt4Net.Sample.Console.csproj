@@ -88,6 +88,7 @@
     <Compile Include="Commands\User\ChangeUserPasswordCommand.cs" />
     <Compile Include="Commands\User\CreateUserCommand.cs" />
     <Compile Include="Commands\User\GetUserInfoCommand.cs" />
+    <Compile Include="Commands\User\InviteUserCommand.cs" />
     <Compile Include="Commands\User\ListUsersCommand.cs" />
     <Compile Include="Commands\User\LoginUserCommand.cs" />
     <Compile Include="Commands\Project\ProjectCommands.cs" />
