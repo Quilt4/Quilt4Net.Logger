@@ -69,6 +69,8 @@
     <Compile Include="..\Build\AssemblyVersionInfo.cs">
       <Link>Properties\AssemblyVersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Commands\Issue\Type\ListIssueTypesCommand.cs" />
+    <Compile Include="Commands\Issue\Type\IssueTypeCommands.cs" />
     <Compile Include="Commands\Issue\RegisterIssueCommand.cs" />
     <Compile Include="Commands\Project\CreateProjectCommand.cs" />
     <Compile Include="Commands\Project\DeleteProjectCommand.cs" />
@@ -83,10 +85,15 @@
     <Compile Include="Commands\Session\RegisterSessionCommand.cs" />
     <Compile Include="Commands\Session\SessionCommands.cs" />
     <Compile Include="Commands\Project\UpdateProjectCommand.cs" />
+    <Compile Include="Commands\User\ChangeUserPasswordCommand.cs" />
     <Compile Include="Commands\User\CreateUserCommand.cs" />
+    <Compile Include="Commands\User\GetUserInfoCommand.cs" />
+    <Compile Include="Commands\User\ListUsersCommand.cs" />
     <Compile Include="Commands\User\LoginUserCommand.cs" />
     <Compile Include="Commands\Project\ProjectCommands.cs" />
     <Compile Include="Commands\User\LogoutUserCommand.cs" />
+    <Compile Include="Commands\User\Role\UserRoleAddCommand.cs" />
+    <Compile Include="Commands\User\Role\UserRoleCommands.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Commands\User\UserCommands.cs" />
@@ -105,6 +112,7 @@
       <Name>Quilt4Net</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

@@ -8,6 +8,8 @@ namespace Quilt4Net.Core.Interfaces
         ISession Session { get; }
         IUser User { get; }
         IProject Project { get; }
+        IApplication Application { get; }
+        IVersion Version { get; }
         IService Service { get; }
     }
 }

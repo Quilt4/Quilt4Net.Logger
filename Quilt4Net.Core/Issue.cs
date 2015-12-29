@@ -79,10 +79,9 @@ namespace Quilt4Net.Core
             }
         }
 
-        public Task<IEnumerable<IssueResponse>> GetListAsync()
+        public async Task<IEnumerable<IssueTypeResponse>> GetIssueTypesAsync(Guid versionKey)
         {
-            //TODO: Implement
-            throw new NotImplementedException();
+            return await _webApiClient.ExecuteQueryAsync<Guid, IEnumerable<IssueTypeResponse>>("Client/IssueType", "QueryByVersionKey", versionKey);
         }
 
         private async Task<IssueResult> RegisterEx(bool doThrow, IssueRequest request)

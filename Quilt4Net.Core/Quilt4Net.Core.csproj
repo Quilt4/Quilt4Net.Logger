@@ -46,10 +46,13 @@
     <Compile Include="..\Build\AssemblyVersionInfo.cs">
       <Link>Properties\AssemblyVersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Action.cs" />
+    <Compile Include="Application.cs" />
     <Compile Include="ApplicationHelper.cs" />
     <Compile Include="Authorization.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="DataTransfer\ApplicationData.cs" />
+    <Compile Include="DataTransfer\ApplicationResponse.cs" />
     <Compile Include="DataTransfer\IssueResponse.cs" />
     <Compile Include="DataTransfer\ProjectResponse.cs" />
     <Compile Include="DataTransfer\RegisterBindingModel.cs" />
@@ -66,6 +69,8 @@
     <Compile Include="DataTransfer\SessionResponse.cs" />
     <Compile Include="DataTransfer\SessionResult.cs" />
     <Compile Include="DataTransfer\UserData.cs" />
+    <Compile Include="DataTransfer\UserResponse.cs" />
+    <Compile Include="DataTransfer\VersionResponse.cs" />
     <Compile Include="Events\IssueRegistrationCompletedEventArgs.cs" />
     <Compile Include="Events\IssueRegistrationStartedEventArgs.cs" />
     <Compile Include="Events\SessionEndCompletedEventArgs.cs" />
@@ -75,6 +80,8 @@
     <Compile Include="ExceptionExtensions.cs" />
     <Compile Include="ExpectedIssues.cs" />
     <Compile Include="HelperExtension.cs" />
+    <Compile Include="Interfaces\IAction.cs" />
+    <Compile Include="Interfaces\IApplication.cs" />
     <Compile Include="Interfaces\IApplicationHelper.cs" />
     <Compile Include="Interfaces\IClient.cs" />
     <Compile Include="Interfaces\IConfiguration.cs" />
@@ -91,6 +98,7 @@
     <Compile Include="Interfaces\ITargetConfiguration.cs" />
     <Compile Include="Interfaces\IUser.cs" />
     <Compile Include="Interfaces\IUserHelper.cs" />
+    <Compile Include="Interfaces\IVersion.cs" />
     <Compile Include="Interfaces\IWebApiClient.cs" />
     <Compile Include="Issue.cs" />
     <Compile Include="IssueLevelExtension.cs" />
@@ -105,6 +113,8 @@
     <Compile Include="TargetConfiguration.cs" />
     <Compile Include="User.cs" />
     <Compile Include="UserHelper.cs" />
+    <Compile Include="DataTransfer\UserInfoViewModel.cs" />
+    <Compile Include="Version.cs" />
     <Compile Include="WebApiClient.cs" />
   </ItemGroup>
   <ItemGroup>

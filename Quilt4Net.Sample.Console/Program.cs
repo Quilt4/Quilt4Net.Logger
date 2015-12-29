@@ -26,7 +26,7 @@ namespace Quilt4Net.Sample.Console
             var configuration = new Configuration();
             var client = new Client(configuration);
 
-            configuration.ProjectApiKey = "6GT3XGE9IZD0LTWDJOJ4X83OK1BGNDK4";
+            configuration.ProjectApiKey = "C9DTTXV7T0ELMBKAGSO26LFIGMUOEBMX";
             configuration.UseBuildTime = true;
             configuration.Target.Location = "http://localhost:29660";
             configuration.Session.Environment = "Manual";
@@ -37,6 +37,7 @@ namespace Quilt4Net.Sample.Console
             client.Session.SessionEndCompletedEvent += Session_SessionEndCompletedEvent;
             client.Issue.IssueRegistrationStartedEvent += Issue_IssueRegistrationStartedEvent;
             client.Issue.IssueRegistrationCompletedEvent += Issue_IssueRegistrationCompletedEvent;
+            client.WebApiClient.AuthorizationChangedEvent += WebApiClient_AuthorizationChangedEvent;
 
             _rootCommand = new RootCommand(console);
             _rootCommand.RegisterCommand(new UserCommands(client));
@@ -80,6 +81,11 @@ namespace Quilt4Net.Sample.Console
         {
             var message = $"Issue {e.Result.ErrorMessage ?? "registered in"} {e.Result.Elapsed.TotalMilliseconds.ToString("0")}ms.";
             _rootCommand.OutputEvent(message);
+        }
+
+        private static void WebApiClient_AuthorizationChangedEvent(object sender, AuthorizationChangedEventArgs e)
+        {
+            _rootCommand.OutputEvent($"Authorization changed to {(e.IsAuthorized ? "authorized" : "unauthorized")}.");
         }
     }
 }

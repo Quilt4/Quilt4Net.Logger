@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Quilt4Net.Core.Events;
 
 namespace Quilt4Net.Core.Interfaces
 {
@@ -8,8 +10,8 @@ namespace Quilt4Net.Core.Interfaces
         //CRUD style operations
         Task CreateAsync<T>(string controller, T data);
         Task<TResult> CreateAsync<T, TResult>(string controller, T data);
-        Task<IEnumerable<TResult>> ReadAsync<TResult>(string controller);
         Task<TResult> ReadAsync<TResult>(string controller, string id);
+        Task<IEnumerable<TResult>> ReadAsync<TResult>(string controller);
         Task UpdateAsync<T>(string controller, string id, T data);
         Task DeleteAsync(string controller, string id);
 
@@ -18,6 +20,7 @@ namespace Quilt4Net.Core.Interfaces
         Task<TResult> ExecuteQueryAsync<T, TResult>(string controller, string action, T data);
 
         //Authorization
+        event EventHandler<AuthorizationChangedEventArgs> AuthorizationChangedEvent;
         void SetAuthorization(string tokenType, string accessToken);
         bool IsAuthorized { get; }
     }

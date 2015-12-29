@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Interfaces;
@@ -29,7 +30,29 @@ namespace Quilt4Net.Core
 
         public async Task LogoutAsync()
         {
-            await Task.Run(() => _webApiClient.SetAuthorization(null, null));
+            await _webApiClient.ExecuteCommandAsync<string>("Account", "Logout", null);
+            _webApiClient.SetAuthorization(null, null);
+        }
+
+        public async Task<UserInfoViewModel> GetUserInfoAsync()
+        {
+            var response = await _webApiClient.ReadAsync<UserInfoViewModel>("Account", "UserInfo");
+            return response;
+        }
+
+        public async Task ChangePassword(string oldPassword, string newPassword, string confirmPassword)
+        {
+            await _webApiClient.ExecuteCommandAsync("Account", "ChangePassword", new ChangePasswordBindingModel { OldPassword = oldPassword, NewPassword = newPassword, ConfirmPassword = confirmPassword });
+        }
+
+        public async Task AddRoleAsync(string userName, string role)
+        {
+            await _webApiClient.ExecuteCommandAsync("Account", "Role/Assign", new AddRoleModel { UserName = userName, Role = role });
+        }
+
+        public async Task<IEnumerable<UserResponse>> GetListAsync()
+        {
+            return await _webApiClient.ReadAsync<UserResponse>("Client/User");
         }
     }
 }

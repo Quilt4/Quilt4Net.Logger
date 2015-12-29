@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Quilt4Net.Core.Events;
 using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core
@@ -12,6 +13,8 @@ namespace Quilt4Net.Core
     {
         private readonly IConfiguration _configuration;
         private Authorization _authorization;
+
+        public event EventHandler<AuthorizationChangedEventArgs> AuthorizationChangedEvent;
 
         internal WebApiClient(IConfiguration configuration)
         {
@@ -56,23 +59,6 @@ namespace Quilt4Net.Core
             return result;
         }
 
-        public async Task<IEnumerable<TResult>> ReadAsync<TResult>(string controller)
-        {
-            string requestUri = $"api/{controller}";
-
-            var result = await Execute(async client =>
-                {
-                    var response = await client.GetAsync(requestUri);
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        throw new InvalidOperationException(response.ToString());
-                    }
-
-                    return response.Content.ReadAsAsync<IEnumerable<TResult>>().Result;
-                });
-            return result;
-        }
-
         public async Task<TResult> ReadAsync<TResult>(string controller, string id)
         {
             string requestUri = $"api/{controller}/{id}";
@@ -87,6 +73,23 @@ namespace Quilt4Net.Core
 
                     return response.Content.ReadAsAsync<TResult>().Result;
                 });
+            return result;
+        }
+
+        public async Task<IEnumerable<TResult>> ReadAsync<TResult>(string controller)
+        {
+            string requestUri = $"api/{controller}";
+
+            var result = await Execute(async client =>
+            {
+                var response = await client.GetAsync(requestUri);
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new InvalidOperationException(response.ToString());
+                }
+
+                return response.Content.ReadAsAsync<IEnumerable<TResult>>().Result;
+            });
             return result;
         }
 
@@ -157,6 +160,7 @@ namespace Quilt4Net.Core
         public void SetAuthorization(string tokenType, string accessToken)
         {
             _authorization = string.IsNullOrEmpty(accessToken) ? null : new Authorization(tokenType, accessToken);
+            OnAuthorizationChangedEvent(new AuthorizationChangedEventArgs(_authorization));
         }
 
         public bool IsAuthorized => _authorization != null;
@@ -191,6 +195,11 @@ namespace Quilt4Net.Core
             }
 
             return client;
+        }
+
+        protected virtual void OnAuthorizationChangedEvent(AuthorizationChangedEventArgs e)
+        {
+            AuthorizationChangedEvent?.Invoke(this, e);
         }
     }
 }

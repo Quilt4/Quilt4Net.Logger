@@ -75,7 +75,7 @@ namespace Quilt4Net
         protected override string GetApplicationVersion()
         {
             var assemblyVersion = GetFirstAssembly().GetName().Version;
-            var clickOnceVersion = (Version)null;
+            var clickOnceVersion = (System.Version)null;
             if (IsClickOnce)
             {
                 clickOnceVersion = ApplicationDeployment.CurrentDeployment.CurrentVersion;
