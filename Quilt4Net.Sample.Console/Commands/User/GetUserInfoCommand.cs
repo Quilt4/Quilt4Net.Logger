@@ -16,12 +16,12 @@ namespace Quilt4Net.Sample.Console.Commands.User
 
         public override bool CanExecute()
         {
-            return _client.User.IsAuthorized;
+            return _client.Action.User.IsAuthorized;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            var response = await _client.User.GetUserInfoAsync();
+            var response = await _client.Action.User.GetUserInfoAsync();
             OutputInformation("{0}",response.Email);
             return true;
         }

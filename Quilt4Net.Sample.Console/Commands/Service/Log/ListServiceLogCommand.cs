@@ -16,12 +16,12 @@ namespace Quilt4Net.Sample.Console.Commands.Service.Log
 
         public override bool CanExecute()
         {
-            return _client.User.IsAuthorized;
+            return _client.Action.User.IsAuthorized;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            var response = await _client.Service.Log.GetListAsync();
+            var response = await _client.Action.Service.Log.GetListAsync();
             foreach (var item in response)
             {
                 OutputInformation(item.Message.Substring(0, 10));

@@ -17,7 +17,7 @@ namespace Quilt4Net.Sample.Console.Commands.Session
 
         public override bool CanExecute()
         {
-            return _client.User.IsAuthorized;
+            return _client.Action.User.IsAuthorized;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)

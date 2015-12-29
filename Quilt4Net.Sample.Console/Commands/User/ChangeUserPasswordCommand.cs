@@ -21,7 +21,7 @@ namespace Quilt4Net.Sample.Console.Commands.User
             var newPassword = QueryParam<string>("New Password", GetParam(paramList, index++));
             var confirmPassword = QueryParam<string>("Confirm Password", GetParam(paramList, index++));
 
-            await _client.User.ChangePassword(oldPassword, newPassword, confirmPassword);
+            await _client.Action.User.ChangePassword(oldPassword, newPassword, confirmPassword);
 
             return true;
         }

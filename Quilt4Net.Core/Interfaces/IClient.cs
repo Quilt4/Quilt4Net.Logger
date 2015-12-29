@@ -6,10 +6,6 @@ namespace Quilt4Net.Core.Interfaces
     {
         IIssue Issue { get; }
         ISession Session { get; }
-        IUser User { get; }
-        IProject Project { get; }
-        IApplication Application { get; }
-        IVersion Version { get; }
-        IService Service { get; }
+        IAction Action { get; }
     }
 }

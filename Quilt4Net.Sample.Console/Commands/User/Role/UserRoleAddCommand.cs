@@ -20,7 +20,7 @@ namespace Quilt4Net.Sample.Console.Commands.User.Role
             var username = QueryParam<string>("UserName", GetParam(paramList, index++));
             var roleName = QueryParam<string>("RoleName", GetParam(paramList, index++));
 
-            await _client.User.AddRoleAsync(username, roleName);
+            await _client.Action.User.AddRoleAsync(username, roleName);
             return true;
         }
     }

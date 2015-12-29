@@ -17,16 +17,16 @@ namespace Quilt4Net.Sample.Console.Commands.Project
 
         public override bool CanExecute()
         {
-            return _client.User.IsAuthorized;
+            return _client.Action.User.IsAuthorized;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
             var index = 0;
-            var projectKey = QueryParam("Project", GetParam(paramList, index++), (await _client.Project.GetListAsync()).ToDictionary(x => x.ProjectKey, x => x.Name));
+            var projectKey = QueryParam("Project", GetParam(paramList, index++), (await _client.Action.Project.GetListAsync()).ToDictionary(x => x.ProjectKey, x => x.Name));
             var projectName = QueryParam<string>("Name", GetParam(paramList, index++) );
             var dashboardColor = QueryParam<string>("Color", GetParam(paramList, index++));
-            await _client.Project.UpdateAsync(projectKey, projectName, dashboardColor);
+            await _client.Action.Project.UpdateAsync(projectKey, projectName, dashboardColor);
             return true;
         }
     }

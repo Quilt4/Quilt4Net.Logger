@@ -17,14 +17,14 @@ namespace Quilt4Net.Sample.Console.Commands.Project
 
         public override bool CanExecute()
         {
-            return _client.User.IsAuthorized;
+            return _client.Action.User.IsAuthorized;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
             var index = 0;
-            var projectKey = QueryParam("Project", GetParam(paramList, index++), (await _client.Project.GetListAsync()).ToDictionary(x => x.ProjectKey,x => x.Name));
-            await _client.Project.DeleteAsync(projectKey);
+            var projectKey = QueryParam("Project", GetParam(paramList, index++), (await _client.Action.Project.GetListAsync()).ToDictionary(x => x.ProjectKey,x => x.Name));
+            await _client.Action.Project.DeleteAsync(projectKey);
             return true;
         }
     }

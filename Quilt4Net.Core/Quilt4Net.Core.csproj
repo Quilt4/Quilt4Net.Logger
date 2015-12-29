@@ -51,9 +51,12 @@
     <Compile Include="ApplicationHelper.cs" />
     <Compile Include="Authorization.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="DataTransfer\AddRoleModel.cs" />
     <Compile Include="DataTransfer\ApplicationData.cs" />
     <Compile Include="DataTransfer\ApplicationResponse.cs" />
+    <Compile Include="DataTransfer\ChangePasswordBindingModel.cs" />
     <Compile Include="DataTransfer\IssueResponse.cs" />
+    <Compile Include="DataTransfer\IssueTypeResponse.cs" />
     <Compile Include="DataTransfer\ProjectResponse.cs" />
     <Compile Include="DataTransfer\RegisterBindingModel.cs" />
     <Compile Include="DataTransfer\IssueLevel.cs" />
@@ -71,6 +74,7 @@
     <Compile Include="DataTransfer\UserData.cs" />
     <Compile Include="DataTransfer\UserResponse.cs" />
     <Compile Include="DataTransfer\VersionResponse.cs" />
+    <Compile Include="Events\AuthorizationChangedEventArgs.cs" />
     <Compile Include="Events\IssueRegistrationCompletedEventArgs.cs" />
     <Compile Include="Events\IssueRegistrationStartedEventArgs.cs" />
     <Compile Include="Events\SessionEndCompletedEventArgs.cs" />

@@ -16,7 +16,7 @@ namespace Quilt4Net.Sample.Console.Commands.User
 
         public override bool CanExecute()
         {
-            return !_client.User.IsAuthorized;
+            return !_client.Action.User.IsAuthorized;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)
@@ -24,7 +24,7 @@ namespace Quilt4Net.Sample.Console.Commands.User
             var index = 0;
             var username = QueryParam<string>("UserName", GetParam(paramList, index++));
             var password = QueryParam<string>("Password", GetParam(paramList, index++));
-            await _client.User.LoginAsync(username, password);
+            await _client.Action.User.LoginAsync(username, password);
             return true;
         }
     }

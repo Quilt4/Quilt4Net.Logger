@@ -18,7 +18,7 @@ namespace Quilt4Net.Sample.Console.Commands.User
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            var response = await _client.User.GetListAsync();
+            var response = await _client.Action.User.GetListAsync();
 
             var data = new List<string[]> { new [] { "UserName", "EMail" } };
             data.AddRange(response.Select(x => new [] { x.UserName, x.EMail }));
