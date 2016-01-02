@@ -15,7 +15,7 @@ namespace Quilt4Net.Sample.Console.Commands.User
             RegisterCommand(new GetUserInfoCommand(client));
             RegisterCommand(new ChangeUserPasswordCommand(client));
             RegisterCommand(new ListUsersCommand(client));
-            RegisterCommand(new InviteUserCommand(client));
+            RegisterCommand(new SearchUsersCommand(client));
             RegisterCommand(new UserRoleCommands(client));
         }
     }

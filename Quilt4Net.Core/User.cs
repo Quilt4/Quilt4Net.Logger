@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Quilt4Net.Core.DataTransfer;
@@ -56,9 +55,9 @@ namespace Quilt4Net.Core
             return await _webApiClient.ReadAsync<UserResponse>("Client/User");
         }
 
-        public async Task InviteAsync(Guid projectKey, string user)
+        public async Task<IEnumerable<QueryUserResponse>> SearchAsync(string searchString)
         {
-            await _webApiClient.ExecuteCommandAsync("Client/User", "Invite", new InviteRequest { ProjectKey = projectKey, User = user });
+            return await _webApiClient.ExecuteQueryAsync<QueryUserRequest, IEnumerable<QueryUserResponse>>("Client/User", "QueryUser", new QueryUserRequest { SearchString = searchString });
         }
     }
 }

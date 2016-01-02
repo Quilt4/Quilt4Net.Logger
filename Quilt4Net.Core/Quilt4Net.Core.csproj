@@ -58,7 +58,10 @@
     <Compile Include="DataTransfer\InviteRequest.cs" />
     <Compile Include="DataTransfer\IssueResponse.cs" />
     <Compile Include="DataTransfer\IssueTypeResponse.cs" />
+    <Compile Include="DataTransfer\MemberResponse.cs" />
     <Compile Include="DataTransfer\ProjectResponse.cs" />
+    <Compile Include="DataTransfer\QueryUserRequest.cs" />
+    <Compile Include="DataTransfer\QueryUserResponse.cs" />
     <Compile Include="DataTransfer\RegisterBindingModel.cs" />
     <Compile Include="DataTransfer\IssueLevel.cs" />
     <Compile Include="DataTransfer\IssueRequest.cs" />
@@ -90,6 +93,7 @@
     <Compile Include="Interfaces\IApplicationHelper.cs" />
     <Compile Include="Interfaces\IClient.cs" />
     <Compile Include="Interfaces\IConfiguration.cs" />
+    <Compile Include="Interfaces\IInvitation.cs" />
     <Compile Include="Interfaces\IIssue.cs" />
     <Compile Include="Interfaces\IIssueData.cs" />
     <Compile Include="Interfaces\ILog.cs" />
@@ -105,6 +109,7 @@
     <Compile Include="Interfaces\IUserHelper.cs" />
     <Compile Include="Interfaces\IVersion.cs" />
     <Compile Include="Interfaces\IWebApiClient.cs" />
+    <Compile Include="Invitation.cs" />
     <Compile Include="Issue.cs" />
     <Compile Include="IssueLevelExtension.cs" />
     <Compile Include="Log.cs" />
@@ -114,6 +119,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service.cs" />
     <Compile Include="Session.cs" />
+    <Compile Include="SessionAlreadyRegisteredException.cs" />
     <Compile Include="SessionConfiguration.cs" />
     <Compile Include="TargetConfiguration.cs" />
     <Compile Include="User.cs" />

@@ -12,5 +12,6 @@ namespace Quilt4Net.Core.Interfaces
         Task<ProjectResponse> GetAsync(Guid projectKey);
         Task UpdateAsync(Guid projectKey, string projectName, string dashboardColor);
         Task DeleteAsync(Guid projectKey);
+        Task<IEnumerable<MemberResponse>> GetMembersAsync(Guid projectKey);
     }
 }

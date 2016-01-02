@@ -1,4 +1,5 @@
 ﻿using Quilt4Net.Core.Events;
+using Quilt4Net.Sample.Console.Commands.Invitation;
 using Quilt4Net.Sample.Console.Commands.Issue;
 using Quilt4Net.Sample.Console.Commands.Project;
 using Quilt4Net.Sample.Console.Commands.Service;
@@ -42,6 +43,7 @@ namespace Quilt4Net.Sample.Console
             _rootCommand = new RootCommand(console);
             _rootCommand.RegisterCommand(new UserCommands(client));
             _rootCommand.RegisterCommand(new ProjectCommands(client));
+            _rootCommand.RegisterCommand(new InvitationCommands(client));
             _rootCommand.RegisterCommand(new SessionCommands(client));
             _rootCommand.RegisterCommand(new IssueCommands(client));
             _rootCommand.RegisterCommand(new ServiceCommands(client));

@@ -13,6 +13,7 @@ namespace Quilt4Net.Sample.Console.Commands.Project
             RegisterCommand(new GetProjectCommand(client));
             RegisterCommand(new UpdateProjectCommand(client));
             RegisterCommand(new DeleteProjectCommand(client));
+            RegisterCommand(new ListMemberProjectsCommand(client));
         }
     }
 }

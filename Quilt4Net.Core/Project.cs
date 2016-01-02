@@ -44,5 +44,11 @@ namespace Quilt4Net.Core
         {
             await _webApiClient.DeleteAsync(_controller, projectKey.ToString());
         }
+
+        public async Task<IEnumerable<MemberResponse>> GetMembersAsync(Guid projectKey)
+        {
+            var response = await _webApiClient.ExecuteQueryAsync<Guid, IEnumerable<MemberResponse>>(_controller, "ProjectMemberQuery", projectKey);
+            return response;
+        }
     }
 }
