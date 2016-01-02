@@ -9,15 +9,20 @@ namespace Quilt4Net.Sample.Console.Commands.Invitation
         private readonly IClient _client;
 
         public ListUserInvitationsCommand(IClient client)
-            : base("Invitations", "List")
+            : base("List", "List the users invitations")
         {
             _client = client;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            //TODO: List all invitations for current user
-            throw new System.NotImplementedException();
+            var result = await _client.Action.Invitation.GetListAsync();
+            foreach (var item in result)
+            {
+                OutputInformation("{0}\t{1}", item.ProjectName, item.InviteCode);
+            }
+
+            return true;
         }
     }
 }

@@ -55,6 +55,7 @@
     <Compile Include="DataTransfer\ApplicationData.cs" />
     <Compile Include="DataTransfer\ApplicationResponse.cs" />
     <Compile Include="DataTransfer\ChangePasswordBindingModel.cs" />
+    <Compile Include="DataTransfer\InvitationResponse.cs" />
     <Compile Include="DataTransfer\InviteRequest.cs" />
     <Compile Include="DataTransfer\IssueResponse.cs" />
     <Compile Include="DataTransfer\IssueTypeResponse.cs" />
