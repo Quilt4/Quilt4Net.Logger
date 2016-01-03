@@ -22,7 +22,7 @@ namespace Quilt4Net.Sample.Console.Commands.Project
             var members = await _client.Action.Project.GetMembersAsync(projectKey);
             foreach (var member in members)
             {
-                OutputInformation("{0}\t{1}\t{2}", member.UserName, member.EMail, member.Confirmed);
+                OutputInformation("{0}\t{1}\t{2}\t{3}", member.UserName, member.EMail, member.Confirmed, member.Role);
             }
 
             return true;
