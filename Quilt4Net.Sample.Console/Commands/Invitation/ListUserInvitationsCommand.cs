@@ -19,7 +19,7 @@ namespace Quilt4Net.Sample.Console.Commands.Invitation
             var result = await _client.Action.Invitation.GetListAsync();
             foreach (var item in result)
             {
-                OutputInformation("{0}\t{1}", item.ProjectName, item.InviteCode);
+                OutputInformation("{0}\t{1}\t{2}\t{3}", item.ProjectName, item.InviteCode, item.InvitedByUserName, item.UserName ?? item.UserEMail);
             }
 
             return true;

@@ -11,6 +11,7 @@ namespace Quilt4Net.Core
         private readonly Lazy<IInvitation> _invitation;
         private readonly Lazy<IApplication> _application;
         private readonly Lazy<IVersion> _version;
+        private readonly Lazy<IServerSetting> _serverSetting;
         private readonly Lazy<IService> _service;
 
         public Action(IWebApiClient webApiClient)
@@ -22,6 +23,7 @@ namespace Quilt4Net.Core
             _invitation = new Lazy<IInvitation>(() => new Invitation(_webApiClient));
             _application = new Lazy<IApplication>(() => new Application(_webApiClient));
             _version = new Lazy<IVersion>(() => new Core.Version(_webApiClient));
+            _serverSetting = new Lazy<IServerSetting>(() => new Core.ServerSetting(_webApiClient));
             _service = new Lazy<IService>(() => new Service(_webApiClient));
         }
 
@@ -31,5 +33,6 @@ namespace Quilt4Net.Core
         public IInvitation Invitation => _invitation.Value;
         public IApplication Application => _application.Value;
         public IVersion Version => _version.Value;
+        public IServerSetting ServerSetting => _serverSetting.Value;
     }
 }

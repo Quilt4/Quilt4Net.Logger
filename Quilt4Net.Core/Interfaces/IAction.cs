@@ -8,5 +8,6 @@ namespace Quilt4Net.Core.Interfaces
         IInvitation Invitation { get; }
         IApplication Application { get; }
         IVersion Version { get; }
+        IServerSetting ServerSetting { get; }
     }
 }
