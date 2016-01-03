@@ -69,6 +69,7 @@
     <Compile Include="..\Build\AssemblyVersionInfo.cs">
       <Link>Properties\AssemblyVersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Commands\Invitation\AcceptInvitationCommand.cs" />
     <Compile Include="Commands\Invitation\CreateInvitationCommand.cs" />
     <Compile Include="Commands\Invitation\InvitationCommands.cs" />
     <Compile Include="Commands\Invitation\ListUserInvitationsCommand.cs" />

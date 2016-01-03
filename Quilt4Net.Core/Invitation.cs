@@ -26,5 +26,10 @@ namespace Quilt4Net.Core
             var result = await _webApiClient.ExecuteQueryAsync<string, IEnumerable<InvitationResponse>>(_controller, "UserInvitationQuery", null);
             return result;
         }
+
+        public async Task Accept(string inviteCode)
+        {
+            await _webApiClient.ExecuteCommandAsync(_controller, "AcceptCommand", new InviteAcceptRequest { InviteCode = inviteCode });
+        }
     }
 }

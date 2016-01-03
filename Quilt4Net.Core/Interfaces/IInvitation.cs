@@ -9,5 +9,6 @@ namespace Quilt4Net.Core.Interfaces
     {
         Task CreateAsync(Guid projectKey, string user);
         Task<IEnumerable<InvitationResponse>> GetListAsync();
+        Task Accept(string inviteCode);
     }
 }

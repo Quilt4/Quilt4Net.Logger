@@ -9,6 +9,7 @@ namespace Quilt4Net.Sample.Console.Commands.Invitation
         {
             RegisterCommand(new CreateInvitationCommand(client));
             RegisterCommand(new ListUserInvitationsCommand(client));
+            RegisterCommand(new AcceptInvitationCommand(client));
         }
     }
 }
