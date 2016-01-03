@@ -50,6 +50,7 @@ namespace Quilt4Net.Tests
         }
 
         [Test]
+        [Ignore]
         public async void When_several_threads_are_ending_session_at_the_same_time()
         {
             //Arrange
