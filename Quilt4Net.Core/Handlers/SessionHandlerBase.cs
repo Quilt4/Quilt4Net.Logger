@@ -233,6 +233,8 @@ namespace Quilt4Net.Core.Handlers
                 OnSessionRegistrationStartedEvent(new SessionRegistrationStartedEventArgs(request));
 
                 response = await _webApiClient.CreateAsync<SessionRequest, SessionResponse>("Client/Session", request);
+
+                if (response.SessionToken == null) throw new InvalidOperationException("No session token returned from the server.");
                 _sessionToken = response.SessionToken;
             }
             catch (Exception exception)
@@ -254,7 +256,7 @@ namespace Quilt4Net.Core.Handlers
         public async Task<IEnumerable<SessionResponse>> GetListAsync()
         {
             //TODO: Implement
-            throw new NotImplementedException();
+            throw new NotImplementedException("List sessions is not yet implemented.");
         }
 
         protected virtual void OnSessionRegistrationStartedEvent(SessionRegistrationStartedEventArgs e)

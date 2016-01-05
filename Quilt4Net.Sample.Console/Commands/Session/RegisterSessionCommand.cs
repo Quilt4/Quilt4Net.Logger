@@ -25,15 +25,13 @@ namespace Quilt4Net.Sample.Console.Commands.Session
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            //var index = 0;
-            //var projectKey = QueryParam("Project", GetParam(paramList, index++), (await _client.Project.GetListAsync()).ToDictionary(x => x.ProjectKey, x => x.Name));
-            //var project = await _client.Project.GetAsync(projectKey);
-            //var environment = QueryParam<string>("Environment", GetParam(paramList, index++));
-            //OutputInformation("ProjectApiKey: {0}", project.ProjectApiKey);
-            //_client.Configuration.ProjectApiKey = project.ProjectApiKey;
-            //_client.Configuration.Session.Environment = environment;
+            if (string.IsNullOrEmpty(_client.ConfigurationHandler.ProjectApiKey))
+            {
+                var index = 0;
+                var projectApiKey = QueryParam<string>("ProjectApiKey", GetParam(paramList, index++));
+                _client.ConfigurationHandler.ProjectApiKey = projectApiKey;
+            }
 
-            //_client.Session.RegisterStart();
             var response = await _client.SessionHandler.RegisterAsync(Assembly.GetExecutingAssembly());
             if (response.IsSuccess)
                 OutputInformation("Session registration took " + response.Elapsed.TotalMilliseconds.ToString("0") + "ms.");

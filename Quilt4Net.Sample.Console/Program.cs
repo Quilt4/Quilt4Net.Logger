@@ -30,7 +30,7 @@ namespace Quilt4Net.Sample.Console
             var client = new Quilt4NetClient(configuration);
 
             //Note: Config in code
-            configuration.ProjectApiKey = "C9DTTXV7T0ELMBKAGSO26LFIGMUOEBMX";
+            //configuration.ProjectApiKey = "C9DTTXV7T0ELMBKAGSO26LFIGMUOEBMX";
             configuration.UseBuildTime = true;
             configuration.Target.Location = "http://localhost:29660";
             configuration.Session.Environment = "Manual";

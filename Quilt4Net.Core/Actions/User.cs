@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Quilt4Net.Core.DataTransfer;
@@ -16,9 +17,14 @@ namespace Quilt4Net.Core.Actions
 
         public bool IsAuthorized => _webApiClient.IsAuthorized;
 
-        public async Task CreateAsync(string userName, string email, string password)
-        {
-            await _webApiClient.ExecuteCommandAsync("Account", "Register", new RegisterBindingModel { UserName = userName, Email = email, Password = password, ConfirmPassword = password });
+        public async Task CreateAsync(string userName, string email, string firstName, string lastName, string password)
+        {            
+            if (firstName.Length < 2) throw new ArgumentException("Parameter first name must be at least 2 characters long.");
+            if (firstName.Length > 100) throw new ArgumentException("Parameter first name cannot be more than 100 characters long.");
+            if (lastName.Length < 2) throw new ArgumentException("Parameter last name must be at least 2 characters long.");
+            if (lastName.Length > 100) throw new ArgumentException("Parameter last name cannot be more than 100 characters long.");
+
+            await _webApiClient.ExecuteCommandAsync("Account", "Register", new RegisterBindingModel { UserName = userName, Email = email, FirstName = firstName, LastName = lastName, Password = password, ConfirmPassword = password });
         }
 
         public async Task<ILoginResult> LoginAsync(string username, string password)

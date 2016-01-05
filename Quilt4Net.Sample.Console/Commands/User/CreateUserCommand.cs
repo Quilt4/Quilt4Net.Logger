@@ -19,8 +19,10 @@ namespace Quilt4Net.Sample.Console.Commands.User
             var index = 0;
             var userName = QueryParam<string>("UserName", GetParam(paramList,index++));
             var email = QueryParam<string>("EMail", GetParam(paramList, index++));
+            var firstName = QueryParam<string>("First Name", GetParam(paramList, index++));
+            var lastName = QueryParam<string>("Last Name", GetParam(paramList, index++));
             var password = QueryParam<string>("Password", GetParam(paramList, index++));
-            await _client.Actions.User.CreateAsync(userName, email, password);
+            await _client.Actions.User.CreateAsync(userName, email, firstName, lastName, password);
             return true;
         }
     }
