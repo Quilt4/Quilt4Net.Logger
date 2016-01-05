@@ -1,14 +1,15 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Quilt4Net.Core.Interfaces;
 using Tharga.Toolkit.Console.Command.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Invitation
 {
     internal class AcceptInvitationCommand : ActionCommandBase
     {
-        private readonly Client _client;
+        private readonly IClient _client;
 
-        public AcceptInvitationCommand(Client client)
+        public AcceptInvitationCommand(IClient client)
             : base("Accept", "Accept an invitation")
         {
             _client = client;

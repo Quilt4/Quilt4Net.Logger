@@ -49,7 +49,7 @@ namespace Quilt4Net
                 {
                     if (_timeout == null)
                     {
-                        _timeout = ConfigSection.Instance.TargetValue.Timeout;
+                        _timeout = new TimeSpan(0, 0, 0, ConfigSection.Instance.TargetValue.Timeout);
                     }
                 }
 

@@ -1,4 +1,3 @@
-using System;
 using System.Configuration;
 
 namespace Quilt4Net
@@ -22,12 +21,12 @@ namespace Quilt4Net
         }
 
         [ConfigurationProperty("Timeout", IsRequired = false)]
-        public TimeSpan Timeout
+        public int Timeout
         {
             get
             {
-                var configurationProperty = new ConfigurationProperty("Timeout", typeof(TimeSpan?), null);
-                return (TimeSpan?)base[configurationProperty] ?? new TimeSpan(0, 0, 60);
+                var configurationProperty = new ConfigurationProperty("Timeout", typeof(int?), null);
+                return (int?)base[configurationProperty] ?? 60;
             }
 
             set { this["Timeout"] = value; }

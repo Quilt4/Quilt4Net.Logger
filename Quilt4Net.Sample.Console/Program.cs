@@ -25,13 +25,14 @@ namespace Quilt4Net.Sample.Console
             //var client = Client.Instance;
 
             //Note: Using the created instance version
-            var configuration = new Configuration();
-            var client = new Client(configuration);
+            //var configuration = new Configuration();
+            //var client = new Client(configuration);
+            var client = Quilt4Net.Client.Instance;
 
-            configuration.ProjectApiKey = "C9DTTXV7T0ELMBKAGSO26LFIGMUOEBMX";
-            configuration.UseBuildTime = true;
-            configuration.Target.Location = "http://localhost:29660";
-            configuration.Session.Environment = "Manual";
+            //configuration.ProjectApiKey = "C9DTTXV7T0ELMBKAGSO26LFIGMUOEBMX";
+            //configuration.UseBuildTime = true;
+            //configuration.Target.Location = "http://localhost:29660";
+            //configuration.Session.Environment = "Manual";
 
             client.Session.SessionRegistrationStartedEvent += Session_SessionRegistrationStartedEvent;
             client.Session.SessionRegistrationCompletedEvent += SessionSessionRegistrationCompletedEvent;

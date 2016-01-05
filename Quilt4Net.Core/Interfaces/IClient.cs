@@ -7,5 +7,6 @@ namespace Quilt4Net.Core.Interfaces
         IIssue Issue { get; }
         ISession Session { get; }
         IAction Action { get; }
+        IWebApiClient WebApiClient { get; }
     }
 }

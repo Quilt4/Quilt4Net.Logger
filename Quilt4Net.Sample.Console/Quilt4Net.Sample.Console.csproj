@@ -90,6 +90,7 @@
     <Compile Include="Commands\Session\RegisterSessionCommand.cs" />
     <Compile Include="Commands\Session\SessionCommands.cs" />
     <Compile Include="Commands\Project\UpdateProjectCommand.cs" />
+    <Compile Include="Commands\Setting\ListSettingsCommand.cs" />
     <Compile Include="Commands\Setting\SettingCommands.cs" />
     <Compile Include="Commands\User\ChangeUserPasswordCommand.cs" />
     <Compile Include="Commands\User\CreateUserCommand.cs" />
