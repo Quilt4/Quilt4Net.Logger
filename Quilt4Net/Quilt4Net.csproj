@@ -58,7 +58,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Singleton\Configuration.cs" />
     <Compile Include="Handlers\HashHandler.cs" />
+    <Compile Include="Singleton\Issue.cs" />
+    <Compile Include="Singleton\Session.cs" />
     <Compile Include="Informations\ApplicationInformation.cs" />
     <Compile Include="Quilt4NetClient.cs" />
     <Compile Include="Configuration\ConfigSection.cs" />
@@ -72,6 +75,7 @@
     <Compile Include="Configuration\TargetConfiguration.cs" />
     <Compile Include="Configuration\TargetElement.cs" />
     <Compile Include="Informations\UserInformation.cs" />
+    <Compile Include="Singleton\Quilt4NetClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Quilt4Net.Core\Quilt4Net.Core.csproj">
@@ -88,6 +92,7 @@
     <None Include="Transformations\web.config.install.xdt" />
     <None Include="Transformations\web.config.uninstall.xdt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

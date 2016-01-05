@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using Quilt4Net.Core.DataTransfer;
@@ -13,6 +12,8 @@ namespace Quilt4Net.Core.Interfaces
         event EventHandler<SessionRegistrationCompletedEventArgs> SessionRegistrationCompletedEvent;
         event EventHandler<SessionEndStartedEventArgs> SessionEndStartedEvent;
         event EventHandler<SessionEndCompletedEventArgs> SessionEndCompletedEvent;
+        bool IsRegistered { get; }
+        DateTime ClientStartTime { get; }
         Task<SessionResult> RegisterAsync();
         Task<SessionResult> RegisterAsync(Assembly firstAssembly);
         void RegisterStart();
@@ -21,9 +22,7 @@ namespace Quilt4Net.Core.Interfaces
         SessionResult Register(Assembly firstAssembly);
         Task EndAsync();
         void End();
-        bool IsRegistered { get; }
-        DateTime ClientStartTime { get; }
         Task<string> GetSessionTokenAsync();
-        Task<IEnumerable<SessionResponse>> GetListAsync();
+        //Task<IEnumerable<SessionResponse>> GetListAsync();
     }
 }

@@ -6,7 +6,7 @@ namespace Quilt4Net.Core.Interfaces
         string ProjectApiKey { get; set; }
         string ApplicationName { get; set; }
         string ApplicationVersion { get; set; }
-        bool UseBuildTime { get; }
+        bool UseBuildTime { get; set; }
         ISessionConfiguration Session { get; }
         ITargetConfiguration Target { get; }
     }

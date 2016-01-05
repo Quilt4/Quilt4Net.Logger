@@ -14,7 +14,5 @@ namespace Quilt4Net
             : base(webApiClient, configuration, applicationInformation, machineInformation, userInformation)
         {
         }
-        
-        //public static ISessionHandler Instance => Quilt4NetClient.Instance.SessionHandler;
     }
 }

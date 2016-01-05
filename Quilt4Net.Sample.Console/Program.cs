@@ -20,11 +20,11 @@ namespace Quilt4Net.Sample.Console
         {
             var console = new ClientConsole();
 
-            //Note: Using the single instance version
-            //var configuration = Configuration.Instance;
-            //var client = Quilt4Net.Quilt4NetClient.Instance;
+            //Using the single instance version
+            //var configuration = Singleton.Configuration.Instance;
+            //var client = Singleton.Quilt4NetClient.Instance;
 
-            //Note: Using the created instance version
+            //Using the created instance version
             var configuration = new Configuration();
             var client = new Quilt4NetClient(configuration);
 

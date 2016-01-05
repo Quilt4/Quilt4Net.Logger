@@ -6,33 +6,15 @@ namespace Quilt4Net
 {
     public class Configuration : ConfigurationBase
     {
-        private static IConfiguration _instance;
-
         public Configuration()
         {
-            Session = new SessionConfiguration(this);
-            Target = new TargetConfiguration(this);
-        }
-
-        public static IConfiguration Instance
-        {
-            get
+            lock (SyncRoot)
             {
-                if (_instance == null)
-                {
-                    lock (SyncRoot)
-                    {
-                        if (_instance == null)
-                        {
-                            _instance = new Configuration();
-                        }
-                    }
-                }
-
-                return _instance;
+                Session = new SessionConfiguration(this);
+                Target = new TargetConfiguration(this);
             }
         }
-
+        
         public override bool Enabled
         {
             get

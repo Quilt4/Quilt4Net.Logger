@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -253,11 +252,11 @@ namespace Quilt4Net.Core.Handlers
             return result;
         }
 
-        public async Task<IEnumerable<SessionResponse>> GetListAsync()
-        {
-            //TODO: Implement
-            throw new NotImplementedException("List sessions is not yet implemented.");
-        }
+        //public async Task<IEnumerable<SessionResponse>> GetListAsync()
+        //{
+        //    //TODO: Implement
+        //    throw new NotImplementedException("List sessions is not yet implemented.");
+        //}
 
         protected virtual void OnSessionRegistrationStartedEvent(SessionRegistrationStartedEventArgs e)
         {
