@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="install.ps1" />
     <None Include="Quilt4Net.nuspec" />
     <None Include="Transformations\app.config.install.xdt" />
     <None Include="Transformations\app.config.uninstall.xdt" />
