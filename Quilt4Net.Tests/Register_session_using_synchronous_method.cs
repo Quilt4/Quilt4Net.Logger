@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using Quilt4Net.Core;
 using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Exceptions;
 using Quilt4Net.Core.Interfaces;
@@ -54,7 +54,7 @@ namespace Quilt4Net.Tests
             configurationMock.SetupGet(x => x.Session.Environment).Returns("Test");
 
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
-            webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(new SessionResponse()));
+            webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(new SessionResponse { SessionToken = Guid.NewGuid().ToString() }));
 
             var session = Register_session_setup.GivenThereIsASession(webApiClientMock, configurationMock, null, null);
 

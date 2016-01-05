@@ -109,7 +109,7 @@ namespace Quilt4Net.Tests
             var response = await session.GetSessionTokenAsync();
 
             //Assert
-            Assert.That(response, Is.EqualTo(Guid.Empty));
+            Assert.That(response, Is.Null);
             Assert.That(sessionRegistrationStartedEventCount, Is.EqualTo(0));
             Assert.That(sessionRegistrationCompletedEventCount, Is.EqualTo(0));
             webApiClientMock.Verify(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>()), Times.Never);
