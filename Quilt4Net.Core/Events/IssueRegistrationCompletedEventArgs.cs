@@ -5,7 +5,7 @@ namespace Quilt4Net.Core.Events
 {
     public class IssueRegistrationCompletedEventArgs : EventArgs
     {
-        public IssueRegistrationCompletedEventArgs(IssueRequest request, IssueResult result)
+        internal IssueRegistrationCompletedEventArgs(IssueRequest request, IssueResult result)
         {
             Request = request;
             Result = result;

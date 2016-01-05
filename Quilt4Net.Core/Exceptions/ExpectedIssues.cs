@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net.Core.Exceptions
+namespace Quilt4Net.Core
 {
     internal class ExpectedIssues
     {

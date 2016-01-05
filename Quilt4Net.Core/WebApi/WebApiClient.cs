@@ -8,7 +8,7 @@ using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Events;
 using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net.Core.WebApi
+namespace Quilt4Net.Core
 {
     internal class WebApiClient : IWebApiClient
     {

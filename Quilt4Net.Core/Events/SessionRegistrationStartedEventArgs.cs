@@ -5,7 +5,7 @@ namespace Quilt4Net.Core.Events
 {
     public class SessionRegistrationStartedEventArgs : EventArgs
     {
-        public SessionRegistrationStartedEventArgs(SessionRequest request)
+        internal SessionRegistrationStartedEventArgs(SessionRequest request)
         {
             Request = request;
         }

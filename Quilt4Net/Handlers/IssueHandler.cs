@@ -1,5 +1,5 @@
 using System;
-using Quilt4Net.Core.Handlers;
+using Quilt4Net.Core;
 using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net

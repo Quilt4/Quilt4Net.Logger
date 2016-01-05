@@ -1,7 +1,6 @@
-using Quilt4Net.Core.Exceptions;
 using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net.Core.Handlers.Configuration
+namespace Quilt4Net.Core
 {
     internal abstract class SessionConfigurationBase : ISessionConfiguration
     {

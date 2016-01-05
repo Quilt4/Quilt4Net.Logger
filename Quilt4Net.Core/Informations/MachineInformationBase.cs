@@ -2,7 +2,7 @@
 using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net.Core.Informations
+namespace Quilt4Net.Core
 {
     internal abstract class MachineInformationBase : IMachineInformation
     {
@@ -17,7 +17,7 @@ namespace Quilt4Net.Core.Informations
         protected abstract string GetTimeZone();
         protected abstract string GetLanguage();
 
-        internal MachineInformationBase(IHashHandler hashHandler)
+        protected MachineInformationBase(IHashHandler hashHandler)
         {
             _hashHandler = hashHandler;
         }

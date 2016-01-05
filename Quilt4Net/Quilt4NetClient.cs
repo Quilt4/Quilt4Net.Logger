@@ -1,7 +1,6 @@
 ﻿using System;
-using Quilt4Net.Core.Informations;
+using Quilt4Net.Core;
 using Quilt4Net.Core.Interfaces;
-using Quilt4Net.Core.WebApi;
 using Action = Quilt4Net.Core.Actions.Action;
 
 namespace Quilt4Net

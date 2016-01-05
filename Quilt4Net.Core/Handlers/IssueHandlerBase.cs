@@ -7,7 +7,7 @@ using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Events;
 using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net.Core.Handlers
+namespace Quilt4Net.Core
 {
     public abstract class IssueHandlerBase : IIssueHandler
     {
@@ -166,19 +166,6 @@ namespace Quilt4Net.Core.Handlers
             };
 
             return issueData;
-        }
-
-        public enum MessageIssueLevel
-        {
-            Information,
-            Warning,
-            Error,
-        }
-
-        public enum ExceptionIssueLevel
-        {
-            Warning,
-            Error,
         }
 
         private static Guid HandleIssueThreadGuid(Exception exception)

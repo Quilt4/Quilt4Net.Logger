@@ -5,7 +5,7 @@ namespace Quilt4Net.Core.Events
 {
     public class SessionEndCompletedEventArgs : EventArgs
     {
-        public SessionEndCompletedEventArgs(string sessionToken, EndSesionResult result)
+        internal SessionEndCompletedEventArgs(string sessionToken, EndSesionResult result)
         {
             SessionToken = sessionToken;
             Result = result;

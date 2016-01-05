@@ -4,10 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Events;
-using Quilt4Net.Core.Exceptions;
 using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net.Core.Handlers
+namespace Quilt4Net.Core
 {
     public abstract class SessionHandlerBase : ISessionHandler
     {

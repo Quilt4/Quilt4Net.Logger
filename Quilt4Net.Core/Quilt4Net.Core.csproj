@@ -49,10 +49,12 @@
     <Compile Include="Actions\Action.cs" />
     <Compile Include="Actions\Application.cs" />
     <Compile Include="DataTransfer\ServiceInfoResponse.cs" />
+    <Compile Include="ExceptionIssueLevel.cs" />
+    <Compile Include="MessageIssueLevel.cs" />
     <Compile Include="Interfaces\IHashHandler.cs" />
     <Compile Include="Informations\ApplicationInformationBase.cs" />
     <Compile Include="DataTransfer\Authorization.cs" />
-    <Compile Include="Handlers\Configuration\ConfigurationBase.cs" />
+    <Compile Include="Configuration\ConfigurationBase.cs" />
     <Compile Include="DataTransfer\AddRoleModel.cs" />
     <Compile Include="DataTransfer\ApplicationData.cs" />
     <Compile Include="DataTransfer\ApplicationResponse.cs" />
@@ -128,8 +130,8 @@
     <Compile Include="Actions\Service.cs" />
     <Compile Include="Handlers\SessionHandlerBase.cs" />
     <Compile Include="Exceptions\SessionAlreadyRegisteredException.cs" />
-    <Compile Include="Handlers\Configuration\SessionConfigurationBase.cs" />
-    <Compile Include="Handlers\Configuration\TargetConfigurationBase.cs" />
+    <Compile Include="Configuration\SessionConfigurationBase.cs" />
+    <Compile Include="Configuration\TargetConfigurationBase.cs" />
     <Compile Include="Actions\User.cs" />
     <Compile Include="Informations\UserInformationBase.cs" />
     <Compile Include="DataTransfer\UserInfoViewModel.cs" />

@@ -5,7 +5,7 @@ namespace Quilt4Net.Core.Events
 {
     public class IssueRegistrationStartedEventArgs : EventArgs
     {
-        public IssueRegistrationStartedEventArgs(IssueRequest request)
+        internal IssueRegistrationStartedEventArgs(IssueRequest request)
         {
             Request = request;
         }

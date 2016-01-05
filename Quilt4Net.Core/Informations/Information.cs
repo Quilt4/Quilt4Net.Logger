@@ -1,10 +1,10 @@
 using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net.Core.Informations
+namespace Quilt4Net.Core
 {
-    public class Information : IInformation
+    internal class Information : IInformation
     {
-        public Information(IApplicationInformation aplicationInformation, IMachineInformation machineInformation, IUserInformation userInformation)
+        internal Information(IApplicationInformation aplicationInformation, IMachineInformation machineInformation, IUserInformation userInformation)
         {
             AplicationInformation = aplicationInformation;
             MachineInformation = machineInformation;

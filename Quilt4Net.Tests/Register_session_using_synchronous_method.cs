@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
+using Quilt4Net.Core;
 using Quilt4Net.Core.DataTransfer;
-using Quilt4Net.Core.Exceptions;
 using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Tests

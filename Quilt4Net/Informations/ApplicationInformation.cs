@@ -2,8 +2,7 @@ using System;
 using System.Deployment.Application;
 using System.IO;
 using System.Reflection;
-using Quilt4Net.Core.Exceptions;
-using Quilt4Net.Core.Informations;
+using Quilt4Net.Core;
 using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net

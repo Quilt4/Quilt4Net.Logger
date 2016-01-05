@@ -3,7 +3,7 @@ using System.Reflection;
 using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net.Core.Informations
+namespace Quilt4Net.Core
 {
     internal abstract class ApplicationInformationBase : IApplicationInformation
     {

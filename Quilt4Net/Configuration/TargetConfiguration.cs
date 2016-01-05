@@ -1,6 +1,5 @@
 using System;
-using Quilt4Net.Core.Exceptions;
-using Quilt4Net.Core.Handlers.Configuration;
+using Quilt4Net.Core;
 using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net

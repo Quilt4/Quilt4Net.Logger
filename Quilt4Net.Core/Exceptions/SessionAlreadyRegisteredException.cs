@@ -1,6 +1,6 @@
 using System;
 
-namespace Quilt4Net.Core.Exceptions
+namespace Quilt4Net.Core
 {
     internal class SessionAlreadyRegisteredException : InvalidOperationException
     {

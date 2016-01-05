@@ -5,7 +5,7 @@ namespace Quilt4Net.Core.Events
 {
     public class SessionRegistrationCompletedEventArgs : EventArgs
     {
-        public SessionRegistrationCompletedEventArgs(SessionRequest request, SessionResult result)
+        internal SessionRegistrationCompletedEventArgs(SessionRequest request, SessionResult result)
         {
             Request = request;
             Result = result;

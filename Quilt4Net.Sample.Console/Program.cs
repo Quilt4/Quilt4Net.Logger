@@ -1,4 +1,5 @@
-﻿using Quilt4Net.Core.Events;
+﻿using Quilt4Net.Core;
+using Quilt4Net.Core.Events;
 using Quilt4Net.Sample.Console.Commands.Invitation;
 using Quilt4Net.Sample.Console.Commands.Issue;
 using Quilt4Net.Sample.Console.Commands.Project;
@@ -23,6 +24,9 @@ namespace Quilt4Net.Sample.Console
             //Using the single instance version
             //var configuration = Singleton.Configuration.Instance;
             //var client = Singleton.Quilt4NetClient.Instance;
+
+            Singleton.Session.Instance.Register();
+            Singleton.Issue.Instance.Register("", MessageIssueLevel.Error);
 
             //Using the created instance version
             var configuration = new Configuration();
