@@ -7,9 +7,9 @@ namespace Quilt4Net.Sample.Console.Commands.Invitation
 {
     internal class CreateInvitationCommand : ActionCommandBase
     {
-        private readonly IClient _client;
+        private readonly IQuilt4NetClient _client;
 
-        public CreateInvitationCommand(IClient client)
+        public CreateInvitationCommand(IQuilt4NetClient client)
             : base("Create", "Create a new invitation.")
         {
             _client = client;
@@ -18,10 +18,10 @@ namespace Quilt4Net.Sample.Console.Commands.Invitation
         public override async Task<bool> InvokeAsync(string paramList)
         {
             var index = 0;
-            var projectKey = QueryParam("Project", GetParam(paramList, index++), (await _client.Action.Project.GetListAsync()).ToDictionary(x => x.ProjectKey, x => x.Name));
+            var projectKey = QueryParam("Project", GetParam(paramList, index++), (await _client.Actions.Project.GetListAsync()).ToDictionary(x => x.ProjectKey, x => x.Name));
             var user = QueryParam<string>("UserName/EMail", GetParam(paramList, index++));
 
-            await _client.Action.Invitation.CreateAsync(projectKey, user);
+            await _client.Actions.Invitation.CreateAsync(projectKey, user);
 
             return true;
         }

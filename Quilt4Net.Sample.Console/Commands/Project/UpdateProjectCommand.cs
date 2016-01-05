@@ -7,9 +7,9 @@ namespace Quilt4Net.Sample.Console.Commands.Project
 {
     internal class UpdateProjectCommand : ActionCommandBase
     {
-        private readonly IClient _client;
+        private readonly IQuilt4NetClient _client;
 
-        public UpdateProjectCommand(IClient client)
+        public UpdateProjectCommand(IQuilt4NetClient client)
             : base("Update", "Update a project")
         {
             _client = client;
@@ -17,16 +17,16 @@ namespace Quilt4Net.Sample.Console.Commands.Project
 
         public override bool CanExecute()
         {
-            return _client.Action.User.IsAuthorized;
+            return _client.Actions.User.IsAuthorized;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
             var index = 0;
-            var projectKey = QueryParam("Project", GetParam(paramList, index++), (await _client.Action.Project.GetListAsync()).ToDictionary(x => x.ProjectKey, x => x.Name));
+            var projectKey = QueryParam("Project", GetParam(paramList, index++), (await _client.Actions.Project.GetListAsync()).ToDictionary(x => x.ProjectKey, x => x.Name));
             var projectName = QueryParam<string>("Name", GetParam(paramList, index++) );
             var dashboardColor = QueryParam<string>("Color", GetParam(paramList, index++));
-            await _client.Action.Project.UpdateAsync(projectKey, projectName, dashboardColor);
+            await _client.Actions.Project.UpdateAsync(projectKey, projectName, dashboardColor);
             return true;
         }
     }

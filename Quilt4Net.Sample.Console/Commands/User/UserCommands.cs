@@ -6,7 +6,7 @@ namespace Quilt4Net.Sample.Console.Commands.User
 {
     internal class UserCommands : ContainerCommandBase
     {
-        public UserCommands(IClient client)
+        public UserCommands(IQuilt4NetClient client)
             : base("User")
         {
             RegisterCommand(new CreateUserCommand(client));

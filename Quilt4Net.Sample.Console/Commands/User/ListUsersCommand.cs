@@ -8,9 +8,9 @@ namespace Quilt4Net.Sample.Console.Commands.User
 {
     internal class ListUsersCommand : ActionCommandBase
     {
-        private readonly IClient _client;
+        private readonly IQuilt4NetClient _client;
 
-        public ListUsersCommand(IClient client)
+        public ListUsersCommand(IQuilt4NetClient client)
             : base("List", "List users")
         {
             _client = client;
@@ -18,7 +18,7 @@ namespace Quilt4Net.Sample.Console.Commands.User
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            var response = await _client.Action.User.GetListAsync();
+            var response = await _client.Actions.User.GetListAsync();
 
             var data = new List<string[]> { new [] { "UserName", "EMail" } };
             data.AddRange(response.Select(x => new [] { x.UserName, x.EMail }));

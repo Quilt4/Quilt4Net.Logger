@@ -6,9 +6,9 @@ namespace Quilt4Net.Sample.Console.Commands.User
 {
     internal class GetUserInfoCommand : ActionCommandBase
     {
-        private readonly IClient _client;
+        private readonly IQuilt4NetClient _client;
 
-        public GetUserInfoCommand(IClient client)
+        public GetUserInfoCommand(IQuilt4NetClient client)
             : base("Info", "Get info about the user.")
         {
             _client = client;
@@ -16,12 +16,12 @@ namespace Quilt4Net.Sample.Console.Commands.User
 
         public override bool CanExecute()
         {
-            return _client.Action.User.IsAuthorized;
+            return _client.Actions.User.IsAuthorized;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            var response = await _client.Action.User.GetUserInfoAsync();
+            var response = await _client.Actions.User.GetUserInfoAsync();
             OutputInformation("{0}",response.Email);
             return true;
         }

@@ -6,9 +6,9 @@ namespace Quilt4Net.Sample.Console.Commands.Session
 {
     internal class EndSessionCommand : ActionCommandBase
     {
-        private readonly IClient _client;
+        private readonly IQuilt4NetClient _client;
 
-        public EndSessionCommand(IClient client)
+        public EndSessionCommand(IQuilt4NetClient client)
             : base("End", "End session.")
         {
             _client = client;
@@ -16,12 +16,12 @@ namespace Quilt4Net.Sample.Console.Commands.Session
 
         public override bool CanExecute()
         {
-            return _client.Session.IsRegistered;
+            return _client.SessionHandler.IsRegistered;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            await _client.Session.EndAsync();
+            await _client.SessionHandler.EndAsync();
             return true;
         }
     }

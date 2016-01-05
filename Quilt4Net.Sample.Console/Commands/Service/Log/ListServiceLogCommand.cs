@@ -6,9 +6,9 @@ namespace Quilt4Net.Sample.Console.Commands.Service.Log
 {
     internal class ListServiceLogCommand : ActionCommandBase
     {
-        private readonly IClient _client;
+        private readonly IQuilt4NetClient _client;
 
-        public ListServiceLogCommand(IClient client)
+        public ListServiceLogCommand(IQuilt4NetClient client)
             : base("List", "List all log entries registered on the server.")
         {
             _client = client;
@@ -16,12 +16,12 @@ namespace Quilt4Net.Sample.Console.Commands.Service.Log
 
         public override bool CanExecute()
         {
-            return _client.Action.User.IsAuthorized;
+            return _client.Actions.User.IsAuthorized;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            var response = await _client.Action.Service.Log.GetListAsync();
+            var response = await _client.Actions.Service.Log.GetListAsync();
             foreach (var item in response)
             {
                 OutputInformation(item.Message.Substring(0, 10));

@@ -5,7 +5,7 @@ namespace Quilt4Net.Sample.Console.Commands.Invitation
 {
     internal class InvitationCommands : ContainerCommandBase
     {
-        public InvitationCommands(IClient client)
+        public InvitationCommands(IQuilt4NetClient client)
             : base("Invitation")
         {
             RegisterCommand(new CreateInvitationCommand(client));

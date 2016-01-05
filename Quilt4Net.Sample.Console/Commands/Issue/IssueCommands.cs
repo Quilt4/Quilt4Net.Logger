@@ -6,7 +6,7 @@ namespace Quilt4Net.Sample.Console.Commands.Issue
 {
     internal class IssueCommands : ContainerCommandBase
     {
-        public IssueCommands(IClient client)
+        public IssueCommands(IQuilt4NetClient client)
             : base("Issue")
         {
             RegisterCommand(new RegisterIssueCommand(client));

@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Tharga.Quilt4Net.Tests")]
+[assembly: AssemblyTitle("Quilt4Net.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Thargelion AB")]
-[assembly: AssemblyProduct("Tharga.Quilt4Net.Tests")]
+[assembly: AssemblyProduct("Quilt4Net.Tests")]
 [assembly: AssemblyCopyright("The MIT License (MIT) Copyright © Thargelion AB 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

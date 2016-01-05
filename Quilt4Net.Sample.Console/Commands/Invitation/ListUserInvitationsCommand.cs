@@ -6,9 +6,9 @@ namespace Quilt4Net.Sample.Console.Commands.Invitation
 {
     internal class ListUserInvitationsCommand : ActionCommandBase
     {
-        private readonly IClient _client;
+        private readonly IQuilt4NetClient _client;
 
-        public ListUserInvitationsCommand(IClient client)
+        public ListUserInvitationsCommand(IQuilt4NetClient client)
             : base("List", "List the users invitations")
         {
             _client = client;
@@ -16,7 +16,7 @@ namespace Quilt4Net.Sample.Console.Commands.Invitation
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            var result = await _client.Action.Invitation.GetListAsync();
+            var result = await _client.Actions.Invitation.GetListAsync();
             foreach (var item in result)
             {
                 OutputInformation("{0}\t{1}\t{2}\t{3}", item.ProjectName, item.InviteCode, item.InvitedByUserName, item.UserName ?? item.UserEMail);

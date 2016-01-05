@@ -5,7 +5,7 @@ namespace Quilt4Net.Sample.Console.Commands.Setting
 {
     internal class SettingCommands : ContainerCommandBase
     {
-        public SettingCommands(IClient client)
+        public SettingCommands(IQuilt4NetClient client)
             : base("Setting")
         {
             RegisterCommand(new ListSettingsCommand(client));

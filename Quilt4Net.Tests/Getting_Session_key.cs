@@ -4,6 +4,7 @@ using Moq;
 using NUnit.Framework;
 using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Interfaces;
+using Quilt4Net.Handlers;
 
 namespace Quilt4Net.Tests
 {
@@ -19,17 +20,17 @@ namespace Quilt4Net.Tests
             var sessionKey = Guid.NewGuid();
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
             webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(new SessionResponse { SessionKey = sessionKey })).Callback(() => { System.Threading.Thread.Sleep(500); });
-            var configurationMock = new Mock<IConfiguration>(MockBehavior.Strict);
+            var configurationMock = new Mock<IConfigurationHandler>(MockBehavior.Strict);
             configurationMock.SetupGet(x => x.Enabled).Returns(true);
             configurationMock.SetupGet(x => x.ProjectApiKey).Returns("ABC123");
             configurationMock.SetupGet(x => x.Session.Environment).Returns((string)null);
-            var applicationHelperMock = new Mock<IApplicationHelper>(MockBehavior.Strict);
+            var applicationHelperMock = new Mock<IApplicationLookup>(MockBehavior.Strict);
             applicationHelperMock.Setup(x => x.GetApplicationData()).Returns(new ApplicationData {});
-            var machineHelperMock = new Mock<IMachineHelper>(MockBehavior.Strict);
+            var machineHelperMock = new Mock<IMachineLookup>(MockBehavior.Strict);
             machineHelperMock.Setup(x => x.GetMachineData()).Returns(new MachineData { });
-            var userHelperMock = new Mock<IUserHelper>(MockBehavior.Strict);
+            var userHelperMock = new Mock<IUserLookup>(MockBehavior.Strict);
             userHelperMock.Setup(x => x.GetDataUser()).Returns(new UserData { });
-            var session = new Session(webApiClientMock.Object, configurationMock.Object, applicationHelperMock.Object, machineHelperMock.Object, userHelperMock.Object);
+            var session = new SessionHandler(webApiClientMock.Object, configurationMock.Object, applicationHelperMock.Object, machineHelperMock.Object, userHelperMock.Object);
             session.SessionRegistrationStartedEvent += delegate { sessionRegistrationStartedEventCount++; };
             session.SessionRegistrationCompletedEvent += delegate { sessionRegistrationCompletedEventCount++; };
 
@@ -60,17 +61,17 @@ namespace Quilt4Net.Tests
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
             webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(new SessionResponse { SessionKey = sessionKey }));
             webApiClientMock.Setup(x => x.ExecuteCommandAsync<Guid>(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>())).Returns(Task.FromResult<object>(null)).Callback(() => { System.Threading.Thread.Sleep(500); });
-            var configurationMock = new Mock<IConfiguration>(MockBehavior.Strict);
+            var configurationMock = new Mock<IConfigurationHandler>(MockBehavior.Strict);
             configurationMock.SetupGet(x => x.Enabled).Returns(true);
             configurationMock.SetupGet(x => x.ProjectApiKey).Returns("ABC123");
             configurationMock.SetupGet(x => x.Session.Environment).Returns((string)null);
-            var applicationHelperMock = new Mock<IApplicationHelper>(MockBehavior.Strict);
+            var applicationHelperMock = new Mock<IApplicationLookup>(MockBehavior.Strict);
             applicationHelperMock.Setup(x => x.GetApplicationData()).Returns(new ApplicationData { });
-            var machineHelperMock = new Mock<IMachineHelper>(MockBehavior.Strict);
+            var machineHelperMock = new Mock<IMachineLookup>(MockBehavior.Strict);
             machineHelperMock.Setup(x => x.GetMachineData()).Returns(new MachineData { });
-            var userHelperMock = new Mock<IUserHelper>(MockBehavior.Strict);
+            var userHelperMock = new Mock<IUserLookup>(MockBehavior.Strict);
             userHelperMock.Setup(x => x.GetDataUser()).Returns(new UserData { });
-            var session = new Session(webApiClientMock.Object, configurationMock.Object, applicationHelperMock.Object, machineHelperMock.Object, userHelperMock.Object);
+            var session = new SessionHandler(webApiClientMock.Object, configurationMock.Object, applicationHelperMock.Object, machineHelperMock.Object, userHelperMock.Object);
             session.SessionEndCompletedEvent += delegate { sessionEndCompletedEventCount++; };
             session.SessionEndStartedEvent += delegate { sessionEndStartedEventCount++; };
             var response = await session.GetSessionKeyAsync();
@@ -97,13 +98,13 @@ namespace Quilt4Net.Tests
             var sessionKey = Guid.NewGuid();
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
             webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(new SessionResponse { SessionKey = sessionKey })).Callback(() => { System.Threading.Thread.Sleep(500); });
-            var configurationMock = new Mock<IConfiguration>(MockBehavior.Strict);
+            var configurationMock = new Mock<IConfigurationHandler>(MockBehavior.Strict);
             configurationMock.SetupGet(x => x.Enabled).Returns(false);
             configurationMock.SetupGet(x => x.ProjectApiKey).Returns("ABC123");
-            var applicationHelperMock = new Mock<IApplicationHelper>(MockBehavior.Strict);
-            var machineHelperMock = new Mock<IMachineHelper>(MockBehavior.Strict);
-            var userHelperMock = new Mock<IUserHelper>(MockBehavior.Strict);
-            var session = new Session(webApiClientMock.Object, configurationMock.Object, applicationHelperMock.Object, machineHelperMock.Object, userHelperMock.Object);
+            var applicationHelperMock = new Mock<IApplicationLookup>(MockBehavior.Strict);
+            var machineHelperMock = new Mock<IMachineLookup>(MockBehavior.Strict);
+            var userHelperMock = new Mock<IUserLookup>(MockBehavior.Strict);
+            var session = new SessionHandler(webApiClientMock.Object, configurationMock.Object, applicationHelperMock.Object, machineHelperMock.Object, userHelperMock.Object);
             session.SessionRegistrationStartedEvent += delegate { sessionRegistrationStartedEventCount++; };
             session.SessionRegistrationCompletedEvent += delegate { sessionRegistrationCompletedEventCount++; };
 

@@ -6,9 +6,9 @@ namespace Quilt4Net.Sample.Console.Commands.User.Role
 {
     internal class UserRoleAddCommand : ActionCommandBase
     {
-        private readonly IClient _client;
+        private readonly IQuilt4NetClient _client;
 
-        public UserRoleAddCommand(IClient client)
+        public UserRoleAddCommand(IQuilt4NetClient client)
             : base("Add", "Add a role to a user.")
         {
             _client = client;
@@ -20,7 +20,7 @@ namespace Quilt4Net.Sample.Console.Commands.User.Role
             var username = QueryParam<string>("UserName", GetParam(paramList, index++));
             var roleName = QueryParam<string>("RoleName", GetParam(paramList, index++));
 
-            await _client.Action.User.AddRoleAsync(username, roleName);
+            await _client.Actions.User.AddRoleAsync(username, roleName);
             return true;
         }
     }

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
   <configSections xdt:Transform="InsertIfMissing">
-	<sectionGroup name="Tharga" xdt:Transform="Remove" xdt:Locator="Match(name)" />
-    <sectionGroup name="Tharga" xdt:Transform="Insert" xdt:Locator="Match(name)">
-      <section name="Quilt4Net" type="Quilt4Net.ConfigSection, Quilt4Net" />
+	<sectionGroup name="Quilt4" xdt:Transform="Remove" xdt:Locator="Match(name)" />
+    <sectionGroup name="Quilt4" xdt:Transform="Insert" xdt:Locator="Match(name)">
+      <section name="Quilt4Net" type="Quilt4Net.Configuration.ConfigSection, Quilt4Net" />
     </sectionGroup>
   </configSections>
-  <Tharga xdt:Transform="InsertIfMissing">
+  <Quilt4 xdt:Transform="InsertIfMissing">
     <Quilt4Net ProjectApiKey="" Enabled="true" UseBuildTime="false">
       <Session Environment="Dev" />
 	  <Target Location="https://www.Quilt4.com/" Timeout="60" />
     </Quilt4Net>
-  </Tharga>
+  </Quilt4>
 </configuration>

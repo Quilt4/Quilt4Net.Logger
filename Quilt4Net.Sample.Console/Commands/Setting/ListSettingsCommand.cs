@@ -6,9 +6,9 @@ namespace Quilt4Net.Sample.Console.Commands.Setting
 {
     internal class ListSettingsCommand : ActionCommandBase
     {
-        private readonly IClient _client;
+        private readonly IQuilt4NetClient _client;
 
-        public ListSettingsCommand(IClient client)
+        public ListSettingsCommand(IQuilt4NetClient client)
             : base("List", "List settings")
         {
             _client = client;
@@ -16,7 +16,7 @@ namespace Quilt4Net.Sample.Console.Commands.Setting
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            var response = await _client.Action.ServerSetting.GetListAsync();
+            var response = await _client.Actions.ServerSetting.GetListAsync();
             foreach (var item in response)
             {
                 OutputInformation("{0}\t{1}",item.Name, item.Value);

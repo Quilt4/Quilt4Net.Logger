@@ -5,7 +5,7 @@ namespace Quilt4Net.Sample.Console.Commands.User.Role
 {
     internal class UserRoleCommands : ContainerCommandBase
     {
-        public UserRoleCommands(IClient client)
+        public UserRoleCommands(IQuilt4NetClient client)
             : base("Role")
         {
             RegisterCommand(new UserRoleAddCommand(client));

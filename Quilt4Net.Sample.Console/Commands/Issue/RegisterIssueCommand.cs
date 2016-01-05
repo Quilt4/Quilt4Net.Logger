@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Quilt4Net.Core.Handlers;
 using Quilt4Net.Core.Interfaces;
 using Tharga.Toolkit.Console.Command.Base;
 
@@ -6,9 +7,9 @@ namespace Quilt4Net.Sample.Console.Commands.Issue
 {
     internal class RegisterIssueCommand : ActionCommandBase
     {
-        private readonly IClient _client;
+        private readonly IQuilt4NetClient _client;
 
-        public RegisterIssueCommand(IClient client)
+        public RegisterIssueCommand(IQuilt4NetClient client)
             : base("Register", "Register issue")
         {
             _client = client;
@@ -16,7 +17,7 @@ namespace Quilt4Net.Sample.Console.Commands.Issue
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            var response = await _client.Issue.RegisterAsync("Some warning.", Core.Issue.MessageIssueLevel.Warning);
+            var response = await _client.IssueHandler.RegisterAsync("Some warning.", IssueHandlerBase.MessageIssueLevel.Warning);
             if ( response.IsSuccess)
                 OutputInformation("Issue registration took " + response.Elapsed.TotalMilliseconds.ToString("0") + "ms.");
             else

@@ -6,9 +6,9 @@ namespace Quilt4Net.Sample.Console.Commands.User
 {
     internal class ChangeUserPasswordCommand : ActionCommandBase
     {
-        private readonly IClient _client;
+        private readonly IQuilt4NetClient _client;
 
-        public ChangeUserPasswordCommand(IClient client)
+        public ChangeUserPasswordCommand(IQuilt4NetClient client)
             : base("password", "Change user password.")
         {
             _client = client;
@@ -21,7 +21,7 @@ namespace Quilt4Net.Sample.Console.Commands.User
             var newPassword = QueryParam<string>("New Password", GetParam(paramList, index++));
             var confirmPassword = QueryParam<string>("Confirm Password", GetParam(paramList, index++));
 
-            await _client.Action.User.ChangePassword(oldPassword, newPassword, confirmPassword);
+            await _client.Actions.User.ChangePassword(oldPassword, newPassword, confirmPassword);
 
             return true;
         }

@@ -46,11 +46,11 @@
     <Compile Include="..\Build\AssemblyVersionInfo.cs">
       <Link>Properties\AssemblyVersionInfo.cs</Link>
     </Compile>
-    <Compile Include="Action.cs" />
-    <Compile Include="Application.cs" />
-    <Compile Include="ApplicationHelper.cs" />
-    <Compile Include="Authorization.cs" />
-    <Compile Include="Configuration.cs" />
+    <Compile Include="Actions\Action.cs" />
+    <Compile Include="Actions\Application.cs" />
+    <Compile Include="Lookups\ApplicationLookupBase.cs" />
+    <Compile Include="DataTransfer\Authorization.cs" />
+    <Compile Include="Handlers\Configuration\ConfigurationHandlerBase.cs" />
     <Compile Include="DataTransfer\AddRoleModel.cs" />
     <Compile Include="DataTransfer\ApplicationData.cs" />
     <Compile Include="DataTransfer\ApplicationResponse.cs" />
@@ -88,79 +88,66 @@
     <Compile Include="Events\SessionEndStartedEventArgs.cs" />
     <Compile Include="Events\SessionRegistrationCompletedEventArgs.cs" />
     <Compile Include="Events\SessionRegistrationStartedEventArgs.cs" />
-    <Compile Include="ExceptionExtensions.cs" />
-    <Compile Include="ExpectedIssues.cs" />
-    <Compile Include="HelperExtension.cs" />
-    <Compile Include="Interfaces\IAction.cs" />
+    <Compile Include="Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Exceptions\ExpectedIssues.cs" />
+    <Compile Include="Extensions\HelperExtension.cs" />
+    <Compile Include="Lookups\Lookup.cs" />
+    <Compile Include="Interfaces\IActions.cs" />
     <Compile Include="Interfaces\IApplication.cs" />
-    <Compile Include="Interfaces\IApplicationHelper.cs" />
-    <Compile Include="Interfaces\IClient.cs" />
-    <Compile Include="Interfaces\IConfiguration.cs" />
+    <Compile Include="Interfaces\IApplicationLookup.cs" />
+    <Compile Include="Interfaces\ILookup.cs" />
+    <Compile Include="Interfaces\IQuilt4NetClient.cs" />
+    <Compile Include="Interfaces\IConfigurationHandler.cs" />
     <Compile Include="Interfaces\IInvitation.cs" />
-    <Compile Include="Interfaces\IIssue.cs" />
+    <Compile Include="Interfaces\IIssueHandler.cs" />
     <Compile Include="Interfaces\IIssueData.cs" />
     <Compile Include="Interfaces\ILog.cs" />
     <Compile Include="Interfaces\ILoginResult.cs" />
-    <Compile Include="Interfaces\IMachineHelper.cs" />
+    <Compile Include="Interfaces\IMachineLookup.cs" />
     <Compile Include="Interfaces\IProject.cs" />
     <Compile Include="Interfaces\IServerSetting.cs" />
     <Compile Include="Interfaces\IService.cs" />
-    <Compile Include="Interfaces\ISession.cs" />
+    <Compile Include="Interfaces\ISessionHandler.cs" />
     <Compile Include="Interfaces\ISessionConfiguration.cs" />
     <Compile Include="Interfaces\ISessionData.cs" />
     <Compile Include="Interfaces\ITargetConfiguration.cs" />
     <Compile Include="Interfaces\IUser.cs" />
-    <Compile Include="Interfaces\IUserHelper.cs" />
+    <Compile Include="Interfaces\IUserLookup.cs" />
     <Compile Include="Interfaces\IVersion.cs" />
     <Compile Include="Interfaces\IWebApiClient.cs" />
-    <Compile Include="Invitation.cs" />
-    <Compile Include="Issue.cs" />
-    <Compile Include="IssueLevelExtension.cs" />
-    <Compile Include="Log.cs" />
-    <Compile Include="MachineHelper.cs" />
-    <Compile Include="Project.cs" />
-    <Compile Include="ProjectApiKeyNotSetException.cs" />
+    <Compile Include="Actions\Invitation.cs" />
+    <Compile Include="Handlers\IssueHandlerBase.cs" />
+    <Compile Include="Extensions\IssueLevelExtension.cs" />
+    <Compile Include="Actions\Log.cs" />
+    <Compile Include="Lookups\MachineLookupBase.cs" />
+    <Compile Include="Actions\Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServerSetting.cs" />
-    <Compile Include="Service.cs" />
-    <Compile Include="Session.cs" />
-    <Compile Include="SessionAlreadyRegisteredException.cs" />
-    <Compile Include="SessionConfiguration.cs" />
-    <Compile Include="TargetConfiguration.cs" />
-    <Compile Include="User.cs" />
-    <Compile Include="UserHelper.cs" />
+    <Compile Include="Actions\ServerSetting.cs" />
+    <Compile Include="Actions\Service.cs" />
+    <Compile Include="Handlers\SessionHandlerBase.cs" />
+    <Compile Include="Exceptions\SessionAlreadyRegisteredException.cs" />
+    <Compile Include="Handlers\Configuration\SessionConfigurationBase.cs" />
+    <Compile Include="Handlers\Configuration\TargetConfigurationBase.cs" />
+    <Compile Include="Actions\User.cs" />
+    <Compile Include="Lookups\UserLookupBase.cs" />
     <Compile Include="DataTransfer\UserInfoViewModel.cs" />
-    <Compile Include="Version.cs" />
-    <Compile Include="WebApiClient.cs" />
+    <Compile Include="Actions\Version.cs" />
+    <Compile Include="WebApi\WebApiClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="bouncy_castle_hmac_sha_pcl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BouncyCastle-PCL.1.0.0.6\lib\bouncy_castle_hmac_sha_pcl.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Net.Http.Formatting.Extension.5.2.3.0\lib\System.Net.Http.Extensions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Net.Http.Formatting.Extension.5.2.3.0\lib\System.Net.Http.Formatting.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Net.Http.Primitives, Version=4.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Net.Http.Formatting.Extension.5.2.3.0\lib\System.Net.Http.Primitives.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="System.Net.Http.Formatting">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
-  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
-    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
-    <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

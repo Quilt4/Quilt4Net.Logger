@@ -6,9 +6,9 @@ namespace Quilt4Net.Sample.Console.Commands.User
 {
     internal class SearchUsersCommand : ActionCommandBase
     {
-        private readonly IClient _client;
+        private readonly IQuilt4NetClient _client;
 
-        public SearchUsersCommand(IClient client)
+        public SearchUsersCommand(IQuilt4NetClient client)
             : base("Search", "Search for user")
         {
             _client = client;
@@ -18,7 +18,7 @@ namespace Quilt4Net.Sample.Console.Commands.User
         {
             var index = 0;
             var searchString = QueryParam<string>("Search string", GetParam(paramList, index++));
-            var response = await _client.Action.User.SearchAsync(searchString);
+            var response = await _client.Actions.User.SearchAsync(searchString);
             foreach (var item in response)
             {
                 OutputInformation("{0}\t{1}", item.UserName, item.EMail);

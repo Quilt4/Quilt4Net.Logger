@@ -6,9 +6,9 @@ namespace Quilt4Net.Sample.Console.Commands.User
 {
     internal class LoginUserCommand : ActionCommandBase
     {
-        private readonly IClient _client;
+        private readonly IQuilt4NetClient _client;
 
-        public LoginUserCommand(IClient client)
+        public LoginUserCommand(IQuilt4NetClient client)
             : base("Login", "Login user")
         {
             _client = client;
@@ -16,7 +16,7 @@ namespace Quilt4Net.Sample.Console.Commands.User
 
         public override bool CanExecute()
         {
-            return !_client.Action.User.IsAuthorized;
+            return !_client.Actions.User.IsAuthorized;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)
@@ -24,7 +24,7 @@ namespace Quilt4Net.Sample.Console.Commands.User
             var index = 0;
             var username = QueryParam<string>("UserName", GetParam(paramList, index++));
             var password = QueryParam<string>("Password", GetParam(paramList, index++));
-            await _client.Action.User.LoginAsync(username, password);
+            await _client.Actions.User.LoginAsync(username, password);
             return true;
         }
     }

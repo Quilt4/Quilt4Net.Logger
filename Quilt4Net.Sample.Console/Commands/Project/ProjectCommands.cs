@@ -5,7 +5,7 @@ namespace Quilt4Net.Sample.Console.Commands.Project
 {
     internal class ProjectCommands : ContainerCommandBase
     {
-        public ProjectCommands(IClient client)
+        public ProjectCommands(IQuilt4NetClient client)
             : base("Project")
         {
             RegisterCommand(new CreateProjectCommand(client));

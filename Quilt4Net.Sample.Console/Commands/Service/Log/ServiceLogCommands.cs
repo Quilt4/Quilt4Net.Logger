@@ -5,7 +5,7 @@ namespace Quilt4Net.Sample.Console.Commands.Service.Log
 {
     internal class ServiceLogCommands : ContainerCommandBase
     {
-        public ServiceLogCommands(IClient client)
+        public ServiceLogCommands(IQuilt4NetClient client)
             : base("Log")
         {
             RegisterCommand(new ListServiceLogCommand(client));

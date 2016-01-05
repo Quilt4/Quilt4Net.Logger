@@ -58,19 +58,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationHelper.cs" />
-    <Compile Include="Client.cs" />
-    <Compile Include="ConfigSection.cs" />
-    <Compile Include="Configuration.cs" />
-    <Compile Include="Issue.cs" />
-    <Compile Include="MachineHelper.cs" />
+    <Compile Include="Handlers\HashHandler.cs" />
+    <Compile Include="Lookups\ApplicationLookup.cs" />
+    <Compile Include="Quilt4NetClient.cs" />
+    <Compile Include="Configuration\ConfigSection.cs" />
+    <Compile Include="Handlers\ConfigurationHandler.cs" />
+    <Compile Include="Handlers\IssueHandler.cs" />
+    <Compile Include="Lookups\MachineLookup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Session.cs" />
-    <Compile Include="SessionConfiguration.cs" />
-    <Compile Include="SessionElement.cs" />
-    <Compile Include="TargetConfiguration.cs" />
-    <Compile Include="TargetElement.cs" />
-    <Compile Include="UserHelper.cs" />
+    <Compile Include="Handlers\SessionHandler.cs" />
+    <Compile Include="Configuration\SessionConfiguration.cs" />
+    <Compile Include="Configuration\SessionElement.cs" />
+    <Compile Include="Configuration\TargetConfiguration.cs" />
+    <Compile Include="Configuration\TargetElement.cs" />
+    <Compile Include="Lookups\UserLookup.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Quilt4Net.Core\Quilt4Net.Core.csproj">
@@ -80,6 +81,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Quilt4Net.nuspec" />
+    <None Include="Transformations\app.config.install.xdt" />
+    <None Include="Transformations\app.config.uninstall.xdt" />
+    <None Include="Transformations\web.config.install.xdt" />
+    <None Include="Transformations\web.config.uninstall.xdt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
