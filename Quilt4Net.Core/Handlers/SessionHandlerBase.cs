@@ -36,6 +36,7 @@ namespace Quilt4Net.Core.Handlers
             _applicationLookup = applicationLookup;
             _machineLookup = machineLookup;
             _userLookup = userLookup;
+            ClientStartTime = DateTime.UtcNow;
         }
 
         public event EventHandler<SessionRegistrationStartedEventArgs> SessionRegistrationStartedEvent;
@@ -44,6 +45,7 @@ namespace Quilt4Net.Core.Handlers
         public event EventHandler<SessionEndCompletedEventArgs> SessionEndCompletedEvent;
 
         public bool IsRegistered => !string.IsNullOrEmpty(_sessionToken);
+        public DateTime ClientStartTime { get; }
 
         public async Task<SessionResult> RegisterAsync()
         {

@@ -22,6 +22,7 @@ namespace Quilt4Net.Core.Interfaces
         Task EndAsync();
         void End();
         bool IsRegistered { get; }
+        DateTime ClientStartTime { get; }
         Task<string> GetSessionTokenAsync();
         Task<IEnumerable<SessionResponse>> GetListAsync();
     }
