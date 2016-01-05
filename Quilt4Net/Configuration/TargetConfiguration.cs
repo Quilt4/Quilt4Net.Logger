@@ -3,12 +3,12 @@ using Quilt4Net.Core.Exceptions;
 using Quilt4Net.Core.Handlers.Configuration;
 using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net.Configuration
+namespace Quilt4Net
 {
     internal class TargetConfiguration : TargetConfigurationBase
     {
-        public TargetConfiguration(IConfigurationHandler configurationHandler)
-            : base(configurationHandler)
+        public TargetConfiguration(IConfiguration configuration)
+            : base(configuration)
         {
         }
 
@@ -19,7 +19,7 @@ namespace Quilt4Net.Configuration
                 if (_location != null) return _location;
 
                 //If there is no setting, read from config file to populate the value
-                lock (ConfigurationHandlerBase.SyncRoot)
+                lock (ConfigurationBase.SyncRoot)
                 {
                     if (_location == null)
                     {
@@ -33,7 +33,7 @@ namespace Quilt4Net.Configuration
 
             set
             {
-                if (value == null) throw new ExpectedIssues(_configurationHandler).GetException(ExpectedIssues.CannotSetLocation);
+                if (value == null) throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.CannotSetLocation);
                 _location = value;
                 if (!_location.EndsWith("/")) _location += "/";
             }
@@ -46,7 +46,7 @@ namespace Quilt4Net.Configuration
                 if (_timeout != null) return _timeout.Value;
 
                 //If there is no setting, read from config file to populate the value
-                lock (ConfigurationHandlerBase.SyncRoot)
+                lock (ConfigurationBase.SyncRoot)
                 {
                     if (_timeout == null)
                     {
@@ -59,7 +59,7 @@ namespace Quilt4Net.Configuration
 
             set
             {
-                if (value == null) throw new ExpectedIssues(_configurationHandler).GetException(ExpectedIssues.CannotSetTimeout);
+                if (value == null) throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.CannotSetTimeout);
                 _timeout = value;
             }
         }

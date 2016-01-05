@@ -8,13 +8,13 @@ namespace Quilt4Net.Core.Lookups
     internal abstract class ApplicationLookupBase : IApplicationLookup
     {
         private readonly IHashHandler _hashHandler;
-        protected readonly IConfigurationHandler ConfigurationHandler;
+        protected readonly IConfiguration Configuration;
         protected Assembly FirstAssembly;
 
-        protected ApplicationLookupBase(IConfigurationHandler configurationHandler, IHashHandler hashHandler)
+        protected ApplicationLookupBase(IConfiguration configuration, IHashHandler hashHandler)
         {
             _hashHandler = hashHandler;
-            ConfigurationHandler = configurationHandler;
+            Configuration = configuration;
         }
 
         protected virtual Assembly GetFirstAssembly()
@@ -37,7 +37,7 @@ namespace Quilt4Net.Core.Lookups
 
         private string GetProjectApiKey()
         {
-            return ConfigurationHandler.ProjectApiKey;
+            return Configuration.ProjectApiKey;
         }
 
         public ApplicationData GetApplicationData()
@@ -71,9 +71,9 @@ namespace Quilt4Net.Core.Lookups
 
         private string GetApplicationName()
         {
-            if (!string.IsNullOrEmpty(ConfigurationHandler.ApplicationName))
+            if (!string.IsNullOrEmpty(Configuration.ApplicationName))
             {
-                return ConfigurationHandler.ApplicationName;
+                return Configuration.ApplicationName;
             }
             return GetFirstAssembly().GetName().Name;
         }

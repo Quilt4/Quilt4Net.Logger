@@ -1,11 +1,6 @@
 namespace Quilt4Net.Core.Interfaces
 {
-    public interface IHashHandler
-    {
-        string ToMd5Hash(string input);
-    }
-
-    public interface IConfigurationHandler
+    public interface IConfiguration
     {
         bool Enabled { get; set; }
         string ProjectApiKey { get; set; }

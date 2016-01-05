@@ -13,14 +13,14 @@ namespace Quilt4Net.Core.Handlers
     {
         private readonly Lazy<ISessionHandler> _session;
         private readonly IWebApiClient _webApiClient;
-        private readonly IConfigurationHandler _configurationHandler;
+        private readonly IConfiguration _configuration;
         private readonly List<Tuple<IssueRequest, Exception>> _issuesThatFailedToRegister = new List<Tuple<IssueRequest, Exception>>();
 
-        internal IssueHandlerBase(Lazy<ISessionHandler> session, IWebApiClient webApiClient, IConfigurationHandler configurationHandler)
+        internal IssueHandlerBase(Lazy<ISessionHandler> session, IWebApiClient webApiClient, IConfiguration configuration)
         {
             _session = session;
             _webApiClient = webApiClient;
-            _configurationHandler = configurationHandler;
+            _configuration = configuration;
         }
 
         public event EventHandler<IssueRegistrationStartedEventArgs> IssueRegistrationStartedEvent;
@@ -136,7 +136,7 @@ namespace Quilt4Net.Core.Handlers
             var issueType = new IssueTypeData
             {
                 Message = exception.Message,
-                IssueLevel = issueLevel.ToIssueLevel(_configurationHandler),
+                IssueLevel = issueLevel.ToIssueLevel(_configuration),
                 Inner = exception.InnerException != null ? CreateIssueTypeData(exception, issueLevel) : null,
                 StackTrace = exception.StackTrace,
                 Type = exception.GetType().ToString(),
@@ -149,7 +149,7 @@ namespace Quilt4Net.Core.Handlers
             var issueType = new IssueTypeData
             {
                 Message = message,
-                IssueLevel = issueLevel.ToIssueLevel(_configurationHandler),
+                IssueLevel = issueLevel.ToIssueLevel(_configuration),
                 Inner = null,
                 StackTrace = null,
                 Type = "Message",

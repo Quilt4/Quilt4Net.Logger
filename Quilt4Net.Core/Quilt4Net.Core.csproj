@@ -49,9 +49,10 @@
     <Compile Include="Actions\Action.cs" />
     <Compile Include="Actions\Application.cs" />
     <Compile Include="DataTransfer\ServiceInfoResponse.cs" />
+    <Compile Include="Interfaces\IHashHandler.cs" />
     <Compile Include="Lookups\ApplicationLookupBase.cs" />
     <Compile Include="DataTransfer\Authorization.cs" />
-    <Compile Include="Handlers\Configuration\ConfigurationHandlerBase.cs" />
+    <Compile Include="Handlers\Configuration\ConfigurationBase.cs" />
     <Compile Include="DataTransfer\AddRoleModel.cs" />
     <Compile Include="DataTransfer\ApplicationData.cs" />
     <Compile Include="DataTransfer\ApplicationResponse.cs" />
@@ -98,7 +99,7 @@
     <Compile Include="Interfaces\IApplicationLookup.cs" />
     <Compile Include="Interfaces\ILookup.cs" />
     <Compile Include="Interfaces\IQuilt4NetClient.cs" />
-    <Compile Include="Interfaces\IConfigurationHandler.cs" />
+    <Compile Include="Interfaces\IConfiguration.cs" />
     <Compile Include="Interfaces\IInvitation.cs" />
     <Compile Include="Interfaces\IIssueHandler.cs" />
     <Compile Include="Interfaces\IIssueData.cs" />

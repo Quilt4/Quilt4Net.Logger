@@ -1,17 +1,17 @@
 ﻿using Quilt4Net.Core.Handlers;
 using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net.Handlers
+namespace Quilt4Net
 {
     public class SessionHandler : SessionHandlerBase
     {
         public SessionHandler(IQuilt4NetClient client)
-            : base(client.WebApiClient, client.ConfigurationHandler, client.Lookup)
+            : base(client.WebApiClient, client.Configuration, client.Lookup)
         {
         }
 
-        internal SessionHandler(IWebApiClient webApiClient, IConfigurationHandler configurationHandler, IApplicationLookup applicationLookup, IMachineLookup machineLookup, IUserLookup userLookup)
-            : base(webApiClient, configurationHandler, applicationLookup, machineLookup, userLookup)
+        internal SessionHandler(IWebApiClient webApiClient, IConfiguration configuration, IApplicationLookup applicationLookup, IMachineLookup machineLookup, IUserLookup userLookup)
+            : base(webApiClient, configuration, applicationLookup, machineLookup, userLookup)
         {
         }
         

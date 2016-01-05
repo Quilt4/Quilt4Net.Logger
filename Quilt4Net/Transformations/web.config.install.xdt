@@ -3,7 +3,7 @@
   <configSections xdt:Transform="InsertIfMissing">
 	<sectionGroup name="Quilt4" xdt:Transform="Remove" xdt:Locator="Match(name)" />
     <sectionGroup name="Quilt4" xdt:Transform="Insert" xdt:Locator="Match(name)">
-      <section name="Quilt4Net" type="Quilt4Net.Configuration.ConfigSection, Quilt4Net" />
+      <section name="Quilt4Net" type="Quilt4Net.ConfigSection, Quilt4Net" />
     </sectionGroup>
   </configSections>
   <Quilt4 xdt:Transform="InsertIfMissing">

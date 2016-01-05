@@ -62,7 +62,7 @@
     <Compile Include="Lookups\ApplicationLookup.cs" />
     <Compile Include="Quilt4NetClient.cs" />
     <Compile Include="Configuration\ConfigSection.cs" />
-    <Compile Include="Handlers\ConfigurationHandler.cs" />
+    <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="Handlers\IssueHandler.cs" />
     <Compile Include="Lookups\MachineLookup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

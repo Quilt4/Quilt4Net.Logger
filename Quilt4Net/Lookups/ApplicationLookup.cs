@@ -6,14 +6,14 @@ using Quilt4Net.Core.Exceptions;
 using Quilt4Net.Core.Interfaces;
 using Quilt4Net.Core.Lookups;
 
-namespace Quilt4Net.Lookups
+namespace Quilt4Net
 {
     internal class ApplicationLookup : ApplicationLookupBase
     {
         private readonly object _syncRoot = new object();
 
-        internal ApplicationLookup(IConfigurationHandler configurationHandler, IHashHandler hashHandler)
-            : base(configurationHandler, hashHandler)
+        internal ApplicationLookup(IConfiguration configuration, IHashHandler hashHandler)
+            : base(configuration, hashHandler)
         {
         }
 
@@ -26,7 +26,7 @@ namespace Quilt4Net.Lookups
                     if (FirstAssembly == null)
                     {
                         FirstAssembly = Assembly.GetEntryAssembly();
-                        if (FirstAssembly == null) throw new ExpectedIssues(ConfigurationHandler).GetException(ExpectedIssues.CannotAutomaticallyRetrieveAssembly);
+                        if (FirstAssembly == null) throw new ExpectedIssues(Configuration).GetException(ExpectedIssues.CannotAutomaticallyRetrieveAssembly);
                     }
                 }
             }
@@ -36,7 +36,7 @@ namespace Quilt4Net.Lookups
 
         protected override DateTime? GetBuildTime()
         {
-            if (!ConfigurationHandler.UseBuildTime) return null;
+            if (!Configuration.UseBuildTime) return null;
 
             const int peHeaderOffset = 60;
             const int linkerTimestampOffset = 8;

@@ -20,19 +20,19 @@ namespace Quilt4Net.Sample.Console.Commands.Session
             //if (!_client.User.IsAuthorized)
             //    return false;
 
-            return !_client.SessionHandler.IsRegistered;
+            return !_client.Session.IsRegistered;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            if (string.IsNullOrEmpty(_client.ConfigurationHandler.ProjectApiKey))
+            if (string.IsNullOrEmpty(_client.Configuration.ProjectApiKey))
             {
                 var index = 0;
                 var projectApiKey = QueryParam<string>("ProjectApiKey", GetParam(paramList, index++));
-                _client.ConfigurationHandler.ProjectApiKey = projectApiKey;
+                _client.Configuration.ProjectApiKey = projectApiKey;
             }
 
-            var response = await _client.SessionHandler.RegisterAsync(Assembly.GetExecutingAssembly());
+            var response = await _client.Session.RegisterAsync(Assembly.GetExecutingAssembly());
             if (response.IsSuccess)
                 OutputInformation("Session registration took " + response.Elapsed.TotalMilliseconds.ToString("0") + "ms.");
             else

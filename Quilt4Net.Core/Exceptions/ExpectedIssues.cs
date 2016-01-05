@@ -6,7 +6,7 @@ namespace Quilt4Net.Core.Exceptions
 {
     internal class ExpectedIssues
     {
-        private readonly IConfigurationHandler _configurationHandler;
+        private readonly IConfiguration _configuration;
         public const int ProjectApiKeyNotSet = 1001;
         public const int UnknownType = 1002;
         public const int CannotSetProjectApiKey = 1003;
@@ -23,9 +23,9 @@ namespace Quilt4Net.Core.Exceptions
 
         private readonly Dictionary<int, string> _data = new Dictionary<int, string>();
 
-        internal ExpectedIssues(IConfigurationHandler configurationHandler)
+        internal ExpectedIssues(IConfiguration configuration)
         {
-            _configurationHandler = configurationHandler;
+            _configuration = configuration;
             _data.Add(ProjectApiKeyNotSet, "The client token has not been set.");
             _data.Add(UnknownType, "Unknown type.");
             _data.Add(CannotSetProjectApiKey, "Cannot set client token to null, use string.Empty instead.");
@@ -100,7 +100,7 @@ namespace Quilt4Net.Core.Exceptions
 
         private string GetHelpLink(int code)
         {
-            return string.Format("{1}Help/Details/{0}", code, _configurationHandler.Target.Location);
+            return string.Format("{1}Help/Details/{0}", code, _configuration.Target.Location);
         }
     }
 }

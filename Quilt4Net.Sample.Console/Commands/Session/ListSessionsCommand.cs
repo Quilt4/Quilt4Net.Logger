@@ -22,7 +22,7 @@ namespace Quilt4Net.Sample.Console.Commands.Session
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            var sessions = (await _client.SessionHandler.GetListAsync()).ToArray();
+            var sessions = (await _client.Session.GetListAsync()).ToArray();
             if (!sessions.Any()) return true;
             var title = new[] { new[] { "SessionToken", "Environment" } };
             var data = title.Union(sessions.Select(x => new[] { x.SessionToken.ToString(), x.Environment }).ToArray()).ToArray();

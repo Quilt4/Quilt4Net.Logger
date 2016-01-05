@@ -1,6 +1,6 @@
 using System.Configuration;
 
-namespace Quilt4Net.Configuration
+namespace Quilt4Net
 {
     internal class SessionElement : ConfigurationElement
     {

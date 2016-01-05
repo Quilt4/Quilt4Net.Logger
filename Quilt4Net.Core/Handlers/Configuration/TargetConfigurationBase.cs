@@ -6,13 +6,13 @@ namespace Quilt4Net.Core.Handlers.Configuration
 {
     internal abstract class TargetConfigurationBase : ITargetConfiguration
     {
-        protected readonly IConfigurationHandler _configurationHandler;
+        protected readonly IConfiguration _configuration;
         protected string _location;
         protected TimeSpan? _timeout;
 
-        protected TargetConfigurationBase(IConfigurationHandler configurationHandler)
+        protected TargetConfigurationBase(IConfiguration configuration)
         {
-            _configurationHandler = configurationHandler;
+            _configuration = configuration;
         }
 
         public virtual string Location
@@ -22,7 +22,7 @@ namespace Quilt4Net.Core.Handlers.Configuration
                 if (_location != null) return _location;
 
                 //If there is no setting, read from config file to populate the value
-                lock (ConfigurationHandlerBase.SyncRoot)
+                lock (ConfigurationBase.SyncRoot)
                 {
                     if (_location == null)
                     {
@@ -36,7 +36,7 @@ namespace Quilt4Net.Core.Handlers.Configuration
 
             set
             {
-                if (value == null) throw new ExpectedIssues(_configurationHandler).GetException(ExpectedIssues.CannotSetLocation);
+                if (value == null) throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.CannotSetLocation);
                 _location = value;
                 if (!_location.EndsWith("/")) _location += "/";
             }
@@ -49,7 +49,7 @@ namespace Quilt4Net.Core.Handlers.Configuration
                 if (_timeout != null) return _timeout.Value;
 
                 //If there is no setting, read from config file to populate the value
-                lock (ConfigurationHandlerBase.SyncRoot)
+                lock (ConfigurationBase.SyncRoot)
                 {
                     if (_timeout == null)
                     {
@@ -62,7 +62,7 @@ namespace Quilt4Net.Core.Handlers.Configuration
 
             set
             {
-                if (value == null) throw new ExpectedIssues(_configurationHandler).GetException(ExpectedIssues.CannotSetTimeout);
+                if (value == null) throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.CannotSetTimeout);
                 _timeout = value;
             }
         }

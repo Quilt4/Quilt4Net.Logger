@@ -14,7 +14,7 @@ namespace Quilt4Net.Core.Handlers
     {
         private readonly object _syncRoot = new object();
         private readonly IWebApiClient _webApiClient;
-        private readonly IConfigurationHandler _configurationHandler;
+        private readonly IConfiguration _configuration;
         private readonly IApplicationLookup _applicationLookup;
         private readonly IMachineLookup _machineLookup;
         private readonly IUserLookup _userLookup;
@@ -24,15 +24,15 @@ namespace Quilt4Net.Core.Handlers
         private readonly AutoResetEvent _sessionRegistered = new AutoResetEvent(false);
         private readonly AutoResetEvent _sessionEnded = new AutoResetEvent(false);
 
-        internal SessionHandlerBase(IWebApiClient webApiClient, IConfigurationHandler configurationHandler, ILookup lookup)
-            : this(webApiClient, configurationHandler, lookup.AplicationLookup, lookup.MachineLookup, lookup.UserLookup)
+        internal SessionHandlerBase(IWebApiClient webApiClient, IConfiguration configuration, ILookup lookup)
+            : this(webApiClient, configuration, lookup.AplicationLookup, lookup.MachineLookup, lookup.UserLookup)
         {
         }
 
-        internal SessionHandlerBase(IWebApiClient webApiClient, IConfigurationHandler configurationHandler, IApplicationLookup applicationLookup, IMachineLookup machineLookup, IUserLookup userLookup)
+        internal SessionHandlerBase(IWebApiClient webApiClient, IConfiguration configuration, IApplicationLookup applicationLookup, IMachineLookup machineLookup, IUserLookup userLookup)
         {
             _webApiClient = webApiClient;
-            _configurationHandler = configurationHandler;
+            _configuration = configuration;
             _applicationLookup = applicationLookup;
             _machineLookup = machineLookup;
             _userLookup = userLookup;
@@ -186,17 +186,17 @@ namespace Quilt4Net.Core.Handlers
 
         private string GetProjectApiKey()
         {
-            var projectApiKey = _configurationHandler.ProjectApiKey;
+            var projectApiKey = _configuration.ProjectApiKey;
             if (string.IsNullOrEmpty(projectApiKey))
             {
-                throw new ExpectedIssues(_configurationHandler).GetException(ExpectedIssues.ProjectApiKeyNotSet);
+                throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.ProjectApiKeyNotSet);
             }
             return projectApiKey;
         }
 
         private async Task<SessionResult> RegisterEx(string projectApiKey)
         {
-            if (!_configurationHandler.Enabled)
+            if (!_configuration.Enabled)
             {
                 return null;
             }
@@ -224,7 +224,7 @@ namespace Quilt4Net.Core.Handlers
                 {
                     ProjectApiKey = projectApiKey,
                     ClientStartTime = DateTime.UtcNow,
-                    Environment = _configurationHandler.Session != null ? _configurationHandler.Session.Environment : string.Empty,
+                    Environment = _configuration.Session != null ? _configuration.Session.Environment : string.Empty,
                     Application = _applicationLookup.GetApplicationData(),
                     Machine = _machineLookup.GetMachineData(),
                     User = _userLookup.GetDataUser(),

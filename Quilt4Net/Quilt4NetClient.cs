@@ -2,8 +2,6 @@
 using Quilt4Net.Core.Interfaces;
 using Quilt4Net.Core.Lookups;
 using Quilt4Net.Core.WebApi;
-using Quilt4Net.Handlers;
-using Quilt4Net.Lookups;
 using Action = Quilt4Net.Core.Actions.Action;
 
 namespace Quilt4Net
@@ -14,25 +12,25 @@ namespace Quilt4Net
         //private static IClient _instance;
         //private static bool _instanceCreated = false;
 
-        private readonly IConfigurationHandler _configurationHandler;
+        private readonly IConfiguration _configuration;
         private readonly IWebApiClient _webApiClient;
         private readonly Lazy<IIssueHandler> _issue;
         private readonly Lazy<ISessionHandler> _session;
         private readonly Lazy<IActions> _action;
         private readonly ILookup _lookup;
 
-        public Quilt4NetClient(IConfigurationHandler configurationHandler)
+        public Quilt4NetClient(IConfiguration configuration)
         {
             //lock (_syncRoot)
             //{
             //    if (_instance != null) throw new InvalidOperationException("The client has been activated in singleton mode. Do not use 'Client.Instance' if you want to create your own instances of the client object.");
 
             var hashHandler = new HashHandler();
-            _configurationHandler = configurationHandler;
-            _lookup = new Lookup(new ApplicationLookup(_configurationHandler, hashHandler), new MachineLookup(hashHandler), new UserLookup(hashHandler));
-            _webApiClient = new WebApiClient(_configurationHandler);
-            _issue = new Lazy<IIssueHandler>(() => new IssueHandler(_session, _webApiClient, _configurationHandler));
-            _session = new Lazy<ISessionHandler>(() => new SessionHandler(_webApiClient, _configurationHandler, Lookup.AplicationLookup, Lookup.MachineLookup, Lookup.UserLookup));
+            _configuration = configuration;
+            _lookup = new Lookup(new ApplicationLookup(_configuration, hashHandler), new MachineLookup(hashHandler), new UserLookup(hashHandler));
+            _webApiClient = new WebApiClient(_configuration);
+            _issue = new Lazy<IIssueHandler>(() => new IssueHandler(_session, _webApiClient, _configuration));
+            _session = new Lazy<ISessionHandler>(() => new SessionHandler(_webApiClient, _configuration, Lookup.AplicationLookup, Lookup.MachineLookup, Lookup.UserLookup));
             _action = new Lazy<IActions>(() => new Action(_webApiClient));
 
             //    _instanceCreated = true;
@@ -60,10 +58,10 @@ namespace Quilt4Net
         //    }
         //}
 
-        public IConfigurationHandler ConfigurationHandler => _configurationHandler;
+        public IConfiguration Configuration => _configuration;
         public IWebApiClient WebApiClient => _webApiClient;
-        public IIssueHandler IssueHandler => _issue.Value;
-        public ISessionHandler SessionHandler => _session.Value;
+        public IIssueHandler Issue => _issue.Value;
+        public ISessionHandler Session => _session.Value;
         public IActions Actions => _action.Value;
         public ILookup Lookup => _lookup;
 

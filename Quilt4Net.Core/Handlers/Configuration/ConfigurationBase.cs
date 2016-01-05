@@ -3,7 +3,7 @@ using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core.Handlers.Configuration
 {
-    public abstract class ConfigurationHandlerBase : IConfigurationHandler
+    public abstract class ConfigurationBase : IConfiguration
     {
         internal static readonly object SyncRoot = new object();
         protected string _projectApiKey;

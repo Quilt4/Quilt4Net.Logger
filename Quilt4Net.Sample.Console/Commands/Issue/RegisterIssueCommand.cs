@@ -17,7 +17,7 @@ namespace Quilt4Net.Sample.Console.Commands.Issue
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            var response = await _client.IssueHandler.RegisterAsync("Some warning.", IssueHandlerBase.MessageIssueLevel.Warning);
+            var response = await _client.Issue.RegisterAsync("Some warning.", IssueHandlerBase.MessageIssueLevel.Warning);
             if ( response.IsSuccess)
                 OutputInformation("Issue registration took " + response.Elapsed.TotalMilliseconds.ToString("0") + "ms.");
             else

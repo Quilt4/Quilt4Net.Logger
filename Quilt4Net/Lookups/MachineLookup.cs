@@ -5,7 +5,7 @@ using System.Threading;
 using Quilt4Net.Core.Interfaces;
 using Quilt4Net.Core.Lookups;
 
-namespace Quilt4Net.Lookups
+namespace Quilt4Net
 {
     internal class MachineLookup : MachineLookupBase
     {

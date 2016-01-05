@@ -1,5 +1,4 @@
 ﻿using Quilt4Net.Core.Events;
-using Quilt4Net.Handlers;
 using Quilt4Net.Sample.Console.Commands.Invitation;
 using Quilt4Net.Sample.Console.Commands.Issue;
 using Quilt4Net.Sample.Console.Commands.Project;
@@ -26,21 +25,20 @@ namespace Quilt4Net.Sample.Console
             //var client = Quilt4Net.Quilt4NetClient.Instance;
 
             //Note: Using the created instance version
-            var configuration = new ConfigurationHandler();
+            var configuration = new Configuration();
             var client = new Quilt4NetClient(configuration);
 
             //Note: Config in code
-            //configuration.ProjectApiKey = "C9DTTXV7T0ELMBKAGSO26LFIGMUOEBMX";
-            configuration.UseBuildTime = true;
-            configuration.Target.Location = "http://localhost:29660";
-            configuration.Session.Environment = "Manual";
+            //configuration.UseBuildTime = true;
+            //configuration.Target.Location = "http://localhost:29660";
+            //configuration.Session.Environment = "Manual";
 
-            client.SessionHandler.SessionRegistrationStartedEvent += Session_SessionRegistrationStartedEvent;
-            client.SessionHandler.SessionRegistrationCompletedEvent += SessionSessionRegistrationCompletedEvent;
-            client.SessionHandler.SessionEndStartedEvent += Session_SessionEndStartedEvent;
-            client.SessionHandler.SessionEndCompletedEvent += Session_SessionEndCompletedEvent;
-            client.IssueHandler.IssueRegistrationStartedEvent += Issue_IssueRegistrationStartedEvent;
-            client.IssueHandler.IssueRegistrationCompletedEvent += Issue_IssueRegistrationCompletedEvent;
+            client.Session.SessionRegistrationStartedEvent += Session_SessionRegistrationStartedEvent;
+            client.Session.SessionRegistrationCompletedEvent += SessionSessionRegistrationCompletedEvent;
+            client.Session.SessionEndStartedEvent += Session_SessionEndStartedEvent;
+            client.Session.SessionEndCompletedEvent += Session_SessionEndCompletedEvent;
+            client.Issue.IssueRegistrationStartedEvent += Issue_IssueRegistrationStartedEvent;
+            client.Issue.IssueRegistrationCompletedEvent += Issue_IssueRegistrationCompletedEvent;
             client.WebApiClient.AuthorizationChangedEvent += WebApiClient_AuthorizationChangedEvent;
 
             _rootCommand = new RootCommand(console);

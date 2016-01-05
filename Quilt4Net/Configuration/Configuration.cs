@@ -1,21 +1,20 @@
-using Quilt4Net.Configuration;
 using Quilt4Net.Core.Exceptions;
 using Quilt4Net.Core.Handlers.Configuration;
 using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net.Handlers
+namespace Quilt4Net
 {
-    public class ConfigurationHandler : ConfigurationHandlerBase
+    public class Configuration : ConfigurationBase
     {
-        private static IConfigurationHandler _instance;
+        private static IConfiguration _instance;
 
-        public ConfigurationHandler()
+        public Configuration()
         {
             Session = new SessionConfiguration(this);
             Target = new TargetConfiguration(this);
         }
 
-        public static IConfigurationHandler Instance
+        public static IConfiguration Instance
         {
             get
             {
@@ -25,7 +24,7 @@ namespace Quilt4Net.Handlers
                     {
                         if (_instance == null)
                         {
-                            _instance = new ConfigurationHandler();
+                            _instance = new Configuration();
                         }
                     }
                 }

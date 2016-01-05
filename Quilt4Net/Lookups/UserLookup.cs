@@ -2,7 +2,7 @@ using System;
 using Quilt4Net.Core.Interfaces;
 using Quilt4Net.Core.Lookups;
 
-namespace Quilt4Net.Lookups
+namespace Quilt4Net
 {
     internal class UserLookup : UserLookupBase
     {

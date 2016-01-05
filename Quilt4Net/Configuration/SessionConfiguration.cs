@@ -2,12 +2,12 @@ using Quilt4Net.Core.Exceptions;
 using Quilt4Net.Core.Handlers.Configuration;
 using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net.Configuration
+namespace Quilt4Net
 {
     internal class SessionConfiguration : SessionConfigurationBase
     {
-        public SessionConfiguration(IConfigurationHandler configurationHandler)
-            : base(configurationHandler)
+        public SessionConfiguration(IConfiguration configuration)
+            : base(configuration)
         {
         }
 
@@ -18,7 +18,7 @@ namespace Quilt4Net.Configuration
                 if (_environment != null) return _environment;
 
                 //If there is no setting, read from config file to populate the value
-                lock (ConfigurationHandlerBase.SyncRoot)
+                lock (ConfigurationBase.SyncRoot)
                 {
                     if (_environment == null)
                     {
@@ -31,7 +31,7 @@ namespace Quilt4Net.Configuration
 
             set
             {
-                if (value == null) throw new ExpectedIssues(_configurationHandler).GetException(ExpectedIssues.CannotSetEnvironment);
+                if (value == null) throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.CannotSetEnvironment);
                 _environment = value;
             }
         }

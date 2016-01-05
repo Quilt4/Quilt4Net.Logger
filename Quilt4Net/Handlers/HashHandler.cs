@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net.Handlers
+namespace Quilt4Net
 {
     internal class HashHandler : IHashHandler
     {

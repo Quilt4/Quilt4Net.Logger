@@ -23,7 +23,7 @@ namespace Quilt4Net.Sample.Console.Commands.Issue.Type
             var applicationKey = QueryParam("Application", GetParam(paramList, index++), (await _client.Actions.Application.GetListAsync(projectKey)).ToDictionary(x => x.ApplicationKey, x => x.Name));
             var versionKey = QueryParam("Version", GetParam(paramList, index++), (await _client.Actions.Version.GetListAsync(applicationKey)).ToDictionary(x => x.VersionKey, x => x.VersionNumber));
 
-            var response = await _client.IssueHandler.GetIssueTypesAsync(versionKey);
+            var response = await _client.Issue.GetIssueTypesAsync(versionKey);
 
             var data = new List<string[]> { new[] { "Ticket", "Type" } };
             data.AddRange(response.Select(x => new[] { x.Ticket.ToString(), x.Type.ToString() }));

@@ -16,12 +16,12 @@ namespace Quilt4Net.Sample.Console.Commands.Session
 
         public override bool CanExecute()
         {
-            return _client.SessionHandler.IsRegistered;
+            return _client.Session.IsRegistered;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            await _client.SessionHandler.EndAsync();
+            await _client.Session.EndAsync();
             return true;
         }
     }
