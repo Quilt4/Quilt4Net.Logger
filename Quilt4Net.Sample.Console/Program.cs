@@ -25,17 +25,14 @@ namespace Quilt4Net.Sample.Console
             //var configuration = Singleton.Configuration.Instance;
             //var client = Singleton.Quilt4NetClient.Instance;
 
-            Singleton.Session.Instance.Register();
-            Singleton.Issue.Instance.Register("", MessageIssueLevel.Error);
-
             //Using the created instance version
             var configuration = new Configuration();
             var client = new Quilt4NetClient(configuration);
 
             //Note: Config in code
-            configuration.UseBuildTime = true;
-            configuration.Target.Location = "http://localhost:29660";
-            configuration.Session.Environment = "Manual";
+            //configuration.UseBuildTime = true;
+            //configuration.Target.Location = "http://localhost:29660";
+            //configuration.Session.Environment = "Manual";
 
             client.Session.SessionRegistrationStartedEvent += Session_SessionRegistrationStartedEvent;
             client.Session.SessionRegistrationCompletedEvent += SessionSessionRegistrationCompletedEvent;

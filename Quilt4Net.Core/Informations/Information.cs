@@ -4,15 +4,15 @@ namespace Quilt4Net.Core
 {
     internal class Information : IInformation
     {
-        internal Information(IApplicationInformation aplicationInformation, IMachineInformation machineInformation, IUserInformation userInformation)
+        internal Information(IApplicationInformation aplication, IMachineInformation machine, IUserInformation user)
         {
-            AplicationInformation = aplicationInformation;
-            MachineInformation = machineInformation;
-            UserInformation = userInformation;
+            Aplication = aplication;
+            Machine = machine;
+            User = user;
         }
 
-        public IApplicationInformation AplicationInformation { get; }
-        public IMachineInformation MachineInformation { get; }
-        public IUserInformation UserInformation { get; }
+        public IApplicationInformation Aplication { get; }
+        public IMachineInformation Machine { get; }
+        public IUserInformation User { get; }
     }
 }

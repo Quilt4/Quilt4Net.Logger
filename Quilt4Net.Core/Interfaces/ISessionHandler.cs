@@ -14,6 +14,7 @@ namespace Quilt4Net.Core.Interfaces
         event EventHandler<SessionEndCompletedEventArgs> SessionEndCompletedEvent;
         bool IsRegistered { get; }
         DateTime ClientStartTime { get; }
+        string Environment { get; }
         Task<SessionResult> RegisterAsync();
         Task<SessionResult> RegisterAsync(Assembly firstAssembly);
         void RegisterStart();

@@ -23,7 +23,7 @@ namespace Quilt4Net.Core
         private readonly AutoResetEvent _sessionEnded = new AutoResetEvent(false);
 
         internal SessionHandlerBase(IWebApiClient webApiClient, IConfiguration configuration, IInformation information)
-            : this(webApiClient, configuration, information.AplicationInformation, information.MachineInformation, information.UserInformation)
+            : this(webApiClient, configuration, information.Aplication, information.Machine, information.User)
         {
         }
 
@@ -44,6 +44,7 @@ namespace Quilt4Net.Core
 
         public bool IsRegistered => !string.IsNullOrEmpty(_sessionToken);
         public DateTime ClientStartTime { get; }
+        public string Environment => _configuration.Session != null ? _configuration.Session.Environment : string.Empty;
 
         public async Task<SessionResult> RegisterAsync()
         {
@@ -222,7 +223,7 @@ namespace Quilt4Net.Core
                 {
                     ProjectApiKey = projectApiKey,
                     ClientStartTime = DateTime.UtcNow,
-                    Environment = _configuration.Session != null ? _configuration.Session.Environment : string.Empty,
+                    Environment = Environment,
                     Application = _applicationInformation.GetApplicationData(),
                     Machine = _machineInformation.GetMachineData(),
                     User = _userInformation.GetDataUser(),

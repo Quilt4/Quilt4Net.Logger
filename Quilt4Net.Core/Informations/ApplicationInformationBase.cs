@@ -40,6 +40,8 @@ namespace Quilt4Net.Core
             return Configuration.ProjectApiKey;
         }
 
+        public string Version => GetApplicationVersion();
+
         public ApplicationData GetApplicationData()
         {
             var applicationName = GetApplicationName();
