@@ -2,8 +2,8 @@ using Quilt4Net.Core.DataTransfer;
 
 namespace Quilt4Net.Core.Interfaces
 {
-    public interface IMachineLookup
+    public interface IUserInformation
     {
-        MachineData GetMachineData();
+        UserData GetDataUser();
     }
 }

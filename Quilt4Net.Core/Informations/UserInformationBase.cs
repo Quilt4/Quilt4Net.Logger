@@ -1,16 +1,16 @@
 ﻿using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net.Core.Lookups
+namespace Quilt4Net.Core.Informations
 {
-    internal abstract class UserLookupBase : IUserLookup
+    internal abstract class UserInformationBase : IUserInformation
     {
         private readonly IHashHandler _hashHandler;
 
         protected abstract string GetUserName();
         protected abstract string GetUserSid();
 
-        protected UserLookupBase(IHashHandler hashHandler)
+        protected UserInformationBase(IHashHandler hashHandler)
         {
             _hashHandler = hashHandler;
         }

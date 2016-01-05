@@ -2,14 +2,14 @@
 using System.IO;
 using System.Management;
 using System.Threading;
+using Quilt4Net.Core.Informations;
 using Quilt4Net.Core.Interfaces;
-using Quilt4Net.Core.Lookups;
 
 namespace Quilt4Net
 {
-    internal class MachineLookup : MachineLookupBase
+    internal class MachineInformation : MachineInformationBase
     {
-        internal MachineLookup(IHashHandler hashHandler)
+        internal MachineInformation(IHashHandler hashHandler)
             : base(hashHandler)
         {
         }

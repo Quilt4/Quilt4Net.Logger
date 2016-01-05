@@ -10,13 +10,13 @@ namespace Quilt4Net.Tests
     {
         internal static SessionHandler GivenThereIsASession(Mock<IWebApiClient> webApiClientMock, Mock<IConfiguration> configurationMock, Action<SessionRegistrationStartedEventArgs> sessionStartedAction, Action<SessionRegistrationCompletedEventArgs> sessionCompletedAction)
         {
-            var applicationHelperMock = new Mock<IApplicationLookup>(MockBehavior.Strict);
+            var applicationHelperMock = new Mock<IApplicationInformation>(MockBehavior.Strict);
             applicationHelperMock.Setup(x => x.GetApplicationData()).Returns(() => new ApplicationData());
-            var machineHelperMock = new Mock<IMachineLookup>(MockBehavior.Strict);
+            var machineHelperMock = new Mock<IMachineInformation>(MockBehavior.Strict);
             machineHelperMock.Setup(x => x.GetMachineData()).Returns(() => new MachineData());
-            var userHelperMock = new Mock<IUserLookup>(MockBehavior.Strict);
+            var userHelperMock = new Mock<IUserInformation>(MockBehavior.Strict);
             userHelperMock.Setup(x => x.GetDataUser()).Returns(() => new UserData());
-            var session = new SessionHandler(webApiClientMock.Object as IWebApiClient, configurationMock.Object as IConfiguration, applicationHelperMock.Object as IApplicationLookup, machineHelperMock.Object as IMachineLookup, userHelperMock.Object as IUserLookup);
+            var session = new SessionHandler(webApiClientMock.Object as IWebApiClient, configurationMock.Object as IConfiguration, applicationHelperMock.Object as IApplicationInformation, machineHelperMock.Object as IMachineInformation, userHelperMock.Object as IUserInformation);
             session.SessionRegistrationStartedEvent += (semder, e) => { sessionStartedAction?.Invoke(e); };
             session.SessionRegistrationCompletedEvent += (sender, e) => { sessionCompletedAction?.Invoke(e); };
             return session;

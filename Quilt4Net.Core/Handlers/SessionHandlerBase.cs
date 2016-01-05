@@ -15,27 +15,27 @@ namespace Quilt4Net.Core.Handlers
         private readonly object _syncRoot = new object();
         private readonly IWebApiClient _webApiClient;
         private readonly IConfiguration _configuration;
-        private readonly IApplicationLookup _applicationLookup;
-        private readonly IMachineLookup _machineLookup;
-        private readonly IUserLookup _userLookup;
+        private readonly IApplicationInformation _applicationInformation;
+        private readonly IMachineInformation _machineInformation;
+        private readonly IUserInformation _userInformation;
         private string _sessionToken;
         private bool _ongoingSessionRegistration;
         private bool _ongoingSessionEnding;
         private readonly AutoResetEvent _sessionRegistered = new AutoResetEvent(false);
         private readonly AutoResetEvent _sessionEnded = new AutoResetEvent(false);
 
-        internal SessionHandlerBase(IWebApiClient webApiClient, IConfiguration configuration, ILookup lookup)
-            : this(webApiClient, configuration, lookup.AplicationLookup, lookup.MachineLookup, lookup.UserLookup)
+        internal SessionHandlerBase(IWebApiClient webApiClient, IConfiguration configuration, IInformation information)
+            : this(webApiClient, configuration, information.AplicationInformation, information.MachineInformation, information.UserInformation)
         {
         }
 
-        internal SessionHandlerBase(IWebApiClient webApiClient, IConfiguration configuration, IApplicationLookup applicationLookup, IMachineLookup machineLookup, IUserLookup userLookup)
+        internal SessionHandlerBase(IWebApiClient webApiClient, IConfiguration configuration, IApplicationInformation applicationInformation, IMachineInformation machineInformation, IUserInformation userInformation)
         {
             _webApiClient = webApiClient;
             _configuration = configuration;
-            _applicationLookup = applicationLookup;
-            _machineLookup = machineLookup;
-            _userLookup = userLookup;
+            _applicationInformation = applicationInformation;
+            _machineInformation = machineInformation;
+            _userInformation = userInformation;
             ClientStartTime = DateTime.UtcNow;
         }
 
@@ -54,7 +54,7 @@ namespace Quilt4Net.Core.Handlers
 
         public async Task<SessionResult> RegisterAsync(Assembly firstAssembly)
         {
-            _applicationLookup.SetFirstAssembly(firstAssembly);
+            _applicationInformation.SetFirstAssembly(firstAssembly);
             return await RegisterAsync();
         }
 
@@ -78,7 +78,7 @@ namespace Quilt4Net.Core.Handlers
 
         public void RegisterStart(Assembly firstAssembly)
         {
-            _applicationLookup.SetFirstAssembly(firstAssembly);
+            _applicationInformation.SetFirstAssembly(firstAssembly);
             RegisterStart();
         }
 
@@ -97,7 +97,7 @@ namespace Quilt4Net.Core.Handlers
 
         public SessionResult Register(Assembly firstAssembly)
         {
-            _applicationLookup.SetFirstAssembly(firstAssembly);
+            _applicationInformation.SetFirstAssembly(firstAssembly);
             return Register();
         }
 
@@ -225,9 +225,9 @@ namespace Quilt4Net.Core.Handlers
                     ProjectApiKey = projectApiKey,
                     ClientStartTime = DateTime.UtcNow,
                     Environment = _configuration.Session != null ? _configuration.Session.Environment : string.Empty,
-                    Application = _applicationLookup.GetApplicationData(),
-                    Machine = _machineLookup.GetMachineData(),
-                    User = _userLookup.GetDataUser(),
+                    Application = _applicationInformation.GetApplicationData(),
+                    Machine = _machineInformation.GetMachineData(),
+                    User = _userInformation.GetDataUser(),
                 };
 
                 OnSessionRegistrationStartedEvent(new SessionRegistrationStartedEventArgs(request));

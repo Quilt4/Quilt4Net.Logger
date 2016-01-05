@@ -3,15 +3,15 @@ using System.Reflection;
 using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net.Core.Lookups
+namespace Quilt4Net.Core.Informations
 {
-    internal abstract class ApplicationLookupBase : IApplicationLookup
+    internal abstract class ApplicationInformationBase : IApplicationInformation
     {
         private readonly IHashHandler _hashHandler;
         protected readonly IConfiguration Configuration;
         protected Assembly FirstAssembly;
 
-        protected ApplicationLookupBase(IConfiguration configuration, IHashHandler hashHandler)
+        protected ApplicationInformationBase(IConfiguration configuration, IHashHandler hashHandler)
         {
             _hashHandler = hashHandler;
             Configuration = configuration;
@@ -64,7 +64,7 @@ namespace Quilt4Net.Core.Lookups
         
         protected virtual string GetSupportToolkitNameVersion()
         {
-            var currentAssembly = typeof(ApplicationLookupBase).GetTypeInfo().Assembly;
+            var currentAssembly = typeof(ApplicationInformationBase).GetTypeInfo().Assembly;
             var toolkitName = currentAssembly.GetName();
             return $"{toolkitName.Name} {toolkitName.Version}";
         }

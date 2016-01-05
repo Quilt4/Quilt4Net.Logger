@@ -3,7 +3,7 @@ using Quilt4Net.Core.DataTransfer;
 
 namespace Quilt4Net.Core.Interfaces
 {
-    public interface IApplicationLookup
+    public interface IApplicationInformation
     {
         ApplicationData GetApplicationData();
         void SetFirstAssembly(Assembly firstAssembly);

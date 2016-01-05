@@ -2,9 +2,9 @@
 using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Interfaces;
 
-namespace Quilt4Net.Core.Lookups
+namespace Quilt4Net.Core.Informations
 {
-    internal abstract class MachineLookupBase : IMachineLookup
+    internal abstract class MachineInformationBase : IMachineInformation
     {
         private readonly IHashHandler _hashHandler;
 
@@ -17,7 +17,7 @@ namespace Quilt4Net.Core.Lookups
         protected abstract string GetTimeZone();
         protected abstract string GetLanguage();
 
-        internal MachineLookupBase(IHashHandler hashHandler)
+        internal MachineInformationBase(IHashHandler hashHandler)
         {
             _hashHandler = hashHandler;
         }

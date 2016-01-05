@@ -1,12 +1,12 @@
 using System;
+using Quilt4Net.Core.Informations;
 using Quilt4Net.Core.Interfaces;
-using Quilt4Net.Core.Lookups;
 
 namespace Quilt4Net
 {
-    internal class UserLookup : UserLookupBase
+    internal class UserInformation : UserInformationBase
     {
-        internal UserLookup(IHashHandler hashHandler)
+        internal UserInformation(IHashHandler hashHandler)
             : base(hashHandler)
         {
         }

@@ -3,16 +3,16 @@ using System.Deployment.Application;
 using System.IO;
 using System.Reflection;
 using Quilt4Net.Core.Exceptions;
+using Quilt4Net.Core.Informations;
 using Quilt4Net.Core.Interfaces;
-using Quilt4Net.Core.Lookups;
 
 namespace Quilt4Net
 {
-    internal class ApplicationLookup : ApplicationLookupBase
+    internal class ApplicationInformation : ApplicationInformationBase
     {
         private readonly object _syncRoot = new object();
 
-        internal ApplicationLookup(IConfiguration configuration, IHashHandler hashHandler)
+        internal ApplicationInformation(IConfiguration configuration, IHashHandler hashHandler)
             : base(configuration, hashHandler)
         {
         }

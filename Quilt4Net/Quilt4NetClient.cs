@@ -1,6 +1,6 @@
 ﻿using System;
+using Quilt4Net.Core.Informations;
 using Quilt4Net.Core.Interfaces;
-using Quilt4Net.Core.Lookups;
 using Quilt4Net.Core.WebApi;
 using Action = Quilt4Net.Core.Actions.Action;
 
@@ -17,7 +17,7 @@ namespace Quilt4Net
         private readonly Lazy<IIssueHandler> _issue;
         private readonly Lazy<ISessionHandler> _session;
         private readonly Lazy<IActions> _action;
-        private readonly ILookup _lookup;
+        private readonly IInformation _information;
 
         public Quilt4NetClient(IConfiguration configuration)
         {
@@ -27,10 +27,10 @@ namespace Quilt4Net
 
             var hashHandler = new HashHandler();
             _configuration = configuration;
-            _lookup = new Lookup(new ApplicationLookup(_configuration, hashHandler), new MachineLookup(hashHandler), new UserLookup(hashHandler));
+            _information = new Information(new ApplicationInformation(_configuration, hashHandler), new MachineInformation(hashHandler), new UserInformation(hashHandler));
             _webApiClient = new WebApiClient(_configuration);
             _issue = new Lazy<IIssueHandler>(() => new IssueHandler(_session, _webApiClient, _configuration));
-            _session = new Lazy<ISessionHandler>(() => new SessionHandler(_webApiClient, _configuration, Lookup.AplicationLookup, Lookup.MachineLookup, Lookup.UserLookup));
+            _session = new Lazy<ISessionHandler>(() => new SessionHandler(_webApiClient, _configuration, Information.AplicationInformation, Information.MachineInformation, Information.UserInformation));
             _action = new Lazy<IActions>(() => new Action(_webApiClient));
 
             //    _instanceCreated = true;
@@ -63,7 +63,7 @@ namespace Quilt4Net
         public IIssueHandler Issue => _issue.Value;
         public ISessionHandler Session => _session.Value;
         public IActions Actions => _action.Value;
-        public ILookup Lookup => _lookup;
+        public IInformation Information => _information;
 
         public void Dispose()
         {

@@ -7,7 +7,7 @@ namespace Quilt4Net.Core.Interfaces
         IIssueHandler Issue { get; }
         ISessionHandler Session { get; }
         IActions Actions { get; }
-        ILookup Lookup { get; }
+        IInformation Information { get; }
         IWebApiClient WebApiClient { get; }
         IConfiguration Configuration { get; }
     }

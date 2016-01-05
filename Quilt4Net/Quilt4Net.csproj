@@ -59,19 +59,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Handlers\HashHandler.cs" />
-    <Compile Include="Lookups\ApplicationLookup.cs" />
+    <Compile Include="Informations\ApplicationInformation.cs" />
     <Compile Include="Quilt4NetClient.cs" />
     <Compile Include="Configuration\ConfigSection.cs" />
     <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="Handlers\IssueHandler.cs" />
-    <Compile Include="Lookups\MachineLookup.cs" />
+    <Compile Include="Informations\MachineInformation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Handlers\SessionHandler.cs" />
     <Compile Include="Configuration\SessionConfiguration.cs" />
     <Compile Include="Configuration\SessionElement.cs" />
     <Compile Include="Configuration\TargetConfiguration.cs" />
     <Compile Include="Configuration\TargetElement.cs" />
-    <Compile Include="Lookups\UserLookup.cs" />
+    <Compile Include="Informations\UserInformation.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Quilt4Net.Core\Quilt4Net.Core.csproj">
