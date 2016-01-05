@@ -48,6 +48,7 @@
     </Compile>
     <Compile Include="Actions\Action.cs" />
     <Compile Include="Actions\Application.cs" />
+    <Compile Include="DataTransfer\ServiceInfoResponse.cs" />
     <Compile Include="Lookups\ApplicationLookupBase.cs" />
     <Compile Include="DataTransfer\Authorization.cs" />
     <Compile Include="Handlers\Configuration\ConfigurationHandlerBase.cs" />
