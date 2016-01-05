@@ -22,7 +22,7 @@ namespace Quilt4Net.Core.Interfaces
         Task EndAsync();
         void End();
         bool IsRegistered { get; }
-        Task<Guid> GetSessionKeyAsync();
+        Task<string> GetSessionTokenAsync();
         Task<IEnumerable<SessionResponse>> GetListAsync();
     }
 }

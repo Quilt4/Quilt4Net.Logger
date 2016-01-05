@@ -10,9 +10,8 @@ namespace Quilt4Net.Core.DataTransfer
         {
         }
 
-        //public string ProjectApiKey { get; set; }
         public Guid IssueKey { get; set; }
-        public Guid SessionKey { get; set; }
+        public string SessionToken { get; set; }
         public DateTime ClientTime { get; set; }
         public IDictionary<string, string> Data { get; set; }
         public IssueTypeData IssueType { get; set; }

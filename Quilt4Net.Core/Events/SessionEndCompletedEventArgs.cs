@@ -5,13 +5,13 @@ namespace Quilt4Net.Core.Events
 {
     public class SessionEndCompletedEventArgs : EventArgs
     {
-        public SessionEndCompletedEventArgs(Guid sessionKey, EndSesionResult result)
+        public SessionEndCompletedEventArgs(string sessionToken, EndSesionResult result)
         {
-            SessionKey = sessionKey;
+            SessionToken = sessionToken;
             Result = result;
         }
 
-        public Guid SessionKey { get; }
+        public string SessionToken { get; }
         public EndSesionResult Result { get; }
     }
 }

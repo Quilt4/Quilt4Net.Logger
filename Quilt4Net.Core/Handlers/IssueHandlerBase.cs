@@ -91,7 +91,7 @@ namespace Quilt4Net.Core.Handlers
 
             try
             {
-                request.SessionKey = await _session.Value.GetSessionKeyAsync();
+                request.SessionToken = await _session.Value.GetSessionTokenAsync();
 
                 OnIssueRegistrationStartedEvent(new IssueRegistrationStartedEventArgs(request));
 

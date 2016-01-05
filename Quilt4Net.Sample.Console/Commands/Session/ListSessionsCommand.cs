@@ -24,8 +24,8 @@ namespace Quilt4Net.Sample.Console.Commands.Session
         {
             var sessions = (await _client.SessionHandler.GetListAsync()).ToArray();
             if (!sessions.Any()) return true;
-            var title = new[] { new[] { "SessionKey", "Environment" } };
-            var data = title.Union(sessions.Select(x => new[] { x.SessionKey.ToString(), x.Environment }).ToArray()).ToArray();
+            var title = new[] { new[] { "SessionToken", "Environment" } };
+            var data = title.Union(sessions.Select(x => new[] { x.SessionToken.ToString(), x.Environment }).ToArray()).ToArray();
             OutputTable(data);
             return true;
         }

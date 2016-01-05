@@ -17,9 +17,9 @@ namespace Quilt4Net.Tests
             //Arrange
             var sessionRegistrationStartedEventCount = 0;
             var sessionRegistrationCompletedEventCount = 0;
-            var sessionKey = Guid.NewGuid();
+            var sessionToken = Guid.NewGuid().ToString();
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
-            webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(new SessionResponse { SessionKey = sessionKey })).Callback(() => { System.Threading.Thread.Sleep(500); });
+            webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(new SessionResponse { SessionToken = sessionToken })).Callback(() => { System.Threading.Thread.Sleep(500); });
             var configurationMock = new Mock<IConfigurationHandler>(MockBehavior.Strict);
             configurationMock.SetupGet(x => x.Enabled).Returns(true);
             configurationMock.SetupGet(x => x.ProjectApiKey).Returns("ABC123");
@@ -35,15 +35,12 @@ namespace Quilt4Net.Tests
             session.SessionRegistrationCompletedEvent += delegate { sessionRegistrationCompletedEventCount++; };
 
             //Act
-            var task1 = Task.Run(() => session.GetSessionKeyAsync());
-            //var task2 = Task.Run(() => session.GetSessionKeyAsync());
-            var task3 = Task.Run(() => { System.Threading.Thread.Sleep(500); return session.GetSessionKeyAsync(); });
-            //Task.WaitAll(task1, task2, task3);
+            var task1 = Task.Run(() => session.GetSessionTokenAsync());
+            var task3 = Task.Run(() => { System.Threading.Thread.Sleep(500); return session.GetSessionTokenAsync(); });
             Task.WaitAll(task1, task3);
 
             //Assert
             Assert.That(task1.Result, Is.Not.EqualTo(Guid.Empty));
-            //Assert.That(task1.Result, Is.EqualTo(task2.Result));
             Assert.That(task1.Result, Is.EqualTo(task3.Result));
             Assert.That(sessionRegistrationStartedEventCount, Is.EqualTo(1));
             Assert.That(sessionRegistrationCompletedEventCount, Is.EqualTo(1));
@@ -57,9 +54,9 @@ namespace Quilt4Net.Tests
             //Arrange
             var sessionEndCompletedEventCount = 0;
             var sessionEndStartedEventCount = 0;
-            var sessionKey = Guid.NewGuid();
+            var sessionToken = Guid.NewGuid().ToString();
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
-            webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(new SessionResponse { SessionKey = sessionKey }));
+            webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(new SessionResponse { SessionToken = sessionToken }));
             webApiClientMock.Setup(x => x.ExecuteCommandAsync<Guid>(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>())).Returns(Task.FromResult<object>(null)).Callback(() => { System.Threading.Thread.Sleep(500); });
             var configurationMock = new Mock<IConfigurationHandler>(MockBehavior.Strict);
             configurationMock.SetupGet(x => x.Enabled).Returns(true);
@@ -74,7 +71,7 @@ namespace Quilt4Net.Tests
             var session = new SessionHandler(webApiClientMock.Object, configurationMock.Object, applicationHelperMock.Object, machineHelperMock.Object, userHelperMock.Object);
             session.SessionEndCompletedEvent += delegate { sessionEndCompletedEventCount++; };
             session.SessionEndStartedEvent += delegate { sessionEndStartedEventCount++; };
-            var response = await session.GetSessionKeyAsync();
+            var response = await session.GetSessionTokenAsync();
 
             //Act
             var task1 = Task.Run(() => session.EndAsync());
@@ -95,9 +92,9 @@ namespace Quilt4Net.Tests
             //Arrange
             var sessionRegistrationStartedEventCount = 0;
             var sessionRegistrationCompletedEventCount = 0;
-            var sessionKey = Guid.NewGuid();
+            var sessionToken = Guid.NewGuid().ToString();
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
-            webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(new SessionResponse { SessionKey = sessionKey })).Callback(() => { System.Threading.Thread.Sleep(500); });
+            webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(new SessionResponse { SessionToken = sessionToken })).Callback(() => { System.Threading.Thread.Sleep(500); });
             var configurationMock = new Mock<IConfigurationHandler>(MockBehavior.Strict);
             configurationMock.SetupGet(x => x.Enabled).Returns(false);
             configurationMock.SetupGet(x => x.ProjectApiKey).Returns("ABC123");
@@ -109,7 +106,7 @@ namespace Quilt4Net.Tests
             session.SessionRegistrationCompletedEvent += delegate { sessionRegistrationCompletedEventCount++; };
 
             //Act
-            var response = await session.GetSessionKeyAsync();
+            var response = await session.GetSessionTokenAsync();
 
             //Assert
             Assert.That(response, Is.EqualTo(Guid.Empty));

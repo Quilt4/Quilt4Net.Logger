@@ -18,7 +18,7 @@ namespace Quilt4Net.Core.Handlers
         private readonly IApplicationLookup _applicationLookup;
         private readonly IMachineLookup _machineLookup;
         private readonly IUserLookup _userLookup;
-        private Guid _sessionKey;
+        private string _sessionToken;
         private bool _ongoingSessionRegistration;
         private bool _ongoingSessionEnding;
         private readonly AutoResetEvent _sessionRegistered = new AutoResetEvent(false);
@@ -43,7 +43,7 @@ namespace Quilt4Net.Core.Handlers
         public event EventHandler<SessionEndStartedEventArgs> SessionEndStartedEvent;
         public event EventHandler<SessionEndCompletedEventArgs> SessionEndCompletedEvent;
 
-        public bool IsRegistered => _sessionKey != Guid.Empty;
+        public bool IsRegistered => !string.IsNullOrEmpty(_sessionToken);
 
         public async Task<SessionResult> RegisterAsync()
         {
@@ -102,7 +102,7 @@ namespace Quilt4Net.Core.Handlers
         public async Task EndAsync()
         {
             if (!IsRegistered) return;
-            await EndEx(await GetSessionKeyAsync());
+            await EndEx(await GetSessionTokenAsync());
         }
 
         public void End()
@@ -111,7 +111,7 @@ namespace Quilt4Net.Core.Handlers
 
             try
             {
-                EndEx(GetSessionKeyAsync().Result).Wait();
+                EndEx(GetSessionTokenAsync().Result).Wait();
             }
             catch (AggregateException exception)
             {
@@ -119,7 +119,7 @@ namespace Quilt4Net.Core.Handlers
             }
         }
 
-        private async Task EndEx(Guid sessionKey)
+        private async Task EndEx(string sessionToken)
         {
             var result = new EndSesionResult();
 
@@ -134,13 +134,13 @@ namespace Quilt4Net.Core.Handlers
                 _ongoingSessionEnding = true;
             }
 
-            if (_sessionKey == Guid.Empty) throw new InvalidOperationException("There is no active session.");
+            if (string.IsNullOrEmpty(sessionToken)) throw new InvalidOperationException("There is no active session.");
 
             try
             {
-                OnSessionEndStartedEvent(new SessionEndStartedEventArgs(sessionKey));
+                OnSessionEndStartedEvent(new SessionEndStartedEventArgs(sessionToken));
 
-                await _webApiClient.ExecuteCommandAsync("Client/Session", "End", sessionKey);
+                await _webApiClient.ExecuteCommandAsync("Client/Session", "End", sessionToken);
             }
             catch (Exception exception)
             {
@@ -149,15 +149,15 @@ namespace Quilt4Net.Core.Handlers
             }
             finally
             {
-                _sessionKey = Guid.Empty;
+                _sessionToken = null;
                 _ongoingSessionEnding = false;
                 _sessionEnded.Set();
                 result.SetCompleted();
-                OnSessionEndCompletedEvent(new SessionEndCompletedEventArgs(sessionKey, result));
+                OnSessionEndCompletedEvent(new SessionEndCompletedEventArgs(sessionToken, result));
             }
         }
 
-        public async Task<Guid> GetSessionKeyAsync()
+        public async Task<string> GetSessionTokenAsync()
         {
             if (!IsRegistered)
             {
@@ -168,19 +168,18 @@ namespace Quilt4Net.Core.Handlers
                 }
                 catch (SessionAlreadyRegisteredException)
                 {
-                    return _sessionKey;
+                    return _sessionToken;
                 }
 
                 if (response == null)
                 {
-                    return _sessionKey;
+                    return _sessionToken;
                 }
 
-                if (_sessionKey != response.Response.SessionKey) throw new InvalidOperationException("The session key returned and stored differs.");
-                return response.Response.SessionKey;
+                return response.Response.SessionToken;
             }
 
-            return _sessionKey;
+            return _sessionToken;
         }
 
         private string GetProjectApiKey()
@@ -215,15 +214,12 @@ namespace Quilt4Net.Core.Handlers
                 _ongoingSessionRegistration = true;
             }
 
-            if (_sessionKey != Guid.Empty) throw new SessionAlreadyRegisteredException();
+            if (!string.IsNullOrEmpty(_sessionToken)) throw new SessionAlreadyRegisteredException();
 
             try
             {
-                var sessionKey = Guid.NewGuid();
-
                 request = new SessionRequest
                 {
-                    SessionKey = sessionKey,
                     ProjectApiKey = projectApiKey,
                     ClientStartTime = DateTime.UtcNow,
                     Environment = _configurationHandler.Session != null ? _configurationHandler.Session.Environment : string.Empty,
@@ -235,7 +231,7 @@ namespace Quilt4Net.Core.Handlers
                 OnSessionRegistrationStartedEvent(new SessionRegistrationStartedEventArgs(request));
 
                 response = await _webApiClient.CreateAsync<SessionRequest, SessionResponse>("Client/Session", request);
-                _sessionKey = response.SessionKey;
+                _sessionToken = response.SessionToken;
             }
             catch (Exception exception)
             {

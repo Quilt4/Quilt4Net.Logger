@@ -7,7 +7,7 @@ namespace Quilt4Net.Core.DataTransfer
     public class IssueResponse : IIssueData
     {
         public Guid IssueKey { get; set; }
-        public Guid SessionKey { get; set; }
+        public string SessionToken { get; set; }
         public DateTime ClientTime { get; set; }
         public IDictionary<string, string> Data { get; set; }
         public IssueTypeData IssueType { get; set; }
@@ -15,6 +15,7 @@ namespace Quilt4Net.Core.DataTransfer
         public string UserHandle { get; set; }
         public DateTime ServerTime { get; set; }
         public string Ticket { get; set; }
+        public string IssueTypeUrl { get; set; }
         public string IssueUrl { get; set; }
     }
 }
