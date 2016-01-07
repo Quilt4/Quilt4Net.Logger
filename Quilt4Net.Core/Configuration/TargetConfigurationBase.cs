@@ -25,7 +25,7 @@ namespace Quilt4Net.Core
                 {
                     if (_location == null)
                     {
-                        _location = "https://www.Quilt4.com/";
+                        _location = "https://service.quilt4.com";
                         if (!_location.EndsWith("/")) _location += "/";
                     }
                 }

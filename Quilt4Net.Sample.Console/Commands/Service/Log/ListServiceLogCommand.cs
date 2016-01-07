@@ -24,7 +24,8 @@ namespace Quilt4Net.Sample.Console.Commands.Service.Log
             var response = await _client.Actions.Service.Log.GetListAsync();
             foreach (var item in response)
             {
-                OutputInformation(item.Message.Substring(0, 10));
+                OutputInformation(item.Message);
+                OutputInformation(new string('-', 40));
             }
 
             return true;

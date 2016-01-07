@@ -50,6 +50,7 @@
     <Compile Include="Actions\Application.cs" />
     <Compile Include="DataTransfer\ServiceInfoResponse.cs" />
     <Compile Include="ExceptionIssueLevel.cs" />
+    <Compile Include="Exceptions\ServiceCallExcepton.cs" />
     <Compile Include="MessageIssueLevel.cs" />
     <Compile Include="Interfaces\IHashHandler.cs" />
     <Compile Include="Informations\ApplicationInformationBase.cs" />

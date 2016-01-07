@@ -34,7 +34,7 @@ namespace Quilt4Net.Core
                     var response = await client.PostAsync(requestUri, content);
                     if (!response.IsSuccessStatusCode)
                     {
-                        throw new InvalidOperationException(response.ToString());
+                        throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
                     }
                 });
         }
@@ -51,7 +51,7 @@ namespace Quilt4Net.Core
                 var response = await client.PostAsync(requestUri, content);
                 if (!response.IsSuccessStatusCode)
                 {
-                    throw new InvalidOperationException(response.ToString());
+                    throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
                 }
 
                 return response.Content.ReadAsAsync<TResult>().Result;
@@ -69,7 +69,7 @@ namespace Quilt4Net.Core
                     var response = await client.GetAsync(requestUri);
                     if (!response.IsSuccessStatusCode)
                     {
-                        throw new InvalidOperationException(response.ToString());
+                        throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
                     }
 
                     return response.Content.ReadAsAsync<TResult>().Result;
@@ -86,7 +86,7 @@ namespace Quilt4Net.Core
                 var response = await client.GetAsync(requestUri);
                 if (!response.IsSuccessStatusCode)
                 {
-                    throw new InvalidOperationException(response.ToString());
+                    throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
                 }
 
                 return response.Content.ReadAsAsync<IEnumerable<TResult>>().Result;
@@ -116,7 +116,7 @@ namespace Quilt4Net.Core
                     var response = await client.DeleteAsync(requestUri);
                     if (!response.IsSuccessStatusCode)
                     {
-                        throw new InvalidOperationException(response.ToString());
+                        throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
                     }
                 });
         }
@@ -133,7 +133,7 @@ namespace Quilt4Net.Core
                     var response = await client.PostAsync(requestUri, content);
                     if (!response.IsSuccessStatusCode)
                     {
-                        throw new InvalidOperationException(response.ToString());
+                        throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
                     }
                 });
         }
@@ -150,7 +150,7 @@ namespace Quilt4Net.Core
                     var response = await client.PostAsync(requestUri, content);
                     if (!response.IsSuccessStatusCode)
                     {
-                        throw new InvalidOperationException(response.ToString());
+                        throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
                     }
 
                     return response.Content.ReadAsAsync<TResult>().Result;
@@ -170,7 +170,22 @@ namespace Quilt4Net.Core
         {
             using (var client = GetHttpClient())
             {
-                await action(client);
+                try
+                {
+                    await action(client);
+                }
+                //catch (ServiceCallExcepton)
+                //{
+                //    throw;
+                //}
+                catch (TaskCanceledException exception)
+                {
+                    throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.CallTerminatedByServer, exception);
+                }
+                //catch (Exception exception)
+                //{
+                //    throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.ServiceCallError, exception);
+                //}
             }
         }
 
@@ -178,8 +193,23 @@ namespace Quilt4Net.Core
         {
             using (var client = GetHttpClient())
             {
-                var response = await action(client);
-                return response;
+                try
+                {
+                    var response = await action(client);
+                    return response;
+                }
+                //catch (ServiceCallExcepton)
+                //{
+                //    throw;
+                //}
+                catch (TaskCanceledException exception)
+                {
+                    throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.CallTerminatedByServer, exception);
+                }
+                //catch (Exception exception)
+                //{
+                //    throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.ServiceCallError, exception);
+                //}
             }
         }
 

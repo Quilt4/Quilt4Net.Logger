@@ -1,5 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core
@@ -20,6 +24,7 @@ namespace Quilt4Net.Core
         public const int CannotParseIssueLevelMessage = 1011;
         public const int CannotSetTimeout = 1012;
         public const int Timeout = 1013;
+        public const int CallTerminatedByServer = 1014;
 
         private readonly Dictionary<int, string> _data = new Dictionary<int, string>();
 
@@ -39,6 +44,7 @@ namespace Quilt4Net.Core
             _data.Add(CannotParseIssueLevelMessage, "Cannot parse value for issue level.");
             _data.Add(CannotSetTimeout, "Cannot set timeout to null.");
             _data.Add(Timeout, "WebAPI call timed out.");
+            _data.Add(CallTerminatedByServer, "WebAPI was terminated by the server for unknown reason.");
         }
 
         public string GetTitle(int code)
@@ -83,6 +89,9 @@ namespace Quilt4Net.Core
                 case Timeout:
                     exception = new TimeoutException(GetMessage(code), innerEception);
                     break;
+                case CallTerminatedByServer:                    
+                    exception = new InvalidOperationException(GetMessage(code), innerEception);
+                    break;
                 default:
                     exception = new InvalidOperationException(GetMessage(code), innerEception);
                     break;
@@ -94,13 +103,73 @@ namespace Quilt4Net.Core
         
         private string GetMessage(int code)
         {
-            var response = $"{_data[code]} Issue code #{code}. Visit {GetHelpLink(code)} for more information";
+            var message = _data[code];
+            return FormatMessage(code, message);
+        }
+
+        private string FormatMessage(int code, string message)
+        {
+            var helpLink = GetHelpLink(code);
+            var response = $"{message} Issue code #{code}. Visit '{helpLink}' for more information.";
             return response;
         }
 
         private string GetHelpLink(int code)
         {
-            return string.Format("{1}Help/Details/{0}", code, _configuration.Target.Location);
+            var location = _configuration.Target.Location;
+            return $"{location}#/help/error/{code}";
         }
+
+        public async Task<Exception> GetExceptionFromResponse(HttpResponseMessage response)
+        {            
+            var result = await response.Content.ReadAsStringAsync();
+            var error = JsonConvert.DeserializeObject<Error>(result);
+
+            if (error.Type == null)
+            {
+                var msg = FormatMessage((int)response.StatusCode, response.ReasonPhrase + ".");
+                var exp = new ServiceCallExcepton(msg, response, new Exception(response.ToString())) { HelpLink = GetHelpLink((int)response.StatusCode) };
+                return exp;
+            }
+
+            var type = Type.GetType(error.Type);
+
+            Exception exception;            
+            if (type == null)
+            {
+                return new ExpectedIssues(_configuration).GetException(ExpectedIssues.ServiceCallError, new Exception(response.ToString()));
+            }
+            else
+            {
+                try
+                {
+                    exception = (Exception)Activator.CreateInstance(type, "The service throw an exception. " + error.Message);
+                }
+                catch (Exception exp)
+                {
+                    exception = new InvalidOperationException(error.Message, exp);
+                }
+            }
+
+            if (error.Data != null)
+            {
+                foreach (var data in error.Data)
+                {
+                    exception.Data.Add(data.Key, data.Value);
+                }
+            }
+
+            return exception;
+        }
+
+        class Error
+        {
+            public string StatusCode { get; set; }
+            public int Code { get; set; }
+            public string Type { get; set; }
+            public string Message { get; set; }
+            public Dictionary<string, string> Data { get; set; }
+        }
+
     }
 }

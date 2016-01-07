@@ -9,7 +9,7 @@
   <Quilt4 xdt:Transform="InsertIfMissing">
     <Quilt4Net ProjectApiKey="" Enabled="true" UseBuildTime="false">
       <Session Environment="Dev" />
-	  <Target Location="https://www.Quilt4.com/" Timeout="60" />
+	  <Target Location="https://service.quilt4.com" Timeout="60" />
     </Quilt4Net>
   </Quilt4>
 </configuration>

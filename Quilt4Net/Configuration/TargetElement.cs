@@ -14,7 +14,7 @@ namespace Quilt4Net
             get
             {
                 var configurationProperty = new ConfigurationProperty("Location", typeof(string), null);
-                return (string)base[configurationProperty] ?? "https://www.Quilt4.com/";
+                return (string)base[configurationProperty] ?? "https://service.quilt4.com";
             }
 
             set { this["Location"] = value; }

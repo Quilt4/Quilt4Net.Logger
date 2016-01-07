@@ -15,6 +15,7 @@ namespace Quilt4Net.Core.Interfaces
         bool IsRegistered { get; }
         DateTime ClientStartTime { get; }
         string Environment { get; }
+        IApplicationInformation Application { get; }
         Task<SessionResult> RegisterAsync();
         Task<SessionResult> RegisterAsync(Assembly firstAssembly);
         void RegisterStart();

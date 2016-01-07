@@ -23,7 +23,7 @@ namespace Quilt4Net
             _issue = new Lazy<IIssueHandler>(() => new IssueHandler(_session, _webApiClient, _configuration));
             _session = new Lazy<ISessionHandler>(() => new SessionHandler(_webApiClient, _configuration, Information.Aplication, Information.Machine, Information.User));
             _action = new Lazy<IActions>(() => new Action(_webApiClient));
-        }
+            }
 
         public IConfiguration Configuration => _configuration;
         public IWebApiClient WebApiClient => _webApiClient;
@@ -34,7 +34,7 @@ namespace Quilt4Net
 
         public void Dispose()
         {
-            if (_session.IsValueCreated)
+            if (_session.IsValueCreated && _session.Value.IsRegistered)
             {
                 _session.Value.End();
             }

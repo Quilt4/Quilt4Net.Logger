@@ -45,6 +45,7 @@ namespace Quilt4Net.Core
         public bool IsRegistered => !string.IsNullOrEmpty(_sessionToken);
         public DateTime ClientStartTime { get; }
         public string Environment => _configuration.Session != null ? _configuration.Session.Environment : string.Empty;
+        public IApplicationInformation Application => _applicationInformation;
 
         public async Task<SessionResult> RegisterAsync()
         {

@@ -1,4 +1,6 @@
-﻿using Quilt4Net.Core;
+﻿using System;
+using System.Reflection;
+using Quilt4Net.Core;
 using Quilt4Net.Core.Events;
 using Quilt4Net.Sample.Console.Commands.Invitation;
 using Quilt4Net.Sample.Console.Commands.Issue;
@@ -26,13 +28,18 @@ namespace Quilt4Net.Sample.Console
             //var client = Singleton.Quilt4NetClient.Instance;
 
             //Using the created instance version
-            var configuration = new Configuration();
+            var configuration = new Configuration();        
             var client = new Quilt4NetClient(configuration);
 
             //Note: Config in code
-            //configuration.UseBuildTime = true;
-            //configuration.Target.Location = "http://localhost:29660";
-            //configuration.Session.Environment = "Manual";
+            configuration.Enabled = true; //Turn the entire quilt4Net feature on or off.
+            configuration.ProjectApiKey = "9XG02ZE0BR1OI75IVX446B59M13RKBR_"; //TODO: Replace with your own ProjectApiKey.
+            configuration.ApplicationName = "MyOverrideApplication"; //Overrides the name of the assembly
+            configuration.ApplicationVersion = "MyOverrideVersion"; //Overrides the version of the assembly
+            configuration.UseBuildTime = false; //If true, separate 'versions' for each build of the assembly will be logged, even though the version number have not changed.
+            configuration.Session.Environment = "Test"; //Use dev, test, production or any other verb you like to filter on.
+            configuration.Target.Location = "http://localhost:29660"; //Address to the target service.
+            configuration.Target.Timeout = new TimeSpan(0, 0, 60);
 
             client.Session.SessionRegistrationStartedEvent += Session_SessionRegistrationStartedEvent;
             client.Session.SessionRegistrationCompletedEvent += SessionSessionRegistrationCompletedEvent;

@@ -10,7 +10,6 @@ namespace Quilt4Net.Core
         {
             IssueLevel il;
             if (!Enum.TryParse(issueLevel.ToString(), true, out il)) throw new ExpectedIssues(configuration).GetException(ExpectedIssues.CannotParseIssueLevelException).AddData("IssueLevel", issueLevel);
-
             return il;
         }
 
@@ -18,7 +17,6 @@ namespace Quilt4Net.Core
         {
             IssueLevel il;
             if (!Enum.TryParse(issueLevel.ToString(), true, out il)) throw new ExpectedIssues(configuration).GetException(ExpectedIssues.CannotParseIssueLevelMessage).AddData("issueLevel", issueLevel);
-
             return il;
         }
     }
