@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Reflection;
-using Quilt4Net.Core;
 using Quilt4Net.Core.Events;
 using Quilt4Net.Sample.Console.Commands.Invitation;
 using Quilt4Net.Sample.Console.Commands.Issue;

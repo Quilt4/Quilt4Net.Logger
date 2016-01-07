@@ -48,6 +48,7 @@
     </Compile>
     <Compile Include="Actions\Action.cs" />
     <Compile Include="Actions\Application.cs" />
+    <Compile Include="DataTransfer\DatabaseInfoResponse.cs" />
     <Compile Include="DataTransfer\ServiceInfoResponse.cs" />
     <Compile Include="ExceptionIssueLevel.cs" />
     <Compile Include="Exceptions\ServiceCallExcepton.cs" />

@@ -1,8 +1,9 @@
 using System;
 
-namespace Quilt4Net.Core
+// ReSharper disable once CheckNamespace
+namespace Quilt4Net
 {
-    internal static class ExceptionExtensions
+    public static class ExceptionExtensions
     {
         public static T AddData<T>(this T item, object key, object value) where T : Exception
         {

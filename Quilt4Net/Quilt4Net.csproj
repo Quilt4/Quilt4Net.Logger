@@ -58,7 +58,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="Singleton\Configuration.cs" />
     <Compile Include="Handlers\HashHandler.cs" />
     <Compile Include="Singleton\Issue.cs" />
@@ -93,7 +92,9 @@
     <None Include="Transformations\web.config.install.xdt" />
     <None Include="Transformations\web.config.uninstall.xdt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

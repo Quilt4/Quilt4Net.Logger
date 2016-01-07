@@ -19,7 +19,11 @@ namespace Quilt4Net.Sample.Console.Commands.Service
             var response = await _client.Actions.Service.GetServiceInfo();
 
             OutputInformation("Version: {0} ({1})", response.Version, response.Environment);
-            OutputInformation("Database: {0}", response.DatabaseInfo);
+            var databaseInfo = response.Database;
+            OutputInformation("Database: {0}", databaseInfo.CanConnect ? $"Database {databaseInfo.Database}, Patch version {databaseInfo.Version}." : "Cannot connect to database.");
+            OutputInformation("HasOwnProjectApiKey: {0}", response.HasOwnProjectApiKey);
+            OutputInformation("CanWriteToSystemLog: {0}", response.CanWriteToSystemLog);
+            OutputInformation("StartTime: {0}", response.StartTime);
 
             return true;
         }
