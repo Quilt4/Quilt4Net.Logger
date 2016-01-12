@@ -7,12 +7,12 @@ namespace Quilt4Net.Sample.Console.Commands.Session
 {
     internal class RegisterSessionCommand : ActionCommandBase
     {
-        private readonly IQuilt4NetClient _client;
+        private readonly ISessionHandler _sessionHandler;
 
-        public RegisterSessionCommand(IQuilt4NetClient client)
+        public RegisterSessionCommand(ISessionHandler sessionHandler)
             : base("Register", "Register session")
         {
-            _client = client;
+            _sessionHandler = sessionHandler;
         }
 
         public override bool CanExecute()
@@ -20,19 +20,19 @@ namespace Quilt4Net.Sample.Console.Commands.Session
             //if (!_client.User.IsAuthorized)
             //    return false;
 
-            return !_client.Session.IsRegistered;
+            return !_sessionHandler.IsRegistered;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            if (string.IsNullOrEmpty(_client.Configuration.ProjectApiKey))
+            if (string.IsNullOrEmpty(_sessionHandler.Client.Configuration.ProjectApiKey))
             {
                 var index = 0;
                 var projectApiKey = QueryParam<string>("ProjectApiKey", GetParam(paramList, index++));
-                _client.Configuration.ProjectApiKey = projectApiKey;
+                _sessionHandler.Client.Configuration.ProjectApiKey = projectApiKey;
             }
 
-            var response = await _client.Session.RegisterAsync(Assembly.GetExecutingAssembly());
+            var response = await _sessionHandler.RegisterAsync(Assembly.GetExecutingAssembly());
             if (response.IsSuccess)
                 OutputInformation("Session registration took " + response.Elapsed.TotalMilliseconds.ToString("0") + "ms.");
             else

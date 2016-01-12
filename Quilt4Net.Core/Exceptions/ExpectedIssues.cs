@@ -31,9 +31,9 @@ namespace Quilt4Net.Core
         internal ExpectedIssues(IConfiguration configuration)
         {
             _configuration = configuration;
-            _data.Add(ProjectApiKeyNotSet, "The client token has not been set.");
+            _data.Add(ProjectApiKeyNotSet, "The projectApiKey has not been set.");
             _data.Add(UnknownType, "Unknown type.");
-            _data.Add(CannotSetProjectApiKey, "Cannot set client token to null, use string.Empty instead.");
+            _data.Add(CannotSetProjectApiKey, "Cannot set projectApiKey, use string.Empty instead.");
             _data.Add(CannotSetEnvironment, "Cannot set Environment to null, use string.Empty instead.");
             _data.Add(ServiceCallError, "Service call error.");
             _data.Add(CannotSetLocation, "Cannot set Location to null, use string.Empty instead.");

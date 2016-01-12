@@ -7,23 +7,23 @@ namespace Quilt4Net.Sample.Console.Commands.Session
 {
     internal class ListSessionsCommand : ActionCommandBase
     {
-        private readonly IQuilt4NetClient _client;
+        private readonly ISessionHandler _sessionHandler;
 
-        public ListSessionsCommand(IQuilt4NetClient client)
+        public ListSessionsCommand(ISessionHandler sessionHandler)
             : base("List", "List sessions")
         {
-            _client = client;
+            _sessionHandler = sessionHandler;
         }
 
         public override bool CanExecute()
         {
-            return _client.Actions.User.IsAuthorized;
+            return _sessionHandler.Client.Actions.User.IsAuthorized;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
             throw new NotImplementedException();
-            //var sessions = (await _client.Session.GetListAsync()).ToArray();
+            //var sessions = (await _sessionHandler.GetListAsync()).ToArray();
             //if (!sessions.Any()) return true;
             //var title = new[] { new[] { "SessionToken", "Environment" } };
             //var data = title.Union(sessions.Select(x => new[] { x.SessionToken.ToString(), x.Environment }).ToArray()).ToArray();

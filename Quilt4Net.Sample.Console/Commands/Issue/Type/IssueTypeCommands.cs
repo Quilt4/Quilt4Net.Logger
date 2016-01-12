@@ -5,10 +5,10 @@ namespace Quilt4Net.Sample.Console.Commands.Issue.Type
 {
     internal class IssueTypeCommands : ContainerCommandBase
     {
-        public IssueTypeCommands(IQuilt4NetClient client)
+        public IssueTypeCommands(IIssueHandler issueHandler)
             : base("Type")
-        {
-            RegisterCommand(new ListIssueTypesCommand(client));
+        {            
+            RegisterCommand(new ListIssueTypesCommand(issueHandler));
         }
     }
 }

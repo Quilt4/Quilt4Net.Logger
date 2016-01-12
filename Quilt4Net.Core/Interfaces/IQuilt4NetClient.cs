@@ -1,11 +1,7 @@
-using System;
-
 namespace Quilt4Net.Core.Interfaces
 {
-    public interface IQuilt4NetClient : IDisposable
+    public interface IQuilt4NetClient
     {
-        IIssueHandler Issue { get; }
-        ISessionHandler Session { get; }
         IActions Actions { get; }
         IInformation Information { get; }
         IWebApiClient WebApiClient { get; }

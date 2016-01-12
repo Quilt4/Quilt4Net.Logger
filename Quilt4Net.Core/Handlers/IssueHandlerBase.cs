@@ -11,18 +11,15 @@ namespace Quilt4Net.Core
 {
     public abstract class IssueHandlerBase : IIssueHandler
     {
-        private readonly Lazy<ISessionHandler> _session;
-        private readonly IWebApiClient _webApiClient;
-        private readonly IConfiguration _configuration;
+        private readonly ISessionHandler _sessionHandler;        
         private readonly List<Tuple<IssueRequest, Exception>> _issuesThatFailedToRegister = new List<Tuple<IssueRequest, Exception>>();
 
-        internal IssueHandlerBase(Lazy<ISessionHandler> session, IWebApiClient webApiClient, IConfiguration configuration)
+        protected internal IssueHandlerBase(ISessionHandler sessionHandler)
         {
-            _session = session;
-            _webApiClient = webApiClient;
-            _configuration = configuration;
+            _sessionHandler = sessionHandler;
         }
 
+        public IQuilt4NetClient Client { get; }
         public event EventHandler<IssueRegistrationStartedEventArgs> IssueRegistrationStartedEvent;
         public event EventHandler<IssueRegistrationCompletedEventArgs> IssueRegistrationCompletedEvent;
 
@@ -81,7 +78,7 @@ namespace Quilt4Net.Core
 
         public async Task<IEnumerable<IssueTypeResponse>> GetIssueTypesAsync(Guid versionKey)
         {
-            return await _webApiClient.ExecuteQueryAsync<Guid, IEnumerable<IssueTypeResponse>>("Client/IssueType", "QueryByVersionKey", versionKey);
+            return await _sessionHandler.Client.WebApiClient.ExecuteQueryAsync<Guid, IEnumerable<IssueTypeResponse>>("Client/IssueType", "QueryByVersionKey", versionKey);
         }
 
         private async Task<IssueResult> RegisterEx(bool doThrow, IssueRequest request)
@@ -91,11 +88,11 @@ namespace Quilt4Net.Core
 
             try
             {
-                request.SessionToken = await _session.Value.GetSessionTokenAsync();
+                request.SessionToken = await _sessionHandler.GetSessionTokenAsync();
 
                 OnIssueRegistrationStartedEvent(new IssueRegistrationStartedEventArgs(request));
 
-                response = await _webApiClient.CreateAsync<IssueRequest, IssueResponse>("Client/Issue", request);                
+                response = await _sessionHandler.Client.WebApiClient.CreateAsync<IssueRequest, IssueResponse>("Client/Issue", request);                
             }
             catch (Exception exception)
             {
@@ -136,7 +133,7 @@ namespace Quilt4Net.Core
             var issueType = new IssueTypeData
             {
                 Message = exception.Message,
-                IssueLevel = issueLevel.ToIssueLevel(_configuration),
+                IssueLevel = issueLevel.ToIssueLevel(_sessionHandler.Client.Configuration),
                 Inner = exception.InnerException != null ? CreateIssueTypeData(exception, issueLevel) : null,
                 StackTrace = exception.StackTrace,
                 Type = exception.GetType().ToString(),
@@ -149,7 +146,7 @@ namespace Quilt4Net.Core
             var issueType = new IssueTypeData
             {
                 Message = message,
-                IssueLevel = issueLevel.ToIssueLevel(_configuration),
+                IssueLevel = issueLevel.ToIssueLevel(_sessionHandler.Client.Configuration),
                 Inner = null,
                 StackTrace = null,
                 Type = "Message",

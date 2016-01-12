@@ -5,8 +5,25 @@ using Quilt4Net.Core.Events;
 
 namespace Quilt4Net.Core.Interfaces
 {
+    public class WebApiRequestEventArgs : EventArgs
+    {
+        internal WebApiRequestEventArgs(Uri baseAddress, string methodName)
+        {
+        }
+    }
+
+    public class WebApiResponseEventArgs : EventArgs
+    {
+        internal WebApiResponseEventArgs()
+        {
+        }
+    }
+
     public interface IWebApiClient
     {
+        event EventHandler<WebApiRequestEventArgs> WebApiRequestEvent;
+        event EventHandler<WebApiResponseEventArgs> WebApiResponseEvent;
+
         //CRUD style operations
         Task CreateAsync<T>(string controller, T data);
         Task<TResult> CreateAsync<T, TResult>(string controller, T data);

@@ -29,7 +29,13 @@ namespace Quilt4Net.Tests
             machineHelperMock.Setup(x => x.GetMachineData()).Returns(new MachineData { });
             var userHelperMock = new Mock<IUserInformation>(MockBehavior.Strict);
             userHelperMock.Setup(x => x.GetDataUser()).Returns(new UserData { });
-            var session = new SessionHandler(webApiClientMock.Object, configurationMock.Object, applicationHelperMock.Object, machineHelperMock.Object, userHelperMock.Object);
+            var clientMock = new Mock<IQuilt4NetClient>(MockBehavior.Strict);
+            clientMock.SetupGet(x => x.Configuration).Returns(() => configurationMock.Object);
+            clientMock.SetupGet(x => x.WebApiClient).Returns(() => webApiClientMock.Object);
+            clientMock.SetupGet(x => x.Information.Aplication).Returns(() => applicationHelperMock.Object);
+            clientMock.SetupGet(x => x.Information.Machine).Returns(() => machineHelperMock.Object);
+            clientMock.SetupGet(x => x.Information.User).Returns(() => userHelperMock.Object);
+            var session = new SessionHandler(clientMock.Object);
             session.SessionRegistrationStartedEvent += delegate { sessionRegistrationStartedEventCount++; };
             session.SessionRegistrationCompletedEvent += delegate { sessionRegistrationCompletedEventCount++; };
 
@@ -67,7 +73,8 @@ namespace Quilt4Net.Tests
             machineHelperMock.Setup(x => x.GetMachineData()).Returns(new MachineData { });
             var userHelperMock = new Mock<IUserInformation>(MockBehavior.Strict);
             userHelperMock.Setup(x => x.GetDataUser()).Returns(new UserData { });
-            var session = new SessionHandler(webApiClientMock.Object, configurationMock.Object, applicationHelperMock.Object, machineHelperMock.Object, userHelperMock.Object);
+            var clientMock = new Mock<IQuilt4NetClient>(MockBehavior.Strict);
+            var session = new SessionHandler(clientMock.Object); //webApiClientMock.Object, configurationMock.Object, applicationHelperMock.Object, machineHelperMock.Object, userHelperMock.Object);
             session.SessionEndCompletedEvent += delegate { sessionEndCompletedEventCount++; };
             session.SessionEndStartedEvent += delegate { sessionEndStartedEventCount++; };
             var response = await session.GetSessionTokenAsync();
@@ -91,16 +98,13 @@ namespace Quilt4Net.Tests
             //Arrange
             var sessionRegistrationStartedEventCount = 0;
             var sessionRegistrationCompletedEventCount = 0;
-            var sessionToken = Guid.NewGuid().ToString();
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
-            webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(new SessionResponse { SessionToken = sessionToken })).Callback(() => { System.Threading.Thread.Sleep(500); });
             var configurationMock = new Mock<IConfiguration>(MockBehavior.Strict);
             configurationMock.SetupGet(x => x.Enabled).Returns(false);
             configurationMock.SetupGet(x => x.ProjectApiKey).Returns("ABC123");
-            var applicationHelperMock = new Mock<IApplicationInformation>(MockBehavior.Strict);
-            var machineHelperMock = new Mock<IMachineInformation>(MockBehavior.Strict);
-            var userHelperMock = new Mock<IUserInformation>(MockBehavior.Strict);
-            var session = new SessionHandler(webApiClientMock.Object, configurationMock.Object, applicationHelperMock.Object, machineHelperMock.Object, userHelperMock.Object);
+            var clientMock = new Mock<IQuilt4NetClient>(MockBehavior.Strict);
+            clientMock.SetupGet(x => x.Configuration).Returns(configurationMock.Object);
+            var session = new SessionHandler(clientMock.Object);
             session.SessionRegistrationStartedEvent += delegate { sessionRegistrationStartedEventCount++; };
             session.SessionRegistrationCompletedEvent += delegate { sessionRegistrationCompletedEventCount++; };
 

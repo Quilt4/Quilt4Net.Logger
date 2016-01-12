@@ -6,11 +6,11 @@ namespace Quilt4Net.Sample.Console.Commands.Issue
 {
     internal class IssueCommands : ContainerCommandBase
     {
-        public IssueCommands(IQuilt4NetClient client)
+        public IssueCommands(IIssueHandler issueHandler)
             : base("Issue")
         {
-            RegisterCommand(new RegisterIssueCommand(client));
-            RegisterCommand(new IssueTypeCommands(client));
+            RegisterCommand(new RegisterIssueCommand(issueHandler));
+            RegisterCommand(new IssueTypeCommands(issueHandler));
         }
     }
 }

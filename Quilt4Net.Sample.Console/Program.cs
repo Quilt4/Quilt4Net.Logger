@@ -1,5 +1,4 @@
-﻿using System;
-using Quilt4Net.Core.Events;
+﻿using Quilt4Net.Core.Events;
 using Quilt4Net.Sample.Console.Commands.Invitation;
 using Quilt4Net.Sample.Console.Commands.Issue;
 using Quilt4Net.Sample.Console.Commands.Project;
@@ -21,43 +20,59 @@ namespace Quilt4Net.Sample.Console
         {
             var console = new ClientConsole();
 
-            //Using the single instance version
+            //Note: Using the singleton version
             //var configuration = Singleton.Configuration.Instance;
             //var client = Singleton.Quilt4NetClient.Instance;
+            //var sessionHandler = Singleton.Session.Instance;
+            //var issueHandler = Singleton.Issue.Instance;
 
-            //Using the created instance version
-            var configuration = new Configuration();        
+            //Note: Using the created instance version
+            var configuration = new Configuration();
             var client = new Quilt4NetClient(configuration);
+            var sessionHandler = new SessionHandler(client);
+            var issueHandler = new IssueHandler(sessionHandler);
 
             //Note: Config in code
-            configuration.Enabled = true; //Turn the entire quilt4Net feature on or off.
-            configuration.ProjectApiKey = "9XG02ZE0BR1OI75IVX446B59M13RKBR_"; //TODO: Replace with your own ProjectApiKey.
-            configuration.ApplicationName = "MyOverrideApplication"; //Overrides the name of the assembly
-            configuration.ApplicationVersion = "MyOverrideVersion"; //Overrides the version of the assembly
-            configuration.UseBuildTime = false; //If true, separate 'versions' for each build of the assembly will be logged, even though the version number have not changed.
-            configuration.Session.Environment = "Test"; //Use dev, test, production or any other verb you like to filter on.
-            configuration.Target.Location = "http://localhost:29660"; //Address to the target service.
-            configuration.Target.Timeout = new TimeSpan(0, 0, 60);
+            //configuration.Enabled = true; //Turn the entire quilt4Net feature on or off.
+            //configuration.ProjectApiKey = "9XG02ZE0BR1OI75IVX446B59M13RKBR_"; //TODO: Replace with your own ProjectApiKey.
+            //configuration.ApplicationName = "MyOverrideApplication"; //Overrides the name of the assembly
+            //configuration.ApplicationVersion = "MyOverrideVersion"; //Overrides the version of the assembly
+            //configuration.UseBuildTime = false; //If true, separate 'versions' for each build of the assembly will be logged, even though the version number have not changed.
+            //configuration.Session.Environment = "Test"; //Use dev, test, production or any other verb you like to filter on.
+            //configuration.Target.Location = "http://localhost:29660"; //Address to the target service.
+            //configuration.Target.Timeout = new TimeSpan(0, 0, 60);
 
-            client.Session.SessionRegistrationStartedEvent += Session_SessionRegistrationStartedEvent;
-            client.Session.SessionRegistrationCompletedEvent += SessionSessionRegistrationCompletedEvent;
-            client.Session.SessionEndStartedEvent += Session_SessionEndStartedEvent;
-            client.Session.SessionEndCompletedEvent += Session_SessionEndCompletedEvent;
-            client.Issue.IssueRegistrationStartedEvent += Issue_IssueRegistrationStartedEvent;
-            client.Issue.IssueRegistrationCompletedEvent += Issue_IssueRegistrationCompletedEvent;
+            sessionHandler.SessionRegistrationStartedEvent += Session_SessionRegistrationStartedEvent;
+            sessionHandler.SessionRegistrationCompletedEvent += SessionSessionRegistrationCompletedEvent;
+            sessionHandler.SessionEndStartedEvent += Session_SessionEndStartedEvent;
+            sessionHandler.SessionEndCompletedEvent += Session_SessionEndCompletedEvent;
+            issueHandler.IssueRegistrationStartedEvent += Issue_IssueRegistrationStartedEvent;
+            issueHandler.IssueRegistrationCompletedEvent += Issue_IssueRegistrationCompletedEvent;
             client.WebApiClient.AuthorizationChangedEvent += WebApiClient_AuthorizationChangedEvent;
+            client.WebApiClient.WebApiRequestEvent += WebApiClientWebApiRequestEvent;
+            client.WebApiClient.WebApiResponseEvent += WebApiClient_WebApiResponseEvent;
 
             _rootCommand = new RootCommand(console);
             _rootCommand.RegisterCommand(new UserCommands(client));
             _rootCommand.RegisterCommand(new ProjectCommands(client));
             _rootCommand.RegisterCommand(new InvitationCommands(client));
-            _rootCommand.RegisterCommand(new SessionCommands(client));
-            _rootCommand.RegisterCommand(new IssueCommands(client));
+            _rootCommand.RegisterCommand(new SessionCommands(sessionHandler));
+            _rootCommand.RegisterCommand(new IssueCommands(issueHandler));
             _rootCommand.RegisterCommand(new SettingCommands(client));
             _rootCommand.RegisterCommand(new ServiceCommands(client));
             new CommandEngine(_rootCommand).Run(args);
 
-            client.Dispose();
+            sessionHandler.Dispose();
+        }
+
+        private static void WebApiClient_WebApiResponseEvent(object sender, Core.Interfaces.WebApiResponseEventArgs e)
+        {
+            _rootCommand.OutputEvent("Got response from WebAPI call.");
+        }
+
+        private static void WebApiClientWebApiRequestEvent(object sender, Core.Interfaces.WebApiRequestEventArgs e)
+        {
+            _rootCommand.OutputEvent("Sending WebAPI call.");
         }
 
         private static void Session_SessionRegistrationStartedEvent(object sender, SessionRegistrationStartedEventArgs e)

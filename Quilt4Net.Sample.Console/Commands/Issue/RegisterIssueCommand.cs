@@ -7,9 +7,9 @@ namespace Quilt4Net.Sample.Console.Commands.Issue
 {
     internal class RegisterIssueCommand : ActionCommandBase
     {
-        private readonly IQuilt4NetClient _client;
+        private readonly IIssueHandler _client;
 
-        public RegisterIssueCommand(IQuilt4NetClient client)
+        public RegisterIssueCommand(IIssueHandler client)
             : base("Register", "Register issue")
         {
             _client = client;
@@ -17,8 +17,8 @@ namespace Quilt4Net.Sample.Console.Commands.Issue
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            var response = await _client.Issue.RegisterAsync("Some warning.", MessageIssueLevel.Warning);
-            if ( response.IsSuccess)
+            var response = await _client.RegisterAsync("Some warning.", MessageIssueLevel.Warning);
+            if (response.IsSuccess)
                 OutputInformation("Issue registration took " + response.Elapsed.TotalMilliseconds.ToString("0") + "ms.");
             else
                 OutputError(response.ErrorMessage + " (" + response.Elapsed.TotalMilliseconds.ToString("0") + "ms)");

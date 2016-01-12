@@ -8,36 +8,22 @@ namespace Quilt4Net
     public class Quilt4NetClient : IQuilt4NetClient
     {
         private readonly IConfiguration _configuration;
-        private readonly IWebApiClient _webApiClient;
-        private readonly Lazy<IIssueHandler> _issue;
-        private readonly Lazy<ISessionHandler> _session;
+        private readonly Lazy<IWebApiClient> _webApiClient;
         private readonly Lazy<IActions> _action;
-        private readonly IInformation _information;
+        private readonly Lazy<IInformation> _information;
 
         public Quilt4NetClient(IConfiguration configuration)
         {
             var hashHandler = new HashHandler();
             _configuration = configuration;
-            _information = new Information(new ApplicationInformation(_configuration, hashHandler), new MachineInformation(hashHandler), new UserInformation(hashHandler));
-            _webApiClient = new WebApiClient(_configuration);
-            _issue = new Lazy<IIssueHandler>(() => new IssueHandler(_session, _webApiClient, _configuration));
-            _session = new Lazy<ISessionHandler>(() => new SessionHandler(_webApiClient, _configuration, Information.Aplication, Information.Machine, Information.User));
-            _action = new Lazy<IActions>(() => new Action(_webApiClient));
-            }
+            _information = new Lazy<IInformation>(() => new Information(new ApplicationInformation(_configuration, hashHandler), new MachineInformation(hashHandler), new UserInformation(hashHandler)));
+            _webApiClient = new Lazy<IWebApiClient>(() => new WebApiClient(_configuration));
+            _action = new Lazy<IActions>(() => new Action(WebApiClient));
+        }
 
         public IConfiguration Configuration => _configuration;
-        public IWebApiClient WebApiClient => _webApiClient;
-        public IIssueHandler Issue => _issue.Value;
-        public ISessionHandler Session => _session.Value;
+        public IWebApiClient WebApiClient => _webApiClient.Value;
         public IActions Actions => _action.Value;
-        public IInformation Information => _information;
-
-        public void Dispose()
-        {
-            if (_session.IsValueCreated && _session.Value.IsRegistered)
-            {
-                _session.Value.End();
-            }
-        }
+        public IInformation Information => _information.Value;
     }
 }

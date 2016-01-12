@@ -11,32 +11,19 @@ namespace Quilt4Net.Core
     public abstract class SessionHandlerBase : ISessionHandler
     {
         private readonly object _syncRoot = new object();
-        private readonly IWebApiClient _webApiClient;
-        private readonly IConfiguration _configuration;
-        private readonly IApplicationInformation _applicationInformation;
-        private readonly IMachineInformation _machineInformation;
-        private readonly IUserInformation _userInformation;
         private string _sessionToken;
         private bool _ongoingSessionRegistration;
         private bool _ongoingSessionEnding;
         private readonly AutoResetEvent _sessionRegistered = new AutoResetEvent(false);
         private readonly AutoResetEvent _sessionEnded = new AutoResetEvent(false);
 
-        internal SessionHandlerBase(IWebApiClient webApiClient, IConfiguration configuration, IInformation information)
-            : this(webApiClient, configuration, information.Aplication, information.Machine, information.User)
+        protected internal SessionHandlerBase(IQuilt4NetClient client)
         {
-        }
-
-        internal SessionHandlerBase(IWebApiClient webApiClient, IConfiguration configuration, IApplicationInformation applicationInformation, IMachineInformation machineInformation, IUserInformation userInformation)
-        {
-            _webApiClient = webApiClient;
-            _configuration = configuration;
-            _applicationInformation = applicationInformation;
-            _machineInformation = machineInformation;
-            _userInformation = userInformation;
+            Client = client;
             ClientStartTime = DateTime.UtcNow;
         }
 
+        public IQuilt4NetClient Client { get; }
         public event EventHandler<SessionRegistrationStartedEventArgs> SessionRegistrationStartedEvent;
         public event EventHandler<SessionRegistrationCompletedEventArgs> SessionRegistrationCompletedEvent;
         public event EventHandler<SessionEndStartedEventArgs> SessionEndStartedEvent;
@@ -44,8 +31,8 @@ namespace Quilt4Net.Core
 
         public bool IsRegistered => !string.IsNullOrEmpty(_sessionToken);
         public DateTime ClientStartTime { get; }
-        public string Environment => _configuration.Session != null ? _configuration.Session.Environment : string.Empty;
-        public IApplicationInformation Application => _applicationInformation;
+        public string Environment => Client.Configuration.Session != null ? Client.Configuration.Session.Environment : string.Empty;
+        public IApplicationInformation Application => Client.Information.Aplication;
 
         public async Task<SessionResult> RegisterAsync()
         {
@@ -54,7 +41,7 @@ namespace Quilt4Net.Core
 
         public async Task<SessionResult> RegisterAsync(Assembly firstAssembly)
         {
-            _applicationInformation.SetFirstAssembly(firstAssembly);
+            Client.Information.Aplication.SetFirstAssembly(firstAssembly);
             return await RegisterAsync();
         }
 
@@ -63,22 +50,22 @@ namespace Quilt4Net.Core
             var projectApiKey = GetProjectApiKey();
 
             Task.Run(async () =>
-            {
-                try
                 {
-                    await RegisterEx(projectApiKey);
-                }
-                catch (Exception exception)
-                {
-                    //TODO: Just catch specific types here
-                    System.Diagnostics.Debug.WriteLine(exception.Message);
-                }
-            });
+                    try
+                    {
+                        await RegisterEx(projectApiKey);
+                    }
+                    catch (Exception exception)
+                    {
+                        //TODO: Just catch specific types here
+                        System.Diagnostics.Debug.WriteLine(exception.Message);
+                    }
+                });
         }
 
         public void RegisterStart(Assembly firstAssembly)
         {
-            _applicationInformation.SetFirstAssembly(firstAssembly);
+            Client.Information.Aplication.SetFirstAssembly(firstAssembly);
             RegisterStart();
         }
 
@@ -97,7 +84,7 @@ namespace Quilt4Net.Core
 
         public SessionResult Register(Assembly firstAssembly)
         {
-            _applicationInformation.SetFirstAssembly(firstAssembly);
+            Client.Information.Aplication.SetFirstAssembly(firstAssembly);
             return Register();
         }
 
@@ -142,7 +129,7 @@ namespace Quilt4Net.Core
             {
                 OnSessionEndStartedEvent(new SessionEndStartedEventArgs(sessionToken));
 
-                await _webApiClient.ExecuteCommandAsync("Client/Session", "End", sessionToken);
+                await Client.WebApiClient.ExecuteCommandAsync("Client/Session", "End", sessionToken);
             }
             catch (Exception exception)
             {
@@ -186,17 +173,17 @@ namespace Quilt4Net.Core
 
         private string GetProjectApiKey()
         {
-            var projectApiKey = _configuration.ProjectApiKey;
+            var projectApiKey = Client.Configuration.ProjectApiKey;
             if (string.IsNullOrEmpty(projectApiKey))
             {
-                throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.ProjectApiKeyNotSet);
+                throw new ExpectedIssues(Client.Configuration).GetException(ExpectedIssues.ProjectApiKeyNotSet);
             }
             return projectApiKey;
         }
 
         private async Task<SessionResult> RegisterEx(string projectApiKey)
         {
-            if (!_configuration.Enabled)
+            if (!Client.Configuration.Enabled)
             {
                 return null;
             }
@@ -221,18 +208,18 @@ namespace Quilt4Net.Core
             try
             {
                 request = new SessionRequest
-                {
-                    ProjectApiKey = projectApiKey,
-                    ClientStartTime = DateTime.UtcNow,
-                    Environment = Environment,
-                    Application = _applicationInformation.GetApplicationData(),
-                    Machine = _machineInformation.GetMachineData(),
-                    User = _userInformation.GetDataUser(),
-                };
+                              {
+                                  ProjectApiKey = projectApiKey,
+                                  ClientStartTime = DateTime.UtcNow,
+                                  Environment = Environment,
+                                  Application = Client.Information.Aplication.GetApplicationData(),
+                                  Machine = Client.Information.Machine.GetMachineData(),
+                                  User = Client.Information.User.GetDataUser(),
+                              };
 
                 OnSessionRegistrationStartedEvent(new SessionRegistrationStartedEventArgs(request));
 
-                response = await _webApiClient.CreateAsync<SessionRequest, SessionResponse>("Client/Session", request);
+                response = await Client.WebApiClient.CreateAsync<SessionRequest, SessionResponse>("Client/Session", request);
 
                 if (response.SessionToken == null) throw new InvalidOperationException("No session token returned from the server.");
                 _sessionToken = response.SessionToken;
@@ -253,12 +240,6 @@ namespace Quilt4Net.Core
             return result;
         }
 
-        //public async Task<IEnumerable<SessionResponse>> GetListAsync()
-        //{
-        //    //TODO: Implement
-        //    throw new NotImplementedException("List sessions is not yet implemented.");
-        //}
-
         protected virtual void OnSessionRegistrationStartedEvent(SessionRegistrationStartedEventArgs e)
         {
             SessionRegistrationStartedEvent?.Invoke(this, e);
@@ -277,6 +258,11 @@ namespace Quilt4Net.Core
         protected virtual void OnSessionEndCompletedEvent(SessionEndCompletedEventArgs e)
         {
             SessionEndCompletedEvent?.Invoke(this, e);
+        }
+
+        public void Dispose()
+        {
+            End();
         }
     }
 }

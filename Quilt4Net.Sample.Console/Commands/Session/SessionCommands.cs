@@ -5,12 +5,12 @@ namespace Quilt4Net.Sample.Console.Commands.Session
 {
     internal class SessionCommands : ContainerCommandBase
     {
-        public SessionCommands(IQuilt4NetClient client)
+        public SessionCommands(ISessionHandler sessionHandler)
             : base("Session")
         {
-            RegisterCommand(new ListSessionsCommand(client));
-            RegisterCommand(new RegisterSessionCommand(client));
-            RegisterCommand(new EndSessionCommand(client));
+            RegisterCommand(new ListSessionsCommand(sessionHandler));
+            RegisterCommand(new RegisterSessionCommand(sessionHandler));
+            RegisterCommand(new EndSessionCommand(sessionHandler));
         }
     }
 }

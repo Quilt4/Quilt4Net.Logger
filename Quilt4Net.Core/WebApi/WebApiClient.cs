@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Threading.Tasks;
 using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Events;
@@ -21,6 +22,9 @@ namespace Quilt4Net.Core
         {
             _configuration = configuration;
         }
+
+        public event EventHandler<WebApiRequestEventArgs> WebApiRequestEvent;
+        public event EventHandler<WebApiResponseEventArgs> WebApiResponseEvent;
 
         public async Task CreateAsync<T>(string controller, T data)
         {
@@ -171,21 +175,19 @@ namespace Quilt4Net.Core
             using (var client = GetHttpClient())
             {
                 try
-                {
+                {                    
+                    OnWebApiCallEvent(new WebApiRequestEventArgs(client.BaseAddress, action.GetMethodInfo().Name));
+
                     await action(client);
                 }
-                //catch (ServiceCallExcepton)
-                //{
-                //    throw;
-                //}
                 catch (TaskCanceledException exception)
                 {
                     throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.CallTerminatedByServer, exception);
                 }
-                //catch (Exception exception)
-                //{
-                //    throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.ServiceCallError, exception);
-                //}
+                finally
+                {
+                    OnWebApiResponseEvent(new WebApiResponseEventArgs());
+                }
             }
         }
 
@@ -195,21 +197,19 @@ namespace Quilt4Net.Core
             {
                 try
                 {
+                    OnWebApiCallEvent(new WebApiRequestEventArgs(client.BaseAddress, action.GetMethodInfo().Name));
+
                     var response = await action(client);
                     return response;
                 }
-                //catch (ServiceCallExcepton)
-                //{
-                //    throw;
-                //}
                 catch (TaskCanceledException exception)
                 {
                     throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.CallTerminatedByServer, exception);
                 }
-                //catch (Exception exception)
-                //{
-                //    throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.ServiceCallError, exception);
-                //}
+                finally
+                {
+                    OnWebApiResponseEvent(new WebApiResponseEventArgs());
+                }
             }
         }
 
@@ -231,6 +231,16 @@ namespace Quilt4Net.Core
         protected virtual void OnAuthorizationChangedEvent(AuthorizationChangedEventArgs e)
         {
             AuthorizationChangedEvent?.Invoke(this, e);
+        }
+
+        protected virtual void OnWebApiCallEvent(WebApiRequestEventArgs e)
+        {
+            WebApiRequestEvent?.Invoke(this, e);
+        }
+
+        protected virtual void OnWebApiResponseEvent(WebApiResponseEventArgs e)
+        {
+            WebApiResponseEvent?.Invoke(this, e);
         }
     }
 }

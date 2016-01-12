@@ -8,22 +8,22 @@ namespace Quilt4Net.Sample.Console.Commands.Issue.Type
 {
     internal class ListIssueTypesCommand : ActionCommandBase
     {
-        private readonly IQuilt4NetClient _client;
+        private readonly IIssueHandler _issueHandler;
 
-        public ListIssueTypesCommand(IQuilt4NetClient client)
+        public ListIssueTypesCommand(IIssueHandler issueHandler)
             : base("List", "List issues")
         {
-            _client = client;
+            _issueHandler = issueHandler;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
             var index = 0;
-            var projectKey = QueryParam("Project", GetParam(paramList, index++), (await _client.Actions.Project.GetListAsync()).ToDictionary(x => x.ProjectKey, x => x.Name));
-            var applicationKey = QueryParam("Application", GetParam(paramList, index++), (await _client.Actions.Application.GetListAsync(projectKey)).ToDictionary(x => x.ApplicationKey, x => x.Name));
-            var versionKey = QueryParam("Version", GetParam(paramList, index++), (await _client.Actions.Version.GetListAsync(applicationKey)).ToDictionary(x => x.VersionKey, x => x.VersionNumber));
+            var projectKey = QueryParam("Project", GetParam(paramList, index++), (await _issueHandler.Client.Actions.Project.GetListAsync()).ToDictionary(x => x.ProjectKey, x => x.Name));
+            var applicationKey = QueryParam("Application", GetParam(paramList, index++), (await _issueHandler.Client.Actions.Application.GetListAsync(projectKey)).ToDictionary(x => x.ApplicationKey, x => x.Name));
+            var versionKey = QueryParam("Version", GetParam(paramList, index++), (await _issueHandler.Client.Actions.Version.GetListAsync(applicationKey)).ToDictionary(x => x.VersionKey, x => x.VersionNumber));
 
-            var response = await _client.Issue.GetIssueTypesAsync(versionKey);
+            var response = await _issueHandler.GetIssueTypesAsync(versionKey);
 
             var data = new List<string[]> { new[] { "Ticket", "Type" } };
             data.AddRange(response.Select(x => new[] { x.Ticket.ToString(), x.Type.ToString() }));

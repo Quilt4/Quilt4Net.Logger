@@ -6,8 +6,9 @@ using Quilt4Net.Core.Events;
 
 namespace Quilt4Net.Core.Interfaces
 {
-    public interface ISessionHandler
+    public interface ISessionHandler : IDisposable
     {
+        IQuilt4NetClient Client { get; }
         event EventHandler<SessionRegistrationStartedEventArgs> SessionRegistrationStartedEvent;
         event EventHandler<SessionRegistrationCompletedEventArgs> SessionRegistrationCompletedEvent;
         event EventHandler<SessionEndStartedEventArgs> SessionEndStartedEvent;
@@ -25,6 +26,5 @@ namespace Quilt4Net.Core.Interfaces
         Task EndAsync();
         void End();
         Task<string> GetSessionTokenAsync();
-        //Task<IEnumerable<SessionResponse>> GetListAsync();
     }
 }
