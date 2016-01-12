@@ -8,7 +8,7 @@ namespace Quilt4Net.Core.Actions
     public class ServerSetting : IServerSetting
     {
         private readonly IWebApiClient _webApiClient;
-        private readonly string _controller = "Client/Setting";
+        private readonly string _controller = "Setting";
 
         internal ServerSetting(IWebApiClient webApiClient)
         {

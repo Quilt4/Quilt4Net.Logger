@@ -18,7 +18,7 @@ namespace Quilt4Net.Core.Actions
 
         public async Task<ServiceInfoResponse> GetServiceInfo()
         {
-            return await _webApiClient.ExecuteQueryAsync<string, ServiceInfoResponse>("Client/Service", "QueryInfo", "");
+            return await _webApiClient.ExecuteQueryAsync<string, ServiceInfoResponse>("Service", "QueryInfo", "");
         }
     }
 }
