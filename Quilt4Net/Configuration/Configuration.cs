@@ -13,7 +13,7 @@ namespace Quilt4Net
                 Target = new TargetConfiguration(this);
             }
         }
-        
+
         public override bool Enabled
         {
             get
@@ -32,7 +32,10 @@ namespace Quilt4Net
                 return _enabled.Value;
             }
 
-            set { _enabled = value; }
+            set
+            {
+                _enabled = value;
+            }
         }
 
         public override string ProjectApiKey
@@ -78,7 +81,10 @@ namespace Quilt4Net
                 return _applicationName;
             }
 
-            set { _applicationName = value; }
+            set
+            {
+                _applicationName = value;
+            }
         }
 
         public override string ApplicationVersion
@@ -99,7 +105,10 @@ namespace Quilt4Net
                 return _applicationVersion;
             }
 
-            set { _applicationVersion = value; }
+            set
+            {
+                _applicationVersion = value;
+            }
         }
 
         public override bool UseBuildTime
@@ -120,7 +129,34 @@ namespace Quilt4Net
                 return _useBuildTime.Value;
             }
 
-            set { _useBuildTime = value; }
+            set
+            {
+                _useBuildTime = value;
+            }
+        }
+
+        public override bool AllowMultipleInstances
+        {
+            get
+            {
+                if (_allowMultipleInstances != null) return _allowMultipleInstances.Value;
+
+                //If there is no setting, read from config file to populate the value
+                lock (SyncRoot)
+                {
+                    if (_allowMultipleInstances == null)
+                    {
+                        _allowMultipleInstances = ConfigSection.Instance.AllowMultipleInstances;
+                    }
+                }
+
+                return _allowMultipleInstances.Value;
+            }
+
+            set
+            {
+                _allowMultipleInstances = value;
+            }
         }
 
         public override ISessionConfiguration Session { get; }

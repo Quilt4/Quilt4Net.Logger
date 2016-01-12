@@ -22,10 +22,12 @@ namespace Quilt4Net.Sample.CastleWindsor
             client.WebApiClient.AuthorizationChangedEvent += WebApiClient_AuthorizationChangedEvent;
 
             var business1 = container.Resolve<ISomeBusiness1>();
+            var business2 = container.Resolve<ISomeBusiness2>();
 
             try
             {
                 business1.Execute();
+                business2.Execute();
             }
             catch (Exception exception)
             {
@@ -41,17 +43,17 @@ namespace Quilt4Net.Sample.CastleWindsor
 
         private static void WebApiClient_AuthorizationChangedEvent(object sender, Core.Events.AuthorizationChangedEventArgs e)
         {
-            Console.WriteLine("WebApiClient_AuthorizationChangedEvent");
+            Console.WriteLine("WebApiClient_AuthorizationChangedEvent: " + e.UserName);
         }
 
         private static void WebApiClient_WebApiResponseEvent(object sender, WebApiResponseEventArgs e)
         {
-            Console.WriteLine("WebApiClient_WebApiResponseEvent");
+            Console.WriteLine("> " + e.Request.OperationType + ": " + e.Request.Path);
         }
 
         private static void WebApiClientWebApiRequestEvent(object sender, WebApiRequestEventArgs e)
         {
-            Console.WriteLine("WebApiClient_WebApiCallEvent");
+            Console.WriteLine("< " + e.OperationType + ": " + e.Path);
         }
     }
 
@@ -78,7 +80,26 @@ namespace Quilt4Net.Sample.CastleWindsor
             container.Register(Classes.FromAssemblyContaining(typeof(Quilt4NetClient))
                                 .Where(Component.IsInSameNamespaceAs<IssueHandler>())
                                 .WithService.DefaultInterfaces()
+                                //.LifestyleTransient());
                                 .LifestyleSingleton());
+        }
+    }
+
+    public class SomeBusiness2 : ISomeBusiness2
+    {
+        private readonly IIssueHandler _issueHandler;
+
+        public SomeBusiness2(IIssueHandler issueHandler)
+        {
+            _issueHandler = issueHandler;
+        }
+
+        public void Execute()
+        {
+            _issueHandler.Register("First issue.", MessageIssueLevel.Information);
+            _issueHandler.Register("Second issue.", MessageIssueLevel.Information);
+
+            Console.WriteLine("Executing some more stuff...");
         }
     }
 
@@ -136,15 +157,15 @@ namespace Quilt4Net.Sample.CastleWindsor
             _issueHandler.Register("Second issue.", MessageIssueLevel.Information);
 
             Console.WriteLine("Executing some stuff...");
-        }
-
-        public void Dispose()
-        {
-            _sessionHandler.End();
-        }
+        }        
     }
 
-    public interface ISomeBusiness1 : IDisposable
+    public interface ISomeBusiness1
+    {
+        void Execute();
+    }
+
+    public interface ISomeBusiness2
     {
         void Execute();
     }

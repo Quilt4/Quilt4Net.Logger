@@ -23,6 +23,7 @@ namespace Quilt4Net.Tests
             configurationMock.SetupGet(x => x.Enabled).Returns(true);
             configurationMock.SetupGet(x => x.ProjectApiKey).Returns("ABC123");
             configurationMock.SetupGet(x => x.Session.Environment).Returns((string)null);
+            configurationMock.SetupGet(x => x.AllowMultipleInstances).Returns(true);
             var applicationHelperMock = new Mock<IApplicationInformation>(MockBehavior.Strict);
             applicationHelperMock.Setup(x => x.GetApplicationData()).Returns(new ApplicationData {});
             var machineHelperMock = new Mock<IMachineInformation>(MockBehavior.Strict);

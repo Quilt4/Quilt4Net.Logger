@@ -5,20 +5,6 @@ using Quilt4Net.Core.Events;
 
 namespace Quilt4Net.Core.Interfaces
 {
-    public class WebApiRequestEventArgs : EventArgs
-    {
-        internal WebApiRequestEventArgs(Uri baseAddress, string methodName)
-        {
-        }
-    }
-
-    public class WebApiResponseEventArgs : EventArgs
-    {
-        internal WebApiResponseEventArgs()
-        {
-        }
-    }
-
     public interface IWebApiClient
     {
         event EventHandler<WebApiRequestEventArgs> WebApiRequestEvent;
@@ -38,7 +24,7 @@ namespace Quilt4Net.Core.Interfaces
 
         //Authorization
         event EventHandler<AuthorizationChangedEventArgs> AuthorizationChangedEvent;
-        void SetAuthorization(string tokenType, string accessToken);
+        void SetAuthorization(string userName, string tokenType, string accessToken);
         bool IsAuthorized { get; }
     }
 }

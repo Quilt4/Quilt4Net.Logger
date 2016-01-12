@@ -30,14 +30,14 @@ namespace Quilt4Net.Core.Actions
         public async Task<ILoginResult> LoginAsync(string username, string password)
         {
             var response = await _webApiClient.ExecuteQueryAsync<LoginData, LoginResult>("Account", "Login", new LoginData { Username = username, Password = password });
-            _webApiClient.SetAuthorization(response.token_type, response.access_token);
+            _webApiClient.SetAuthorization(response.token_type, response.access_token, username);
             return response;
         }
 
         public async Task LogoutAsync()
         {
             await _webApiClient.ExecuteCommandAsync<string>("Account", "Logout", null);
-            _webApiClient.SetAuthorization(null, null);
+            _webApiClient.SetAuthorization(null, null, null);
         }
 
         public async Task<UserInfoViewModel> GetUserInfoAsync()

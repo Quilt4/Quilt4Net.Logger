@@ -10,7 +10,8 @@ namespace Quilt4Net.Core
         protected bool? _useBuildTime;
         protected string _applicationName;
         protected string _applicationVersion;
-        
+        protected bool? _allowMultipleInstances;
+
         public virtual bool Enabled
         {
             get
@@ -28,7 +29,10 @@ namespace Quilt4Net.Core
                 return _enabled.Value;
             }
 
-            set { _enabled = value; }
+            set
+            {
+                _enabled = value;
+            }
         }
 
         public virtual string ProjectApiKey
@@ -77,7 +81,10 @@ namespace Quilt4Net.Core
                 return _useBuildTime.Value;
             }
 
-            set { _useBuildTime = value; }
+            set
+            {
+                _useBuildTime = value;
+            }
         }
 
         public virtual string ApplicationName
@@ -87,7 +94,10 @@ namespace Quilt4Net.Core
                 return _applicationName;
             }
 
-            set { _applicationName = value; }
+            set
+            {
+                _applicationName = value;
+            }
         }
 
         public virtual string ApplicationVersion
@@ -97,7 +107,34 @@ namespace Quilt4Net.Core
                 return _applicationVersion;
             }
 
-            set { _applicationVersion = value; }
+            set
+            {
+                _applicationVersion = value;
+            }
+        }
+
+        public virtual bool AllowMultipleInstances
+        {
+            get
+            {
+                if (_allowMultipleInstances != null) return _allowMultipleInstances.Value;
+
+                //If there is no setting, read from config file to populate the value
+                lock (SyncRoot)
+                {
+                    if (_allowMultipleInstances == null)
+                    {
+                        _allowMultipleInstances = false;
+                    }
+                }
+
+                return _allowMultipleInstances.Value;
+            }
+
+            set
+            {
+                _allowMultipleInstances = value;
+            }
         }
 
         public abstract ISessionConfiguration Session { get; }

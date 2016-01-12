@@ -7,11 +7,13 @@ namespace Quilt4Net.Core.Events
     {
         private readonly Authorization _authorization;
 
-        internal AuthorizationChangedEventArgs(Authorization authorization)
+        internal AuthorizationChangedEventArgs(string userName, Authorization authorization)
         {
+            UserName = userName;
             _authorization = authorization;
         }
 
+        public string UserName { get; }
         public bool IsAuthorized => _authorization != null;
     }
 }

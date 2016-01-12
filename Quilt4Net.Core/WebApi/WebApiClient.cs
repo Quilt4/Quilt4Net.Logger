@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
-using System.Reflection;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Events;
 using Quilt4Net.Core.Interfaces;
@@ -13,6 +13,8 @@ namespace Quilt4Net.Core
 {
     internal class WebApiClient : IWebApiClient
     {
+        private readonly object _syncRoot = new object();
+        private static int _instanceCounter;
         private readonly IConfiguration _configuration;
         private Authorization _authorization;
 
@@ -20,6 +22,18 @@ namespace Quilt4Net.Core
 
         internal WebApiClient(IConfiguration configuration)
         {
+            lock (_syncRoot)
+            {
+                if (_instanceCounter != 0)
+                {
+                    if (!configuration.AllowMultipleInstances)
+                    {
+                        throw new InvalidOperationException("Multiple instances is not allowed. Set configuration setting AllowMultipleInstances to true if you want to use multiple instances of this object.");
+                    }
+                }
+                _instanceCounter++;
+            }
+
             _configuration = configuration;
         }
 
@@ -28,54 +42,27 @@ namespace Quilt4Net.Core
 
         public async Task CreateAsync<T>(string controller, T data)
         {
-            string requestUri = $"api/{controller}";
-
-            var jsonFormatter = new JsonMediaTypeFormatter();
-            var content = new ObjectContent<T>(data, jsonFormatter);
-
             await Execute(async client =>
                 {
-                    var response = await client.PostAsync(requestUri, content);
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
-                    }
+                    await PostAsync<T>(client, $"api/{controller}", data);
+                    return true;
                 });
         }
 
         public async Task<TResult> CreateAsync<T, TResult>(string controller, T data)
         {
-            string requestUri = $"api/{controller}";
-
-            var jsonFormatter = new JsonMediaTypeFormatter();
-            var content = new ObjectContent<T>(data, jsonFormatter);
-
-            var result = await Execute(async client =>
-            {
-                var response = await client.PostAsync(requestUri, content);
-                if (!response.IsSuccessStatusCode)
+            return await Execute(async client =>
                 {
-                    throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
-                }
-
-                return response.Content.ReadAsAsync<TResult>().Result;
-            });
-
-            return result;
+                    var response = await PostAsync<T>(client, $"api/{controller}", data);
+                    return response.Content.ReadAsAsync<TResult>().Result;
+                });
         }
 
         public async Task<TResult> ReadAsync<TResult>(string controller, string id)
         {
-            string requestUri = $"api/{controller}/{id}";
-
             var result = await Execute(async client =>
                 {
-                    var response = await client.GetAsync(requestUri);
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
-                    }
-
+                    var response = await GetAsync(client, $"api/{controller}/{id}");
                     return response.Content.ReadAsAsync<TResult>().Result;
                 });
             return result;
@@ -83,16 +70,9 @@ namespace Quilt4Net.Core
 
         public async Task<IEnumerable<TResult>> ReadAsync<TResult>(string controller)
         {
-            string requestUri = $"api/{controller}";
-
             var result = await Execute(async client =>
             {
-                var response = await client.GetAsync(requestUri);
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
-                }
-
+                var response = await GetAsync(client, $"api/{controller}");
                 return response.Content.ReadAsAsync<IEnumerable<TResult>>().Result;
             });
             return result;
@@ -100,96 +80,148 @@ namespace Quilt4Net.Core
 
         public async Task UpdateAsync<T>(string controller, string id, T data)
         {
-            string requestUri = $"api/{controller}/{id}";
-
-            var jsonFormatter = new JsonMediaTypeFormatter();
-            var content = new ObjectContent<T>(data, jsonFormatter);
-
             await Execute(async client =>
                 {
-                    await client.PutAsync(requestUri, content);
+                    await PutAsync(client, $"api/{controller}/{id}", data);
+                    return true;
                 });
         }
 
         public async Task DeleteAsync(string controller, string id)
         {
-            string requestUri = $"api/{controller}/{id}";
-
             await Execute(async client =>
                 {
-                    var response = await client.DeleteAsync(requestUri);
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
-                    }
+                    await DeleteAsync(client, $"api/{controller}/{id}");
+                    return true;
                 });
         }
 
         public async Task ExecuteCommandAsync<T>(string controller, string action, T data)
         {
-            string requestUri = $"api/{controller}/{action}";
-
-            var jsonFormatter = new JsonMediaTypeFormatter();
-            var content = new ObjectContent<T>(data, jsonFormatter);
-
             await Execute(async client =>
                 {
-                    var response = await client.PostAsync(requestUri, content);
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
-                    }
+                    await PostAsync(client, $"api/{controller}/{action}", data);
+                    return true;
                 });
         }
 
         public async Task<TResult> ExecuteQueryAsync<T, TResult>(string controller, string action, T data)
         {
-            string requestUri = $"api/{controller}/{action}";
-
-            var jsonFormatter = new JsonMediaTypeFormatter();
-            var content = new ObjectContent<T>(data, jsonFormatter);
-
             var result = await Execute(async client =>
                 {
-                    var response = await client.PostAsync(requestUri, content);
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
-                    }
-
+                    var response = await PostAsync(client, $"api/{controller}/{action}", data);
                     return response.Content.ReadAsAsync<TResult>().Result;
                 });
             return result;
         }
 
-        public void SetAuthorization(string tokenType, string accessToken)
+        private async Task<HttpResponseMessage> PostAsync<T>(HttpClient client, string requestUri, T data)
+        {
+            WebApiRequestEventArgs request = null;
+            try
+            {
+                var jsonFormatter = new JsonMediaTypeFormatter();
+                var content = new ObjectContent<T>(data, jsonFormatter);
+
+                request = new WebApiRequestEventArgs(client.BaseAddress, requestUri, OperationType.Post, JsonConvert.SerializeObject(data));
+                OnWebApiRequestEvent(request);
+
+                var response = await client.PostAsync(requestUri, content);
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
+                }
+
+                OnWebApiResponseEvent(new WebApiResponseEventArgs(request, response));
+                return response;
+            }
+            catch (Exception exception)
+            {
+                OnWebApiResponseEvent(new WebApiResponseEventArgs(request, exception));
+                throw;
+            }
+        }
+
+        private async Task<HttpResponseMessage> GetAsync(HttpClient client, string requestUri)
+        {
+            WebApiRequestEventArgs request = null;
+            try
+            {
+                request = new WebApiRequestEventArgs(client.BaseAddress, requestUri, OperationType.Get);
+                OnWebApiRequestEvent(request);
+
+                var response = await client.GetAsync(requestUri);
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
+                }
+
+                OnWebApiResponseEvent(new WebApiResponseEventArgs(request, response));
+                return response;
+            }
+            catch (Exception exception)
+            {
+                OnWebApiResponseEvent(new WebApiResponseEventArgs(request, exception));
+                throw;
+            }
+        }
+
+        private async Task PutAsync<T>(HttpClient client, string requestUri, T data)
+        {
+            WebApiRequestEventArgs request = null;
+            try
+            {
+                var jsonFormatter = new JsonMediaTypeFormatter();
+                var content = new ObjectContent<T>(data, jsonFormatter);
+
+                request = new WebApiRequestEventArgs(client.BaseAddress, requestUri, OperationType.Put, JsonConvert.SerializeObject(data));
+                OnWebApiRequestEvent(request);
+
+                var response = await client.PutAsync(requestUri, content);
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
+                }
+
+                OnWebApiResponseEvent(new WebApiResponseEventArgs(request, response));
+            }
+            catch (Exception exception)
+            {
+                OnWebApiResponseEvent(new WebApiResponseEventArgs(request, exception));
+                throw;
+            }
+        }
+
+        private async Task DeleteAsync(HttpClient client, string requestUri)
+        {
+            WebApiRequestEventArgs request = null;
+            try
+            {
+                request = new WebApiRequestEventArgs(client.BaseAddress, requestUri, OperationType.Delete);
+                OnWebApiRequestEvent(request);
+
+                var response = await client.DeleteAsync(requestUri);
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
+                }
+
+                OnWebApiResponseEvent(new WebApiResponseEventArgs(request, response));
+            }
+            catch (Exception exception)
+            {
+                OnWebApiResponseEvent(new WebApiResponseEventArgs(request, exception));
+                throw;
+            }
+        }
+
+        public void SetAuthorization(string userName, string tokenType, string accessToken)
         {
             _authorization = string.IsNullOrEmpty(accessToken) ? null : new Authorization(tokenType, accessToken);
-            OnAuthorizationChangedEvent(new AuthorizationChangedEventArgs(_authorization));
+            OnAuthorizationChangedEvent(new AuthorizationChangedEventArgs(userName, _authorization));
         }
 
         public bool IsAuthorized => _authorization != null;
-
-        private async Task Execute(Func<HttpClient, Task> action)
-        {
-            using (var client = GetHttpClient())
-            {
-                try
-                {                    
-                    OnWebApiCallEvent(new WebApiRequestEventArgs(client.BaseAddress, action.GetMethodInfo().Name));
-
-                    await action(client);
-                }
-                catch (TaskCanceledException exception)
-                {
-                    throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.CallTerminatedByServer, exception);
-                }
-                finally
-                {
-                    OnWebApiResponseEvent(new WebApiResponseEventArgs());
-                }
-            }
-        }
 
         private async Task<T> Execute<T>(Func<HttpClient, Task<T>> action)
         {
@@ -197,18 +229,12 @@ namespace Quilt4Net.Core
             {
                 try
                 {
-                    OnWebApiCallEvent(new WebApiRequestEventArgs(client.BaseAddress, action.GetMethodInfo().Name));
-
                     var response = await action(client);
                     return response;
                 }
                 catch (TaskCanceledException exception)
                 {
                     throw new ExpectedIssues(_configuration).GetException(ExpectedIssues.CallTerminatedByServer, exception);
-                }
-                finally
-                {
-                    OnWebApiResponseEvent(new WebApiResponseEventArgs());
                 }
             }
         }
@@ -233,7 +259,7 @@ namespace Quilt4Net.Core
             AuthorizationChangedEvent?.Invoke(this, e);
         }
 
-        protected virtual void OnWebApiCallEvent(WebApiRequestEventArgs e)
+        protected virtual void OnWebApiRequestEvent(WebApiRequestEventArgs e)
         {
             WebApiRequestEvent?.Invoke(this, e);
         }

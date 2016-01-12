@@ -5,7 +5,7 @@ namespace Quilt4Net
 {
     internal class ConfigSection : ConfigurationSection
     {
-        private static readonly Lazy<ConfigSection> _instance = new Lazy<ConfigSection>(() => System.Configuration.ConfigurationManager.GetSection("Quilt4/Quilt4Net") as ConfigSection ?? new ConfigSection());
+        private static readonly Lazy<ConfigSection> _instance = new Lazy<ConfigSection>(() => ConfigurationManager.GetSection("Quilt4/Quilt4Net") as ConfigSection ?? new ConfigSection());
 
         private ConfigSection()
         {
@@ -65,6 +65,13 @@ namespace Quilt4Net
         {
             get { return (bool)this["UseBuildTime"]; }
             set { this["UseBuildTime"] = value; }
+        }
+
+        [ConfigurationProperty("AllowMultipleInstances", IsRequired = false, DefaultValue = false)]
+        public bool AllowMultipleInstances
+        {
+            get { return (bool)this["AllowMultipleInstances"]; }
+            set { this["AllowMultipleInstances"] = value; }
         }
 
         [ConfigurationProperty("Session")]

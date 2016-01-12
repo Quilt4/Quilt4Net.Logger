@@ -11,6 +11,7 @@ namespace Quilt4Net.Core
     public abstract class SessionHandlerBase : ISessionHandler
     {
         private readonly object _syncRoot = new object();
+        private static int _instanceCounter;
         private string _sessionToken;
         private bool _ongoingSessionRegistration;
         private bool _ongoingSessionEnding;
@@ -19,6 +20,18 @@ namespace Quilt4Net.Core
 
         protected internal SessionHandlerBase(IQuilt4NetClient client)
         {
+            lock (_syncRoot)
+            {
+                if (_instanceCounter != 0)
+                {
+                    if (!client.Configuration.AllowMultipleInstances)
+                    {
+                        throw new InvalidOperationException("Multiple instances is not allowed. Set configuration setting AllowMultipleInstances to true if you want to use multiple instances of this object.");
+                    }
+                }
+                _instanceCounter++;
+            }
+
             Client = client;
             ClientStartTime = DateTime.UtcNow;
         }

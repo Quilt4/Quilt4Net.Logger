@@ -11,15 +11,29 @@ namespace Quilt4Net.Core
 {
     public abstract class IssueHandlerBase : IIssueHandler
     {
+        private readonly object _syncRoot = new object();
+        private static int _instanceCounter;
         private readonly ISessionHandler _sessionHandler;        
         private readonly List<Tuple<IssueRequest, Exception>> _issuesThatFailedToRegister = new List<Tuple<IssueRequest, Exception>>();
 
         protected internal IssueHandlerBase(ISessionHandler sessionHandler)
         {
+            lock (_syncRoot)
+            {
+                if (_instanceCounter != 0)
+                {
+                    if (!sessionHandler.Client.Configuration.AllowMultipleInstances)
+                    {
+                        throw new InvalidOperationException("Multiple instances is not allowed. Set configuration setting AllowMultipleInstances to true if you want to use multiple instances of this object.");
+                    }
+                }
+                _instanceCounter++;
+            }
+
             _sessionHandler = sessionHandler;
         }
 
-        public IQuilt4NetClient Client { get; }
+        public IQuilt4NetClient Client => _sessionHandler.Client;
         public event EventHandler<IssueRegistrationStartedEventArgs> IssueRegistrationStartedEvent;
         public event EventHandler<IssueRegistrationCompletedEventArgs> IssueRegistrationCompletedEvent;
 
