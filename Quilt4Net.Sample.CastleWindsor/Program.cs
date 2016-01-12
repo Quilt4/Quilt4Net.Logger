@@ -8,7 +8,7 @@ using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Sample.CastleWindsor
 {
-    class Program
+    static class Program
     {
         static void Main(string[] args)
         {
