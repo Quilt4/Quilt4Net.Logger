@@ -20,7 +20,7 @@ namespace Quilt4Net.Sample.Console.Commands.Session
             //if (!_client.User.IsAuthorized)
             //    return false;
 
-            return !_sessionHandler.IsRegistered;
+            return !_sessionHandler.IsRegisteredOnServer;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)

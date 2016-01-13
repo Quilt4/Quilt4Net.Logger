@@ -18,7 +18,7 @@ namespace Quilt4Net.Core
         public UserData GetDataUser()
         {
             var userName = GetUserName();
-            var fingerprint = $"UI1:{_hashHandler.ToMd5Hash($"{GetUserSid()}{userName}")}";
+            var fingerprint = GetFingerprint(userName);
 
             var user = new UserData
             {
@@ -26,6 +26,11 @@ namespace Quilt4Net.Core
                 UserName = userName,
             };
             return user;
+        }
+
+        private string GetFingerprint(string userName)
+        {
+            return $"UI1:{_hashHandler.ToMd5Hash($"{GetUserSid()}{userName}")}";
         }
     }
 }

@@ -35,12 +35,15 @@ namespace Quilt4Net.Core
 
         protected abstract DateTime? GetBuildTime();
 
+        protected virtual string GetFingerPrint()
+        {
+            return GetFingerPrint(GetApplicationName(), GetApplicationVersion(), GetSupportToolkitNameVersion(), GetProjectApiKey(), GetBuildTime());
+        }
+
         private string GetProjectApiKey()
         {
             return Configuration.ProjectApiKey;
         }
-
-        public string Version => GetApplicationVersion();
 
         public ApplicationData GetApplicationData()
         {
@@ -50,7 +53,7 @@ namespace Quilt4Net.Core
             var buildTime = GetBuildTime();
             var projectApiKey = GetProjectApiKey();
             
-            var fingerPrint = $"AI1:{_hashHandler.ToMd5Hash($"{applicationName}{applicationVersion}{supportToolkitNameVersion}{projectApiKey}{buildTime}")}";
+            var fingerPrint = GetFingerPrint(applicationName, applicationVersion, supportToolkitNameVersion, projectApiKey, buildTime);
 
             var application = new ApplicationData
             {
@@ -63,7 +66,12 @@ namespace Quilt4Net.Core
 
             return application;
         }
-        
+
+        private string GetFingerPrint(string applicationName, string applicationVersion, string supportToolkitNameVersion, string projectApiKey, DateTime? buildTime)
+        {
+            return $"AI1:{_hashHandler.ToMd5Hash($"{applicationName}{applicationVersion}{supportToolkitNameVersion}{projectApiKey}{buildTime}")}";
+        }
+
         protected virtual string GetSupportToolkitNameVersion()
         {
             var currentAssembly = typeof(ApplicationInformationBase).GetTypeInfo().Assembly;

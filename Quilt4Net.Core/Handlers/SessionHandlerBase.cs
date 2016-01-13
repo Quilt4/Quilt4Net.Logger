@@ -42,7 +42,7 @@ namespace Quilt4Net.Core
         public event EventHandler<SessionEndStartedEventArgs> SessionEndStartedEvent;
         public event EventHandler<SessionEndCompletedEventArgs> SessionEndCompletedEvent;
 
-        public bool IsRegistered => !string.IsNullOrEmpty(_sessionToken);
+        public bool IsRegisteredOnServer => !string.IsNullOrEmpty(_sessionToken);
         public DateTime ClientStartTime { get; }
         public string Environment => Client.Configuration.Session != null ? Client.Configuration.Session.Environment : string.Empty;
         public IApplicationInformation Application => Client.Information.Aplication;
@@ -103,13 +103,13 @@ namespace Quilt4Net.Core
 
         public async Task EndAsync()
         {
-            if (!IsRegistered) return;
+            if (!IsRegisteredOnServer) return;
             await EndEx(await GetSessionTokenAsync());
         }
 
         public void End()
         {
-            if (!IsRegistered) return;
+            if (!IsRegisteredOnServer) return;
 
             try
             {
@@ -161,7 +161,7 @@ namespace Quilt4Net.Core
 
         public async Task<string> GetSessionTokenAsync()
         {
-            if (!IsRegistered)
+            if (!IsRegisteredOnServer)
             {
                 SessionResult response = null;
                 try

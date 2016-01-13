@@ -16,7 +16,7 @@ namespace Quilt4Net.Sample.Console.Commands.Session
 
         public override bool CanExecute()
         {
-            return _sessionHandler.IsRegistered;
+            return _sessionHandler.IsRegisteredOnServer;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)

@@ -87,7 +87,7 @@ namespace Quilt4Net.Tests
             Task.WaitAll(task1, task2, task3);
 
             //Assert
-            Assert.That(session.IsRegistered, Is.False);
+            Assert.That(session.IsRegisteredOnServer, Is.False);
             Assert.That(sessionEndStartedEventCount, Is.EqualTo(1));
             Assert.That(sessionEndCompletedEventCount, Is.EqualTo(1));
             webApiClientMock.Verify(x => x.ExecuteCommandAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>()), Times.Once);

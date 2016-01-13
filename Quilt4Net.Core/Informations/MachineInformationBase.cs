@@ -8,6 +8,11 @@ namespace Quilt4Net.Core
     {
         private readonly IHashHandler _hashHandler;
 
+        protected MachineInformationBase(IHashHandler hashHandler)
+        {
+            _hashHandler = hashHandler;
+        }
+
         protected abstract string GetMachineName();
         protected abstract string GetCpuId();
         protected abstract string GetDriveSerial();
@@ -17,15 +22,20 @@ namespace Quilt4Net.Core
         protected abstract string GetTimeZone();
         protected abstract string GetLanguage();
 
-        protected MachineInformationBase(IHashHandler hashHandler)
+        protected virtual string GetFingerprint()
         {
-            _hashHandler = hashHandler;
+            return GetFingerprint(GetMachineName());
+        }
+
+        private string GetFingerprint(string machineName)
+        {
+            return $"MI1:{_hashHandler.ToMd5Hash($"{GetCpuId()}{GetDriveSerial()}{machineName}")}";
         }
 
         public MachineData GetMachineData()
         {
             var machineName = GetMachineName();
-            var fingerprint = $"MI1:{_hashHandler.ToMd5Hash($"{GetCpuId()}{GetDriveSerial()}{machineName}")}";
+            var fingerprint = GetFingerprint(machineName);
             var data = new Dictionary<string, string> { { "OsName", GetOsName() }, { "Model", GetModel() }, { "Type", "Desktop" }, { "Screen", GetScreen() }, { "TimeZone", GetTimeZone() }, { "Language", GetLanguage() } };
 
             var machine = new MachineData
