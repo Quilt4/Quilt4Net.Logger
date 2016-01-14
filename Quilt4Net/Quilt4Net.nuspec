@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>$id$</id>
-    <version>$version$-beta</version>
+    <version>$version$</version>
     <title>Quilt4Net</title>
     <authors>Quilt4Net</authors>
     <description>Assure quality in .net systems.</description>
