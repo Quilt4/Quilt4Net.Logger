@@ -227,14 +227,14 @@ namespace Quilt4Net.Core
                                   Environment = Environment,
                                   Application = Client.Information.Aplication.GetApplicationData(),
                                   Machine = Client.Information.Machine.GetMachineData(),
-                                  User = Client.Information.User.GetDataUser(),
+                                  User = Client.Information.User.GetDataUser(),                                  
                               };
 
                 OnSessionRegistrationStartedEvent(new SessionRegistrationStartedEventArgs(request));
 
                 response = await Client.WebApiClient.CreateAsync<SessionRequest, SessionResponse>("Client/Session", request);
 
-                if (response.SessionToken == null) throw new InvalidOperationException("No session token returned from the server.");
+                if (response.SessionToken == null) throw new InvalidOperationException("No session key returned from the server.");
                 _sessionToken = response.SessionToken;
             }
             catch (Exception exception)

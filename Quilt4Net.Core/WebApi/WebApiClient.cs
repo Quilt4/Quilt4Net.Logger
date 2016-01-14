@@ -132,7 +132,8 @@ namespace Quilt4Net.Core
                     throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
                 }
 
-                OnWebApiResponseEvent(new WebApiResponseEventArgs(request, response));
+                var contentData = response.Content.ReadAsStringAsync().Result;
+                OnWebApiResponseEvent(new WebApiResponseEventArgs(request, response, contentData));
                 return response;
             }
             catch (Exception exception)
@@ -156,7 +157,8 @@ namespace Quilt4Net.Core
                     throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
                 }
 
-                OnWebApiResponseEvent(new WebApiResponseEventArgs(request, response));
+                var contentData = response.Content.ReadAsStringAsync().Result;
+                OnWebApiResponseEvent(new WebApiResponseEventArgs(request, response, contentData));
                 return response;
             }
             catch (Exception exception)

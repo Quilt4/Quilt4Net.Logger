@@ -3,7 +3,7 @@ using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core.DataTransfer
 {
-    public class SessionRequest : ISessionData
+    public class SessionRequest //: ISessionData
     {
         internal SessionRequest()
         {

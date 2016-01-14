@@ -11,15 +11,17 @@ namespace Quilt4Net.Core.Interfaces
             Exception = exception;
         }
 
-        internal WebApiResponseEventArgs(WebApiRequestEventArgs request, HttpResponseMessage response)
+        internal WebApiResponseEventArgs(WebApiRequestEventArgs request, HttpResponseMessage response, string contentData = null)
         {
             Request = request;
             Response = response;
+            ContentData = contentData;
         }
 
         public bool IsSuccess => Exception == null;
         public WebApiRequestEventArgs Request { get; }
         public Exception Exception { get; }
         public HttpResponseMessage Response { get; }
+        public string ContentData { get; }
     }
 }

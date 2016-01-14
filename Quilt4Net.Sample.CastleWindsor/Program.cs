@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
@@ -10,7 +12,7 @@ namespace Quilt4Net.Sample.CastleWindsor
 {
     static class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var container = new WindsorContainer();
 
@@ -46,14 +48,21 @@ namespace Quilt4Net.Sample.CastleWindsor
             Console.WriteLine("WebApiClient_AuthorizationChangedEvent: " + e.UserName);
         }
 
-        private static void WebApiClient_WebApiResponseEvent(object sender, WebApiResponseEventArgs e)
-        {
-            Console.WriteLine("> " + e.Request.OperationType + ": " + e.Request.Path);
-        }
-
         private static void WebApiClientWebApiRequestEvent(object sender, WebApiRequestEventArgs e)
         {
-            Console.WriteLine("< " + e.OperationType + ": " + e.Path);
+            Console.WriteLine("REQUEST: (" + e.Path + ")" + e.ContentData);
+        }
+
+        private static void WebApiClient_WebApiResponseEvent(object sender, WebApiResponseEventArgs e)
+        {
+            if (!e.IsSuccess)
+            {
+                Console.WriteLine("> " + e.Request.OperationType + ": " + e.Request.Path + " --> " + (e.IsSuccess ? "Success" : "Fail: " + e.Exception.Message));
+            }
+            else
+            {
+                Console.WriteLine("RESPONSE (" + e.Request.Path + "): " + e.ContentData);
+            }
         }
     }
 
@@ -62,9 +71,9 @@ namespace Quilt4Net.Sample.CastleWindsor
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             container.Register(Classes.FromThisAssembly()
-                                .Where(Component.IsInSameNamespaceAs<SomeBusiness1>())
-                                .WithService.DefaultInterfaces()
-                                .LifestyleTransient());
+                .Where(Component.IsInSameNamespaceAs<SomeBusiness1>())
+                .WithService.DefaultInterfaces()
+                .LifestyleTransient());
 
             //container.Register(Component.For<IConfiguration>().ImplementedBy(typeof(Quilt4Net.Configuration)).LifestyleSingleton());
             //container.Register(Component.For<IQuilt4NetClient>().ImplementedBy(typeof(Quilt4Net.Quilt4NetClient)).LifestyleSingleton());
@@ -78,10 +87,10 @@ namespace Quilt4Net.Sample.CastleWindsor
 
             //TODO: Using this should fail the execution (since two clients are created in the same runner)
             container.Register(Classes.FromAssemblyContaining(typeof(Quilt4NetClient))
-                                .Where(Component.IsInSameNamespaceAs<IssueHandler>())
-                                .WithService.DefaultInterfaces()
-                                //.LifestyleTransient());
-                                .LifestyleSingleton());
+                .Where(Component.IsInSameNamespaceAs<IssueHandler>())
+                .WithService.DefaultInterfaces()
+                //.LifestyleTransient());
+                .LifestyleSingleton());
         }
     }
 
@@ -96,8 +105,8 @@ namespace Quilt4Net.Sample.CastleWindsor
 
         public void Execute()
         {
-            _issueHandler.Register("First issue.", MessageIssueLevel.Information);
-            _issueHandler.Register("Second issue.", MessageIssueLevel.Information);
+            _issueHandler.Register("Mimimal message");
+            //_issueHandler.Register("Maximal message", MessageIssueLevel.Information, "Bob Loblaw", new Dictionary<string, string> { { "A", "1" } });
 
             Console.WriteLine("Executing some more stuff...");
         }
@@ -153,11 +162,45 @@ namespace Quilt4Net.Sample.CastleWindsor
         public void Execute()
         {
             _sessionHandler.Register();
-            _issueHandler.Register("First issue.", MessageIssueLevel.Information);
-            _issueHandler.Register("Second issue.", MessageIssueLevel.Information);
+
+            try
+            {
+                try
+                {
+                    try
+                    {
+                        var task1 = Task.Run(() =>
+                            {
+                                System.Threading.Thread.Sleep(500);
+                                throw new InvalidOperationException("First");
+                            });
+                        var task2 = Task.Run(() =>
+                            {
+                                System.Threading.Thread.Sleep(500);
+                                throw new InvalidOperationException("Second");
+                            });
+
+                        Task.WaitAll(task1, task2);
+                    }
+                    catch (Exception exception)
+                    {
+                        throw new InvalidOperationException("Some inner exception.", exception);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    exception.AddData("A", "1").AddData("B", "2");
+                    throw new InvalidOperationException("Some exception", exception);
+                }
+            }
+            catch (Exception exception)
+            {
+                exception.AddData("B", "22").AddData("C", "3");
+                _issueHandler.Register(exception, ExceptionIssueLevel.Error, "Bob Loblaw");
+            }
 
             Console.WriteLine("Executing some stuff...");
-        }        
+        }
     }
 
     public interface ISomeBusiness1
