@@ -17,7 +17,6 @@ namespace Quilt4Net.Core
             Configuration = configuration;
         }
 
-        public string Version => GetApplicationVersion();
         protected virtual bool IsClickOnce => false;
 
         protected virtual Assembly GetFirstAssembly()

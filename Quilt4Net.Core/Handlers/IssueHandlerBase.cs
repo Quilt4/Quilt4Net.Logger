@@ -39,8 +39,8 @@ namespace Quilt4Net.Core
 
         public async Task<IssueResult> RegisterAsync(string message, MessageIssueLevel issueLevel, string userHandle = null, IDictionary<string, string> data = null)
         {
-            var sessionToken = await _sessionHandler.GetSessionTokenAsync();
-            var issueData = PrepareIssueData(sessionToken, message, issueLevel, userHandle, data);
+            var sessionKey = await _sessionHandler.GetSessionKeyAsync();
+            var issueData = PrepareIssueData(sessionKey, message, issueLevel, userHandle, data);
             return await RegisterEx(true, issueData);
         }
 
@@ -48,8 +48,8 @@ namespace Quilt4Net.Core
         {
             Task.Run(async () =>
                 {
-                    var sessionToken = await _sessionHandler.GetSessionTokenAsync();
-                    var issueData = PrepareIssueData(sessionToken, message, issueLevel, userHandle, data);
+                    var sessionKey = await _sessionHandler.GetSessionKeyAsync();
+                    var issueData = PrepareIssueData(sessionKey, message, issueLevel, userHandle, data);
                     await RegisterEx(false, issueData);
                 });
         }
@@ -58,8 +58,8 @@ namespace Quilt4Net.Core
         {
             try
             {
-                var sessionToken = _sessionHandler.GetSessionTokenAsync().Result;
-                var issueData = PrepareIssueData(sessionToken, message, issueLevel, userHandle, data);
+                var sessionKey = _sessionHandler.GetSessionKeyAsync().Result;
+                var issueData = PrepareIssueData(sessionKey, message, issueLevel, userHandle, data);
                 var response = RegisterEx(true, issueData).Result;
                 return response;
             }
@@ -71,8 +71,8 @@ namespace Quilt4Net.Core
 
         public async Task<IssueResult> RegisterAsync(Exception exception, ExceptionIssueLevel issueLevel = ExceptionIssueLevel.Error, string userHandle = null)
         {
-            var sessionToken = await _sessionHandler.GetSessionTokenAsync();
-            var issueData = PrepareIssueData(sessionToken, exception, issueLevel, userHandle);
+            var sessionKey = await _sessionHandler.GetSessionKeyAsync();
+            var issueData = PrepareIssueData(sessionKey, exception, issueLevel, userHandle);
             var respnse = await RegisterEx(true, issueData);
             return respnse;
         }
@@ -81,8 +81,8 @@ namespace Quilt4Net.Core
         {
             Task.Run(async () =>
                 {
-                    var sessionToken = await _sessionHandler.GetSessionTokenAsync();
-                    var issueData = PrepareIssueData(sessionToken, exception, issueLevel, userHandle);
+                    var sessionKey = await _sessionHandler.GetSessionKeyAsync();
+                    var issueData = PrepareIssueData(sessionKey, exception, issueLevel, userHandle);
                     await RegisterEx(false, issueData);
                 });
         }
@@ -91,8 +91,8 @@ namespace Quilt4Net.Core
         {
             try
             {
-                var sessionToken = _sessionHandler.GetSessionTokenAsync().Result;
-                var issueData = PrepareIssueData(sessionToken, exception, issueLevel, userHandle);
+                var sessionKey = _sessionHandler.GetSessionKeyAsync().Result;
+                var issueData = PrepareIssueData(sessionKey, exception, issueLevel, userHandle);
                 var response = RegisterEx(true, issueData).Result;
                 return response;
             }
@@ -109,8 +109,8 @@ namespace Quilt4Net.Core
 
         private async Task<IssueResult> RegisterEx(bool doThrow, IssueRequest request)
         {
-            if (string.IsNullOrEmpty(request.SessionToken))
-                throw new ArgumentException("No SessionToken has been assigned.");
+            if (string.IsNullOrEmpty(request.SessionKey))
+                throw new ArgumentException("No SessionKey has been assigned.");
 
             var result = new IssueResult();
             IssueResponse response = null;
@@ -138,7 +138,7 @@ namespace Quilt4Net.Core
             return result;
         }
 
-        private IssueRequest PrepareIssueData(string sessionToken, Exception exception, ExceptionIssueLevel issueLevel, string userHandle)
+        private IssueRequest PrepareIssueData(string sessionKey, Exception exception, ExceptionIssueLevel issueLevel, string userHandle)
         {
             var level = issueLevel.ToString();
             var issueType = CreateIssueTypeData(exception);
@@ -151,7 +151,7 @@ namespace Quilt4Net.Core
                                     IssueKey = Guid.NewGuid(),
                                     IssueThreadKey = HandleIssueThreadGuid(exception),
                                     IssueType = issueType,
-                                    SessionToken = sessionToken,                                    
+                                    SessionKey = sessionKey,                                    
                                 };
 
             return issueData;
@@ -194,7 +194,7 @@ namespace Quilt4Net.Core
             }
         }
 
-        private IssueRequest PrepareIssueData(string sessionToken, string message, MessageIssueLevel issueLevel, string userHandle, IDictionary<string, string> data)
+        private IssueRequest PrepareIssueData(string sessionKey, string message, MessageIssueLevel issueLevel, string userHandle, IDictionary<string, string> data)
         {
             var issueType = new IssueTypeData
                                 {
@@ -213,7 +213,7 @@ namespace Quilt4Net.Core
                                     IssueThreadKey = null,
                                     IssueType = issueType,
                                     IssueLevel = issueLevel.ToString(),
-                                    SessionToken = sessionToken,                                    
+                                    SessionKey = sessionKey,                                    
                                 };
 
             return issueData;

@@ -110,7 +110,6 @@
     <Compile Include="Interfaces\IConfiguration.cs" />
     <Compile Include="Interfaces\IInvitation.cs" />
     <Compile Include="Interfaces\IIssueHandler.cs" />
-    <Compile Include="Interfaces\IIssueData.cs" />
     <Compile Include="Interfaces\ILog.cs" />
     <Compile Include="Interfaces\ILoginResult.cs" />
     <Compile Include="Interfaces\IMachineInformation.cs" />
@@ -119,7 +118,6 @@
     <Compile Include="Interfaces\IService.cs" />
     <Compile Include="Interfaces\ISessionHandler.cs" />
     <Compile Include="Interfaces\ISessionConfiguration.cs" />
-    <Compile Include="Interfaces\ISessionData.cs" />
     <Compile Include="Interfaces\ITargetConfiguration.cs" />
     <Compile Include="Interfaces\IUser.cs" />
     <Compile Include="Interfaces\IUserInformation.cs" />

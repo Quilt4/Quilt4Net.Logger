@@ -4,11 +4,11 @@ namespace Quilt4Net.Core.Events
 {
     public class SessionEndStartedEventArgs : EventArgs
     {
-        internal SessionEndStartedEventArgs(string sessionToken)
+        internal SessionEndStartedEventArgs(string sessionKey)
         {
-            SessionToken = sessionToken;
+            SessionKey = sessionKey;
         }
 
-        public string SessionToken { get; }
+        public string SessionKey { get; }
     }
 }

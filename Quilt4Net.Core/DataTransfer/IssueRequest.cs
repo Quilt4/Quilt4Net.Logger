@@ -1,16 +1,15 @@
 ﻿using System;
-using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core.DataTransfer
 {
-    public class IssueRequest //: IIssueData
+    public class IssueRequest
     {
         internal IssueRequest()
         {
         }
 
         public Guid IssueKey { get; set; }
-        public string SessionToken { get; set; }
+        public string SessionKey { get; set; }
         public DateTime ClientTime { get; set; }
         public string IssueLevel { get; set; }
         public IssueTypeData IssueType { get; set; }

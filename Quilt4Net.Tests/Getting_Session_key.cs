@@ -16,20 +16,20 @@ namespace Quilt4Net.Tests
             //Arrange
             var sessionRegistrationStartedEventCount = 0;
             var sessionRegistrationCompletedEventCount = 0;
-            var sessionToken = Guid.NewGuid().ToString();
+            var sessionKey = Guid.NewGuid().ToString();
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
-            webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(new SessionResponse { SessionToken = sessionToken })).Callback(() => { System.Threading.Thread.Sleep(500); });
+            webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(new SessionResponse { SessionKey = sessionKey })).Callback(() => { System.Threading.Thread.Sleep(500); });
             var configurationMock = new Mock<IConfiguration>(MockBehavior.Strict);
             configurationMock.SetupGet(x => x.Enabled).Returns(true);
             configurationMock.SetupGet(x => x.ProjectApiKey).Returns("ABC123");
             configurationMock.SetupGet(x => x.Session.Environment).Returns((string)null);
             configurationMock.SetupGet(x => x.AllowMultipleInstances).Returns(true);
             var applicationHelperMock = new Mock<IApplicationInformation>(MockBehavior.Strict);
-            applicationHelperMock.Setup(x => x.GetApplicationData()).Returns(new ApplicationData {});
+            applicationHelperMock.Setup(x => x.GetApplicationData()).Returns(new ApplicationData());
             var machineHelperMock = new Mock<IMachineInformation>(MockBehavior.Strict);
-            machineHelperMock.Setup(x => x.GetMachineData()).Returns(new MachineData { });
+            machineHelperMock.Setup(x => x.GetMachineData()).Returns(new MachineData());
             var userHelperMock = new Mock<IUserInformation>(MockBehavior.Strict);
-            userHelperMock.Setup(x => x.GetDataUser()).Returns(new UserData { });
+            userHelperMock.Setup(x => x.GetDataUser()).Returns(new UserData());
             var clientMock = new Mock<IQuilt4NetClient>(MockBehavior.Strict);
             clientMock.SetupGet(x => x.Configuration).Returns(() => configurationMock.Object);
             clientMock.SetupGet(x => x.WebApiClient).Returns(() => webApiClientMock.Object);
@@ -41,8 +41,8 @@ namespace Quilt4Net.Tests
             session.SessionRegistrationCompletedEvent += delegate { sessionRegistrationCompletedEventCount++; };
 
             //Act
-            var task1 = Task.Run(() => session.GetSessionTokenAsync());
-            var task3 = Task.Run(() => { System.Threading.Thread.Sleep(500); return session.GetSessionTokenAsync(); });
+            var task1 = Task.Run(() => session.GetSessionKeyAsync());
+            var task3 = Task.Run(() => { System.Threading.Thread.Sleep(500); return session.GetSessionKeyAsync(); });
             Task.WaitAll(task1, task3);
 
             //Assert
@@ -60,25 +60,25 @@ namespace Quilt4Net.Tests
             //Arrange
             var sessionEndCompletedEventCount = 0;
             var sessionEndStartedEventCount = 0;
-            var sessionToken = Guid.NewGuid().ToString();
+            var sessionKey = Guid.NewGuid().ToString();
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
-            webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(new SessionResponse { SessionToken = sessionToken }));
-            webApiClientMock.Setup(x => x.ExecuteCommandAsync<Guid>(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>())).Returns(Task.FromResult<object>(null)).Callback(() => { System.Threading.Thread.Sleep(500); });
+            webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(new SessionResponse { SessionKey = sessionKey }));
+            webApiClientMock.Setup(x => x.ExecuteCommandAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>())).Returns(Task.FromResult<object>(null)).Callback(() => { System.Threading.Thread.Sleep(500); });
             var configurationMock = new Mock<IConfiguration>(MockBehavior.Strict);
             configurationMock.SetupGet(x => x.Enabled).Returns(true);
             configurationMock.SetupGet(x => x.ProjectApiKey).Returns("ABC123");
             configurationMock.SetupGet(x => x.Session.Environment).Returns((string)null);
             var applicationHelperMock = new Mock<IApplicationInformation>(MockBehavior.Strict);
-            applicationHelperMock.Setup(x => x.GetApplicationData()).Returns(new ApplicationData { });
+            applicationHelperMock.Setup(x => x.GetApplicationData()).Returns(new ApplicationData());
             var machineHelperMock = new Mock<IMachineInformation>(MockBehavior.Strict);
-            machineHelperMock.Setup(x => x.GetMachineData()).Returns(new MachineData { });
+            machineHelperMock.Setup(x => x.GetMachineData()).Returns(new MachineData());
             var userHelperMock = new Mock<IUserInformation>(MockBehavior.Strict);
-            userHelperMock.Setup(x => x.GetDataUser()).Returns(new UserData { });
+            userHelperMock.Setup(x => x.GetDataUser()).Returns(new UserData());
             var clientMock = new Mock<IQuilt4NetClient>(MockBehavior.Strict);
             var session = new SessionHandler(clientMock.Object); //webApiClientMock.Object, configurationMock.Object, applicationHelperMock.Object, machineHelperMock.Object, userHelperMock.Object);
             session.SessionEndCompletedEvent += delegate { sessionEndCompletedEventCount++; };
             session.SessionEndStartedEvent += delegate { sessionEndStartedEventCount++; };
-            var response = await session.GetSessionTokenAsync();
+            var response = await session.GetSessionKeyAsync();
 
             //Act
             var task1 = Task.Run(() => session.EndAsync());
@@ -87,6 +87,7 @@ namespace Quilt4Net.Tests
             Task.WaitAll(task1, task2, task3);
 
             //Assert
+            Assert.That(response,Is.EqualTo(sessionKey));
             Assert.That(session.IsRegisteredOnServer, Is.False);
             Assert.That(sessionEndStartedEventCount, Is.EqualTo(1));
             Assert.That(sessionEndCompletedEventCount, Is.EqualTo(1));
@@ -103,6 +104,7 @@ namespace Quilt4Net.Tests
             var configurationMock = new Mock<IConfiguration>(MockBehavior.Strict);
             configurationMock.SetupGet(x => x.Enabled).Returns(false);
             configurationMock.SetupGet(x => x.ProjectApiKey).Returns("ABC123");
+            configurationMock.SetupGet(x => x.AllowMultipleInstances).Returns(true);
             var clientMock = new Mock<IQuilt4NetClient>(MockBehavior.Strict);
             clientMock.SetupGet(x => x.Configuration).Returns(configurationMock.Object);
             var session = new SessionHandler(clientMock.Object);
@@ -110,7 +112,7 @@ namespace Quilt4Net.Tests
             session.SessionRegistrationCompletedEvent += delegate { sessionRegistrationCompletedEventCount++; };
 
             //Act
-            var response = await session.GetSessionTokenAsync();
+            var response = await session.GetSessionKeyAsync();
 
             //Assert
             Assert.That(response, Is.Null);

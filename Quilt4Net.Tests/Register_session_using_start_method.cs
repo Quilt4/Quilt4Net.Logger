@@ -58,7 +58,7 @@ namespace Quilt4Net.Tests
             configurationMock.SetupGet(x => x.AllowMultipleInstances).Returns(true);
 
             var webApiClientMock = new Mock<IWebApiClient>(MockBehavior.Strict);
-            webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(new SessionResponse { SessionToken = Guid.NewGuid().ToString() }));
+            webApiClientMock.Setup(x => x.CreateAsync<SessionRequest, SessionResponse>(It.IsAny<string>(), It.IsAny<SessionRequest>())).Returns(Task.FromResult(new SessionResponse { SessionKey = Guid.NewGuid().ToString() }));
 
             var callbackEvent = new AutoResetEvent(false);
 

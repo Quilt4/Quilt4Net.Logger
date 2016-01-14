@@ -12,7 +12,7 @@ namespace Quilt4Net.Core
     {
         private readonly object _syncRoot = new object();
         private static int _instanceCounter;
-        private string _sessionToken;
+        private string _sessionKey;
         private bool _ongoingSessionRegistration;
         private bool _ongoingSessionEnding;
         private readonly AutoResetEvent _sessionRegistered = new AutoResetEvent(false);
@@ -42,7 +42,7 @@ namespace Quilt4Net.Core
         public event EventHandler<SessionEndStartedEventArgs> SessionEndStartedEvent;
         public event EventHandler<SessionEndCompletedEventArgs> SessionEndCompletedEvent;
 
-        public bool IsRegisteredOnServer => !string.IsNullOrEmpty(_sessionToken);
+        public bool IsRegisteredOnServer => !string.IsNullOrEmpty(_sessionKey);
         public DateTime ClientStartTime { get; }
         public string Environment => Client.Configuration.Session != null ? Client.Configuration.Session.Environment : string.Empty;
         public IApplicationInformation Application => Client.Information.Aplication;
@@ -104,7 +104,7 @@ namespace Quilt4Net.Core
         public async Task EndAsync()
         {
             if (!IsRegisteredOnServer) return;
-            await EndEx(await GetSessionTokenAsync());
+            await EndEx(await GetSessionKeyAsync());
         }
 
         public void End()
@@ -113,7 +113,7 @@ namespace Quilt4Net.Core
 
             try
             {
-                EndEx(GetSessionTokenAsync().Result).Wait();
+                EndEx(GetSessionKeyAsync().Result).Wait();
             }
             catch (AggregateException exception)
             {
@@ -121,7 +121,7 @@ namespace Quilt4Net.Core
             }
         }
 
-        private async Task EndEx(string sessionToken)
+        private async Task EndEx(string sessionKey)
         {
             var result = new EndSesionResult();
 
@@ -136,13 +136,13 @@ namespace Quilt4Net.Core
                 _ongoingSessionEnding = true;
             }
 
-            if (string.IsNullOrEmpty(sessionToken)) throw new InvalidOperationException("There is no active session.");
+            if (string.IsNullOrEmpty(sessionKey)) throw new InvalidOperationException("There is no active session.");
 
             try
             {
-                OnSessionEndStartedEvent(new SessionEndStartedEventArgs(sessionToken));
+                OnSessionEndStartedEvent(new SessionEndStartedEventArgs(sessionKey));
 
-                await Client.WebApiClient.ExecuteCommandAsync("Client/Session", "End", sessionToken);
+                await Client.WebApiClient.ExecuteCommandAsync("Client/Session", "End", sessionKey);
             }
             catch (Exception exception)
             {
@@ -151,37 +151,37 @@ namespace Quilt4Net.Core
             }
             finally
             {
-                _sessionToken = null;
+                _sessionKey = null;
                 _ongoingSessionEnding = false;
                 _sessionEnded.Set();
                 result.SetCompleted();
-                OnSessionEndCompletedEvent(new SessionEndCompletedEventArgs(sessionToken, result));
+                OnSessionEndCompletedEvent(new SessionEndCompletedEventArgs(sessionKey, result));
             }
         }
 
-        public async Task<string> GetSessionTokenAsync()
+        public async Task<string> GetSessionKeyAsync()
         {
             if (!IsRegisteredOnServer)
             {
-                SessionResult response = null;
+                SessionResult response;
                 try
                 {
                     response = await RegisterEx(GetProjectApiKey());
                 }
                 catch (SessionAlreadyRegisteredException)
                 {
-                    return _sessionToken;
+                    return _sessionKey;
                 }
 
                 if (response == null)
                 {
-                    return _sessionToken;
+                    return _sessionKey;
                 }
 
-                return response.Response.SessionToken;
+                return response.Response.SessionKey;
             }
 
-            return _sessionToken;
+            return _sessionKey;
         }
 
         private string GetProjectApiKey()
@@ -216,7 +216,7 @@ namespace Quilt4Net.Core
                 _ongoingSessionRegistration = true;
             }
 
-            if (!string.IsNullOrEmpty(_sessionToken)) throw new SessionAlreadyRegisteredException();
+            if (!string.IsNullOrEmpty(_sessionKey)) throw new SessionAlreadyRegisteredException();
 
             try
             {
@@ -234,8 +234,8 @@ namespace Quilt4Net.Core
 
                 response = await Client.WebApiClient.CreateAsync<SessionRequest, SessionResponse>("Client/Session", request);
 
-                if (response.SessionToken == null) throw new InvalidOperationException("No session key returned from the server.");
-                _sessionToken = response.SessionToken;
+                if (response.SessionKey == null) throw new InvalidOperationException("No session key returned from the server.");
+                _sessionKey = response.SessionKey;
             }
             catch (Exception exception)
             {
