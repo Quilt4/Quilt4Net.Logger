@@ -17,6 +17,9 @@ namespace Quilt4Net.Core
             Configuration = configuration;
         }
 
+        public string Version => GetApplicationVersion();
+        protected virtual bool IsClickOnce => false;
+
         protected virtual Assembly GetFirstAssembly()
         {
             if (FirstAssembly == null) throw new InvalidOperationException("No first assembly has been set.");
@@ -87,8 +90,6 @@ namespace Quilt4Net.Core
             }
             return GetFirstAssembly().GetName().Name;
         }
-
-        protected virtual bool IsClickOnce => false;
 
         protected virtual string GetApplicationVersion()
         {

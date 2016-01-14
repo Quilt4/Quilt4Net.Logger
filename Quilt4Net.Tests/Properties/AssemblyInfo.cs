@@ -8,8 +8,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Thargelion AB")]
-[assembly: AssemblyProduct("Quilt4Net.Tests")]
-[assembly: AssemblyCopyright("The MIT License (MIT) Copyright © Thargelion AB 2015")]
+[assembly: AssemblyProduct("Quilt4Net")]
+[assembly: AssemblyCopyright("The MIT License (MIT) Copyright © Thargelion AB 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
