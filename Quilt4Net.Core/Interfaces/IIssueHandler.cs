@@ -18,5 +18,6 @@ namespace Quilt4Net.Core.Interfaces
         void RegisterStart(Exception exception, ExceptionIssueLevel issueLevel = ExceptionIssueLevel.Error, string userHandle = null);
         IssueResult Register(Exception exception, ExceptionIssueLevel issueLevel = ExceptionIssueLevel.Error, string userHandle = null);
         Task<IEnumerable<IssueTypeResponse>> GetIssueTypesAsync(Guid versionKey);
+        Task<IEnumerable<IssueResponse>> GetIssuesAsync(Guid versionKey);
     }
 }

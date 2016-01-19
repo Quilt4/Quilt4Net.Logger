@@ -10,6 +10,7 @@ namespace Quilt4Net.Sample.Console.Commands.Issue
             : base("Issue")
         {
             RegisterCommand(new RegisterIssueCommand(issueHandler));
+            RegisterCommand(new ListIssueCommand(issueHandler));
             RegisterCommand(new IssueTypeCommands(issueHandler));
         }
     }

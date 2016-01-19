@@ -7,17 +7,17 @@ namespace Quilt4Net.Sample.Console.Commands.Issue
 {
     internal class RegisterIssueCommand : ActionCommandBase
     {
-        private readonly IIssueHandler _client;
+        private readonly IIssueHandler _issueHandler;
 
-        public RegisterIssueCommand(IIssueHandler client)
+        public RegisterIssueCommand(IIssueHandler issueHandler)
             : base("Register", "Register issue")
         {
-            _client = client;
+            _issueHandler = issueHandler;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            var response = await _client.RegisterAsync("Some warning.", MessageIssueLevel.Warning);
+            var response = await _issueHandler.RegisterAsync("Some warning.", MessageIssueLevel.Warning);
             if (response.IsSuccess)
                 OutputInformation("Issue registration took " + response.Elapsed.TotalMilliseconds.ToString("0") + "ms.");
             else

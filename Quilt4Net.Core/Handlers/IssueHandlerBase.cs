@@ -107,6 +107,11 @@ namespace Quilt4Net.Core
             return await _sessionHandler.Client.WebApiClient.ExecuteQueryAsync<Guid, IEnumerable<IssueTypeResponse>>("Client/IssueType", "QueryByVersionKey", versionKey);
         }
 
+        public async Task<IEnumerable<IssueResponse>> GetIssuesAsync(Guid versionKey)
+        {
+            return await _sessionHandler.Client.WebApiClient.ExecuteQueryAsync<Guid, IEnumerable<IssueResponse>>("Client/Issue", "QueryByVersionKey", versionKey);
+        }
+
         private async Task<IssueResult> RegisterEx(bool doThrow, IssueRequest request)
         {
             if (string.IsNullOrEmpty(request.SessionKey))

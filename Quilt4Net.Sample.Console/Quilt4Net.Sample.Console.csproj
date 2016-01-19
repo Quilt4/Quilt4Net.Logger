@@ -78,6 +78,7 @@
     <Compile Include="Commands\Invitation\CreateInvitationCommand.cs" />
     <Compile Include="Commands\Invitation\InvitationCommands.cs" />
     <Compile Include="Commands\Invitation\ListUserInvitationsCommand.cs" />
+    <Compile Include="Commands\Issue\ListIssueCommand.cs" />
     <Compile Include="Commands\Issue\Type\ListIssueTypesCommand.cs" />
     <Compile Include="Commands\Issue\Type\IssueTypeCommands.cs" />
     <Compile Include="Commands\Issue\RegisterIssueCommand.cs" />
