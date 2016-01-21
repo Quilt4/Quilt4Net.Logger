@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Interfaces;
@@ -18,7 +19,7 @@ namespace Quilt4Net.Core.Actions
 
         public async Task<ServiceInfoResponse> GetServiceInfo()
         {
-            return await _webApiClient.ExecuteQueryAsync<string, ServiceInfoResponse>("Service", "QueryInfo", "");
+            return await _webApiClient.ExecuteQueryAsync<string, ServiceInfoResponse>("Service");
         }
     }
 }

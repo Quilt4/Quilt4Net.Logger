@@ -47,7 +47,7 @@ namespace Quilt4Net.Core.Actions
 
         public async Task<IEnumerable<MemberResponse>> GetMembersAsync(Guid projectKey)
         {
-            var response = await _webApiClient.ExecuteQueryAsync<Guid, IEnumerable<MemberResponse>>(_controller, "ProjectMemberQuery", projectKey);
+            var response = await _webApiClient.ExecuteQueryAsync<Guid, IEnumerable<MemberResponse>>(_controller + "/Members", projectKey.ToString());
             return response;
         }
     }

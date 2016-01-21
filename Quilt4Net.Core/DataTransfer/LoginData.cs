@@ -6,7 +6,8 @@
         {
         }
 
-        public string Username { get; internal set; }
-        public string Password { get; internal set; }
+        public string grant_type { get; internal set; }
+        public string username { get; internal set; }
+        public string password { get; internal set; }
     }
 }

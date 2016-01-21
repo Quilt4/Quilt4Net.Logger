@@ -67,7 +67,7 @@ namespace Quilt4Net.Sample.Console
 
         private static void WebApiClient_WebApiResponseEvent(object sender, Core.Interfaces.WebApiResponseEventArgs e)
         {
-            _rootCommand.OutputEvent("Got response from WebAPI call.");
+            _rootCommand.OutputEvent("Got response from WebAPI call after {0} sec.", OutputLevel.Default, e.Elapsed.TotalSeconds);
         }
 
         private static void WebApiClientWebApiRequestEvent(object sender, Core.Interfaces.WebApiRequestEventArgs e)

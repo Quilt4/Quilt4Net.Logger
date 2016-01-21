@@ -105,7 +105,52 @@ namespace Quilt4Net.Core
                 });
         }
 
-        public async Task<TResult> ExecuteQueryAsync<T, TResult>(string controller, string action, T data)
+        public async Task<TResult> ExecuteQueryAsync<T, TResult>(string controller)
+        {
+            var result = await Execute(async client =>
+            {
+                var response = await GetAsync(client, $"api/{controller}");
+                return response.Content.ReadAsAsync<TResult>().Result;
+            });
+            return result;
+        }
+
+        public async Task<TResult> ExecuteQueryAsync<T, TResult>(string controller, string id)
+        {
+            return await ExecuteQueryAsync<T, TResult>(controller + "/" + id);
+        }
+
+        ////public async Task<TResult> ExecuteQueryAsync<T, TResult>(string controller, IDictionary<string, string> parameters)
+        //public async Task<TResult> ExecuteQueryAsync<T, TResult>(string controller, T data)
+        //{
+        //    var info = typeof(T).GetRuntimeProperties();
+        //    var param = string.Empty;
+        //    var sign = "?";
+        //    foreach (var propertyInfo in info)
+        //    {
+        //        param += sign + propertyInfo.Name + "=" + propertyInfo.GetValue(data);
+        //        sign = "&";
+        //    }
+
+        //    var result = await Execute(async client =>
+        //    {
+        //        var response = await GetAsync(client, $"api/{controller}{param}");
+        //        return response.Content.ReadAsAsync<TResult>().Result;
+        //    });
+        //    return result;
+        //}
+
+        public async Task<TResult> PostQueryAsync<TResult>(string controller, string action, FormUrlEncodedContent cnt)
+        {
+            var result = await Execute(async client =>
+            {
+                var response = await PostAsync(client, $"api/{controller}/{action}", cnt);
+                return response.Content.ReadAsAsync<TResult>().Result;
+            });
+            return result;
+        }
+
+        public async Task<TResult> PostQueryAsync<T, TResult>(string controller, string action, T data)
         {
             var result = await Execute(async client =>
                 {

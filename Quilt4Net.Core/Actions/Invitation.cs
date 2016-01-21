@@ -23,7 +23,7 @@ namespace Quilt4Net.Core.Actions
 
         public async Task<IEnumerable<InvitationResponse>> GetListAsync()
         {
-            var result = await _webApiClient.ExecuteQueryAsync<string, IEnumerable<InvitationResponse>>(_controller, "UserInvitationQuery", null);
+            var result = await _webApiClient.ExecuteQueryAsync<string, IEnumerable<InvitationResponse>>(_controller);
             return result;
         }
 

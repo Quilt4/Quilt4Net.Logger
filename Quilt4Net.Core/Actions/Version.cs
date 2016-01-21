@@ -18,7 +18,7 @@ namespace Quilt4Net.Core.Actions
 
         public async Task<IEnumerable<VersionResponse>> GetListAsync(Guid applicationKey)
         {
-            var response = await _webApiClient.ExecuteQueryAsync<Guid, IEnumerable<VersionResponse>>(_controller, "QueryByApplication", applicationKey);
+            var response = await _webApiClient.ExecuteQueryAsync<Guid, IEnumerable<VersionResponse>>(_controller, applicationKey.ToString());
             return response;
         }
     }

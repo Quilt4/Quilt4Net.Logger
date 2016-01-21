@@ -7,12 +7,14 @@ namespace Quilt4Net.Core.Interfaces
     {
         internal WebApiResponseEventArgs(WebApiRequestEventArgs request, Exception exception)
         {
+            Elapsed = request.SetComplete();
             Request = request;
             Exception = exception;
         }
 
         internal WebApiResponseEventArgs(WebApiRequestEventArgs request, HttpResponseMessage response, string contentData = null)
         {
+            Elapsed = request.SetComplete();
             Request = request;
             Response = response;
             ContentData = contentData;
@@ -23,5 +25,6 @@ namespace Quilt4Net.Core.Interfaces
         public Exception Exception { get; }
         public HttpResponseMessage Response { get; }
         public string ContentData { get; }
+        public TimeSpan Elapsed { get; private set; }
     }
 }

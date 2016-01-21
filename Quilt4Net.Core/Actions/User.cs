@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Interfaces;
@@ -29,7 +30,16 @@ namespace Quilt4Net.Core.Actions
 
         public async Task<ILoginResult> LoginAsync(string username, string password)
         {
-            var response = await _webApiClient.ExecuteQueryAsync<LoginData, LoginResult>("Account", "Login", new LoginData { Username = username, Password = password });
+            //var requestParams = new List<KeyValuePair<string, string>>
+            //    {
+            //        new KeyValuePair<string, string>("grant_type", "password"),
+            //        new KeyValuePair<string, string>("username", username),
+            //        new KeyValuePair<string, string>("password", password)
+            //    };
+            //var requestParamsFormUrlEncoded = new FormUrlEncodedContent(requestParams);
+            //var response = await _webApiClient.PostQueryAsync<LoginResult>("Account", "Token", requestParamsFormUrlEncoded);
+            //var response = await _webApiClient.PostQueryAsync<LoginData, LoginResult>("Account", "Login", new LoginData { username = username, password = password });
+            var response = await _webApiClient.PostQueryAsync<LoginData, LoginResult>("Account", "Token", new LoginData { username = username, password = password, grant_type = "grant_type" });
             _webApiClient.SetAuthorization(username, response.token_type, response.access_token);
             return response;
         }
@@ -63,7 +73,7 @@ namespace Quilt4Net.Core.Actions
 
         public async Task<IEnumerable<QueryUserResponse>> SearchAsync(string searchString)
         {
-            return await _webApiClient.ExecuteQueryAsync<QueryUserRequest, IEnumerable<QueryUserResponse>>("Client/User", "QueryUser", new QueryUserRequest { SearchString = searchString });
+            return await _webApiClient.ExecuteQueryAsync<QueryUserRequest, IEnumerable<QueryUserResponse>>("Client/User", searchString);
         }
     }
 }
