@@ -38,8 +38,8 @@ namespace Quilt4Net.Core.Actions
             //    };
             //var requestParamsFormUrlEncoded = new FormUrlEncodedContent(requestParams);
             //var response = await _webApiClient.PostQueryAsync<LoginResult>("Account", "Token", requestParamsFormUrlEncoded);
-            //var response = await _webApiClient.PostQueryAsync<LoginData, LoginResult>("Account", "Login", new LoginData { username = username, password = password });
-            var response = await _webApiClient.PostQueryAsync<LoginData, LoginResult>("Account", "Token", new LoginData { username = username, password = password, grant_type = "grant_type" });
+            var response = await _webApiClient.PostQueryAsync<LoginData, LoginResult>("Account", "Login", new LoginData { username = username, password = password });
+            //var response = await _webApiClient.PostQueryAsync<LoginData, LoginResult>("Account", "Token", new LoginData { username = username, password = password, grant_type = "grant_type" });
             _webApiClient.SetAuthorization(username, response.token_type, response.access_token);
             return response;
         }
