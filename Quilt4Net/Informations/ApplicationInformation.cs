@@ -10,27 +10,52 @@ namespace Quilt4Net
     internal class ApplicationInformation : ApplicationInformationBase
     {
         private readonly object _syncRoot = new object();
+        private Assembly _firstAssembly;
 
         internal ApplicationInformation(IConfiguration configuration, IHashHandler hashHandler)
             : base(configuration, hashHandler)
         {
         }
 
-        protected override Assembly GetFirstAssembly()
+        public override ApplicationNameVersion GetApplicationNameVersion()
         {
-            if (FirstAssembly == null)
+            if (ApplicationNameVersion == null)
             {
                 lock (_syncRoot)
                 {
-                    if (FirstAssembly == null)
+                    if (ApplicationNameVersion == null)
                     {
-                        FirstAssembly = Assembly.GetEntryAssembly();
-                        if (FirstAssembly == null) throw new ExpectedIssues(Configuration).GetException(ExpectedIssues.CannotAutomaticallyRetrieveAssembly);
+                        var firstAssembly = GetFirstAssembly();
+                        ApplicationNameVersion = new ApplicationNameVersion(firstAssembly.GetName().Name, firstAssembly.GetName().Version.ToString());
+                        if (ApplicationNameVersion == null) throw new ExpectedIssues(Configuration).GetException(ExpectedIssues.CannotAutomaticallyRetrieveAssembly);
                     }
                 }
             }
 
-            return FirstAssembly;
+            return ApplicationNameVersion;
+        }
+
+        private Assembly GetFirstAssembly()
+        {
+            if (_firstAssembly == null)
+            {
+                lock (_syncRoot)
+                {
+                    if (_firstAssembly == null)
+                    {
+                        _firstAssembly = Assembly.GetEntryAssembly();
+                        if (_firstAssembly == null) throw new ExpectedIssues(Configuration).GetException(ExpectedIssues.CannotAutomaticallyRetrieveAssembly);
+                    }
+                }
+            }
+
+            return _firstAssembly;
+        }
+
+        protected internal void SetFirstAssembly(Assembly firstAssembly)
+        {
+            if (_firstAssembly != null && !ReferenceEquals(firstAssembly, _firstAssembly)) throw new InvalidOperationException("Cannot change the first assembly once it has been assigned.");
+            _firstAssembly = firstAssembly;
         }
 
         protected override DateTime? GetBuildTime()
@@ -72,16 +97,21 @@ namespace Quilt4Net
 
         protected override bool IsClickOnce => ApplicationDeployment.IsNetworkDeployed;
 
+        protected override string GetApplicationName()
+        {
+            return base.GetApplicationName();
+        }
+
         protected override string GetApplicationVersion()
         {
-            var assemblyVersion = GetFirstAssembly().GetName().Version;
-            var clickOnceVersion = (Version)null;
+            var version = base.GetApplicationVersion();
+            var clickOnceVersion = (string)null;
             if (IsClickOnce)
             {
-                clickOnceVersion = ApplicationDeployment.CurrentDeployment.CurrentVersion;
+                clickOnceVersion = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
             }
-            var applicationVersion = clickOnceVersion ?? assemblyVersion;
-            return applicationVersion.ToString();
+            var applicationVersion = clickOnceVersion ?? version;
+            return applicationVersion;
         }
     }
 }

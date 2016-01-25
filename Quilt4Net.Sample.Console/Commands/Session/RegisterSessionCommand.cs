@@ -1,6 +1,6 @@
 using System.Reflection;
 using System.Threading.Tasks;
-using Quilt4Net.Core.Interfaces;
+using Quilt4Net.Interfaces;
 using Tharga.Toolkit.Console.Command.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Session

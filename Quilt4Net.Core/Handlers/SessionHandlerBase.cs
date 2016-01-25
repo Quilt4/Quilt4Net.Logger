@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Quilt4Net.Core.DataTransfer;
@@ -52,12 +51,6 @@ namespace Quilt4Net.Core
             return await RegisterEx(GetProjectApiKey());
         }
 
-        public async Task<SessionResult> RegisterAsync(Assembly firstAssembly)
-        {
-            Client.Information.Aplication.SetFirstAssembly(firstAssembly);
-            return await RegisterAsync();
-        }
-
         public void RegisterStart()
         {
             var projectApiKey = GetProjectApiKey();
@@ -76,12 +69,6 @@ namespace Quilt4Net.Core
                 });
         }
 
-        public void RegisterStart(Assembly firstAssembly)
-        {
-            Client.Information.Aplication.SetFirstAssembly(firstAssembly);
-            RegisterStart();
-        }
-
         public SessionResult Register()
         {
             try
@@ -93,12 +80,6 @@ namespace Quilt4Net.Core
             {
                 throw exception.InnerException;
             }
-        }
-
-        public SessionResult Register(Assembly firstAssembly)
-        {
-            Client.Information.Aplication.SetFirstAssembly(firstAssembly);
-            return Register();
         }
 
         public async Task EndAsync()

@@ -61,6 +61,7 @@
     <Compile Include="..\Build\AssemblyVersionInfo.cs">
       <Link>Properties\AssemblyVersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Interfaces\ISessionHandler.cs" />
     <Compile Include="Singleton\Configuration.cs" />
     <Compile Include="Handlers\HashHandler.cs" />
     <Compile Include="Singleton\Issue.cs" />

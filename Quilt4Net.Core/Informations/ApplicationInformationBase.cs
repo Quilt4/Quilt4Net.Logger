@@ -9,7 +9,7 @@ namespace Quilt4Net.Core
     {
         private readonly IHashHandler _hashHandler;
         protected readonly IConfiguration Configuration;
-        protected Assembly FirstAssembly;
+        protected ApplicationNameVersion ApplicationNameVersion;
 
         protected ApplicationInformationBase(IConfiguration configuration, IHashHandler hashHandler)
         {
@@ -19,20 +19,16 @@ namespace Quilt4Net.Core
 
         protected virtual bool IsClickOnce => false;
 
-        protected virtual Assembly GetFirstAssembly()
+        public void SetApplicationNameVersion(ApplicationNameVersion applicationNameVersion)
         {
-            if (FirstAssembly == null) throw new InvalidOperationException("No first assembly has been set.");
-            return FirstAssembly;
+            if (ApplicationNameVersion != null) throw new InvalidOperationException("Cannot change the application name version once it has been set.");
+            ApplicationNameVersion = applicationNameVersion;
         }
 
-        public virtual void SetFirstAssembly(Assembly firstAssembly)
+        public virtual ApplicationNameVersion GetApplicationNameVersion()
         {
-            if (FirstAssembly != null && !ReferenceEquals(FirstAssembly, firstAssembly))
-            {
-                throw new InvalidOperationException("Cannot change first assembly once it has been set.");
-            }
-
-            FirstAssembly = firstAssembly;
+            if (ApplicationNameVersion == null) throw new InvalidOperationException("No version name as been assigned. Call the SetApplicationNameVersion function before this operation");
+            return ApplicationNameVersion;
         }
 
         protected abstract DateTime? GetBuildTime();
@@ -54,7 +50,7 @@ namespace Quilt4Net.Core
             var supportToolkitNameVersion = GetSupportToolkitNameVersion();
             var buildTime = GetBuildTime();
             var projectApiKey = GetProjectApiKey();
-            
+
             var fingerPrint = GetFingerPrint(applicationName, applicationVersion, supportToolkitNameVersion, projectApiKey, buildTime);
 
             var application = new ApplicationData
@@ -81,20 +77,22 @@ namespace Quilt4Net.Core
             return $"{toolkitName.Name} {toolkitName.Version}";
         }
 
-        private string GetApplicationName()
+        protected virtual string GetApplicationName()
         {
             if (!string.IsNullOrEmpty(Configuration.ApplicationName))
             {
                 return Configuration.ApplicationName;
             }
-            return GetFirstAssembly().GetName().Name;
+            return GetApplicationNameVersion().Name;
         }
 
         protected virtual string GetApplicationVersion()
         {
-            var assemblyVersion = GetFirstAssembly().GetName().Version;
-            var applicationVersion = assemblyVersion;
-            return applicationVersion.ToString();
+            if (!string.IsNullOrEmpty(Configuration.ApplicationVersion))
+            {
+                return Configuration.ApplicationVersion;
+            }
+            return GetApplicationNameVersion().Version;
         }
     }
 }
