@@ -61,6 +61,8 @@
     <Compile Include="..\Build\AssemblyVersionInfo.cs">
       <Link>Properties\AssemblyVersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Interfaces\IIssueHandler.cs" />
+    <Compile Include="Interfaces\IQuilt4NetClient.cs" />
     <Compile Include="Interfaces\ISessionHandler.cs" />
     <Compile Include="Singleton\Configuration.cs" />
     <Compile Include="Handlers\HashHandler.cs" />

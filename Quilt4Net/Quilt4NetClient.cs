@@ -5,7 +5,7 @@ using Action = Quilt4Net.Core.Actions.Action;
 
 namespace Quilt4Net
 {
-    public class Quilt4NetClient : IQuilt4NetClient
+    public class Quilt4NetClient : Interfaces.IQuilt4NetClient
     {
         private static readonly object _syncRoot = new object();
         private static int _instanceCounter;

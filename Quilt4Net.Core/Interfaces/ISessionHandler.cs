@@ -17,11 +17,8 @@ namespace Quilt4Net.Core.Interfaces
         string Environment { get; }
         IApplicationInformation Application { get; }
         Task<SessionResult> RegisterAsync();
-        //Task<SessionResult> RegisterAsync(Assembly firstAssembly);
         void RegisterStart();
-        //void RegisterStart(Assembly firstAssembly);
         SessionResult Register();
-        //SessionResult Register(Assembly firstAssembly);
         Task EndAsync();
         void End();
         Task<string> GetSessionKeyAsync();

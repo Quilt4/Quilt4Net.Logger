@@ -1,5 +1,3 @@
-using Quilt4Net.Core.Interfaces;
-
 namespace Quilt4Net.Singleton
 {
     public class Issue : IssueHandler
@@ -9,6 +7,6 @@ namespace Quilt4Net.Singleton
         {
         }
 
-        public static IIssueHandler Instance { get; } = new Issue();
+        public static Interfaces.IIssueHandler Instance { get; } = new Issue();
     }
 }

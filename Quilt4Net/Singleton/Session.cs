@@ -1,5 +1,3 @@
-using Quilt4Net.Core.Interfaces;
-
 namespace Quilt4Net.Singleton
 {
     public class Session : SessionHandler
@@ -9,6 +7,6 @@ namespace Quilt4Net.Singleton
         {
         }
 
-        public static ISessionHandler Instance { get; } = new Session();
+        public static Interfaces.ISessionHandler Instance { get; } = new Session();
     }
 }

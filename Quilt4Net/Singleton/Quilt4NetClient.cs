@@ -1,6 +1,4 @@
-﻿using Quilt4Net.Core.Interfaces;
-
-namespace Quilt4Net.Singleton
+﻿namespace Quilt4Net.Singleton
 {
     public class Quilt4NetClient : Quilt4Net.Quilt4NetClient
     {
@@ -9,6 +7,6 @@ namespace Quilt4Net.Singleton
         {
         }
 
-        public static IQuilt4NetClient Instance { get; } = new Quilt4NetClient();
+        public static Interfaces.IQuilt4NetClient Instance { get; } = new Quilt4NetClient();
     }
 }
