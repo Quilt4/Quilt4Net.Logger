@@ -19,7 +19,7 @@ namespace Quilt4Net.Tests
             var clientMock = new Mock<IQuilt4NetClient>(MockBehavior.Strict);
             clientMock.SetupGet(x => x.Configuration).Returns(() => configurationMock.Object);
             clientMock.SetupGet(x => x.WebApiClient).Returns(() => webApiClientMock.Object);
-            clientMock.SetupGet(x => x.Information.Aplication).Returns(() => applicationHelperMock.Object);
+            clientMock.SetupGet(x => x.Information.Application).Returns(() => applicationHelperMock.Object);
             clientMock.SetupGet(x => x.Information.User).Returns(() => userHelperMock.Object);
             clientMock.SetupGet(x => x.Information.Machine).Returns(() => machineHelperMock.Object);
             var session = new SessionHandler(clientMock.Object);

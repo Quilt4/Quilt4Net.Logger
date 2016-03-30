@@ -33,7 +33,7 @@ namespace Quilt4Net.Tests
             var clientMock = new Mock<IQuilt4NetClient>(MockBehavior.Strict);
             clientMock.SetupGet(x => x.Configuration).Returns(() => configurationMock.Object);
             clientMock.SetupGet(x => x.WebApiClient).Returns(() => webApiClientMock.Object);
-            clientMock.SetupGet(x => x.Information.Aplication).Returns(() => applicationHelperMock.Object);
+            clientMock.SetupGet(x => x.Information.Application).Returns(() => applicationHelperMock.Object);
             clientMock.SetupGet(x => x.Information.Machine).Returns(() => machineHelperMock.Object);
             clientMock.SetupGet(x => x.Information.User).Returns(() => userHelperMock.Object);
             var session = new SessionHandler(clientMock.Object);
@@ -75,9 +75,14 @@ namespace Quilt4Net.Tests
             var userHelperMock = new Mock<IUserInformation>(MockBehavior.Strict);
             userHelperMock.Setup(x => x.GetDataUser()).Returns(new UserData());
             var clientMock = new Mock<IQuilt4NetClient>(MockBehavior.Strict);
-            var session = new SessionHandler(clientMock.Object); //webApiClientMock.Object, configurationMock.Object, applicationHelperMock.Object, machineHelperMock.Object, userHelperMock.Object);
+            clientMock.SetupGet(x => x.Configuration).Returns(() => configurationMock.Object);
+            clientMock.SetupGet(x => x.WebApiClient).Returns(() => webApiClientMock.Object);
+            clientMock.SetupGet(x => x.Information.Application).Returns(() => applicationHelperMock.Object);
+            clientMock.SetupGet(x => x.Information.Machine).Returns(() => machineHelperMock.Object);
+            clientMock.SetupGet(x => x.Information.User).Returns(() => userHelperMock.Object);
+            var session = new SessionHandler(clientMock.Object);
             session.SessionEndCompletedEvent += delegate { sessionEndCompletedEventCount++; };
-            session.SessionEndStartedEvent += delegate { sessionEndStartedEventCount++; };
+            session.SessionEndStartedEvent += delegate { sessionEndStartedEventCount++; };            
             var response = await session.GetSessionKeyAsync();
 
             //Act

@@ -2,7 +2,7 @@ namespace Quilt4Net.Core.Interfaces
 {
     public interface IInformation
     {
-        IApplicationInformation Aplication { get; }
+        IApplicationInformation Application { get; }
         IMachineInformation Machine { get; }
         IUserInformation User { get; }
     }
