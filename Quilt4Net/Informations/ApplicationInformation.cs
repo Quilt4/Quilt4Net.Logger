@@ -52,7 +52,7 @@ namespace Quilt4Net
             return _firstAssembly;
         }
 
-        public void SetFirstAssembly(Assembly firstAssembly)
+        protected internal void SetFirstAssembly(Assembly firstAssembly)
         {
             if (_firstAssembly != null && !ReferenceEquals(firstAssembly, _firstAssembly)) throw new InvalidOperationException("Cannot change the first assembly once it has been assigned.");
             _firstAssembly = firstAssembly;

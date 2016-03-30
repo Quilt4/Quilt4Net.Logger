@@ -9,5 +9,6 @@ namespace Quilt4Net.Interfaces
         Task<SessionResult> RegisterAsync(Assembly firstAssembly);
         void RegisterStart(Assembly firstAssembly);
         SessionResult Register(Assembly firstAssembly);
+        void SetFirstAssembly(Assembly firstAssembly);
     }
 }

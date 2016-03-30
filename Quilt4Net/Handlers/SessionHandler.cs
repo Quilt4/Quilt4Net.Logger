@@ -15,23 +15,25 @@ namespace Quilt4Net
 
         public async Task<SessionResult> RegisterAsync(Assembly firstAssembly)
         {
-            //Client.Information.Application.SetApplicationNameVersion(new ApplicationNameVersion(firstAssembly.GetName().Name, firstAssembly.GetName().Version.ToString()));
             (Client.Information.Application as ApplicationInformation)?.SetFirstAssembly(firstAssembly);
             return await RegisterAsync();
         }
 
         public void RegisterStart(Assembly firstAssembly)
         {
-            //Client.Information.Application.SetApplicationNameVersion(new ApplicationNameVersion(firstAssembly.GetName().Name, firstAssembly.GetName().Version.ToString()));
             (Client.Information.Application as ApplicationInformation)?.SetFirstAssembly(firstAssembly);
             RegisterStart();
         }
 
         public SessionResult Register(Assembly firstAssembly)
         {
-            //Client.Information.Application.SetApplicationNameVersion(new ApplicationNameVersion(firstAssembly.GetName().Name, firstAssembly.GetName().Version.ToString()));
             (Client.Information.Application as ApplicationInformation)?.SetFirstAssembly(firstAssembly);
             return Register();
+        }
+
+        public void SetFirstAssembly(Assembly firstAssembly)
+        {
+            (Client.Information.Application as ApplicationInformation)?.SetFirstAssembly(firstAssembly);
         }
     }
 }
