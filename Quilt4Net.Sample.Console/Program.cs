@@ -72,7 +72,7 @@ namespace Quilt4Net.Sample.Console
 
         private static void WebApiClientWebApiRequestEvent(object sender, Core.Interfaces.WebApiRequestEventArgs e)
         {
-            _rootCommand.OutputEvent("Sending WebAPI call.");
+            _rootCommand.OutputEvent("Sending WebAPI call to "  + e.Path +  ".");
         }
 
         private static void Session_SessionRegistrationStartedEvent(object sender, SessionRegistrationStartedEventArgs e)
