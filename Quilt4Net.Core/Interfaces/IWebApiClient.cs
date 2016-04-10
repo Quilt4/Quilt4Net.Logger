@@ -21,10 +21,8 @@ namespace Quilt4Net.Core.Interfaces
 
         //CQRS style operations
         Task ExecuteCommandAsync<T>(string controller, string action, T data);
-        //Task<TResult> ExecuteQueryAsync<T, TResult>(string controller, IDictionary<string, string> parameters);
         Task<TResult> ExecuteQueryAsync<T, TResult>(string controller);
         Task<TResult> ExecuteQueryAsync<T, TResult>(string controller, string id);
-        //Task<TResult> ExecuteQueryAsync<T, TResult>(string controller, T data);
         Task<TResult> PostQueryAsync<T, TResult>(string controller, string action, T data);
         Task<TResult> PostQueryAsync<TResult>(string controller, string action, FormUrlEncodedContent cnt);
 

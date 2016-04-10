@@ -12,6 +12,7 @@ namespace Quilt4Net.Core
         private readonly object _syncRoot = new object();
         private static int _instanceCounter;
         private string _sessionKey;
+        private string _sessionUrl;
         private bool _ongoingSessionRegistration;
         private bool _ongoingSessionEnding;
         private readonly AutoResetEvent _sessionRegistered = new AutoResetEvent(false);
@@ -42,6 +43,7 @@ namespace Quilt4Net.Core
         public event EventHandler<SessionEndCompletedEventArgs> SessionEndCompletedEvent;
 
         public bool IsRegisteredOnServer => !string.IsNullOrEmpty(_sessionKey);
+        public string SessionUrl => _sessionUrl;
         public DateTime ClientStartTime { get; }
         public string Environment => Client.Configuration.Session != null ? Client.Configuration.Session.Environment : string.Empty;
         public IApplicationInformation Application => Client.Information.Application;
@@ -133,6 +135,7 @@ namespace Quilt4Net.Core
             finally
             {
                 _sessionKey = null;
+                _sessionUrl = null;
                 _ongoingSessionEnding = false;
                 _sessionEnded.Set();
                 result.SetCompleted();
@@ -217,6 +220,7 @@ namespace Quilt4Net.Core
 
                 if (response.SessionKey == null) throw new InvalidOperationException("No session key returned from the server.");
                 _sessionKey = response.SessionKey;
+                _sessionUrl = response.SessionUrl;
             }
             catch (Exception exception)
             {

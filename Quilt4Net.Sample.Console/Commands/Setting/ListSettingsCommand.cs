@@ -14,6 +14,11 @@ namespace Quilt4Net.Sample.Console.Commands.Setting
             _client = client;
         }
 
+        public override bool CanExecute()
+        {
+            return _client.Actions.User.IsAuthorized;
+        }
+
         public override async Task<bool> InvokeAsync(string paramList)
         {
             var response = await _client.Actions.ServerSetting.GetListAsync();

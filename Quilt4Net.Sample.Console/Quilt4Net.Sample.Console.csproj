@@ -109,6 +109,8 @@
     <Compile Include="Commands\User\Role\UserRoleAddCommand.cs" />
     <Compile Include="Commands\User\Role\UserRoleCommands.cs" />
     <Compile Include="Commands\User\SearchUsersCommand.cs" />
+    <Compile Include="Commands\Web\WebIssueTypeCommand.cs" />
+    <Compile Include="Commands\Web\WebCommands.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Commands\User\UserCommands.cs" />

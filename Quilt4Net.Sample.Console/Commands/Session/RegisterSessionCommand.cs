@@ -34,9 +34,14 @@ namespace Quilt4Net.Sample.Console.Commands.Session
 
             var response = await _sessionHandler.RegisterAsync(Assembly.GetExecutingAssembly());
             if (response.IsSuccess)
+            {
                 OutputInformation("Session registration took " + response.Elapsed.TotalMilliseconds.ToString("0") + "ms.");
+                OutputInformation("Session Url: " + response.Response.SessionUrl);
+            }
             else
+            {
                 OutputError(response.ErrorMessage + " (" + response.Elapsed.TotalMilliseconds.ToString("0") + "ms)");
+            }            
 
             return true;
         }

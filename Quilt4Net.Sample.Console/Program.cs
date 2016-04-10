@@ -6,6 +6,7 @@ using Quilt4Net.Sample.Console.Commands.Service;
 using Quilt4Net.Sample.Console.Commands.Session;
 using Quilt4Net.Sample.Console.Commands.Setting;
 using Quilt4Net.Sample.Console.Commands.User;
+using Quilt4Net.Sample.Console.Commands.Web;
 using Tharga.Toolkit.Console;
 using Tharga.Toolkit.Console.Command;
 using Tharga.Toolkit.Console.Command.Base;
@@ -42,6 +43,8 @@ namespace Quilt4Net.Sample.Console
             //configuration.Target.Location = "http://localhost:29660"; //Address to the target service.
             //configuration.Target.Timeout = new TimeSpan(0, 0, 60);
 
+            console.WriteLine("Connecting to quilt4 server " + configuration.Target.Location, OutputLevel.Information);
+
             sessionHandler.SessionRegistrationStartedEvent += Session_SessionRegistrationStartedEvent;
             sessionHandler.SessionRegistrationCompletedEvent += SessionSessionRegistrationCompletedEvent;
             sessionHandler.SessionEndStartedEvent += Session_SessionEndStartedEvent;
@@ -50,7 +53,7 @@ namespace Quilt4Net.Sample.Console
             issueHandler.IssueRegistrationCompletedEvent += Issue_IssueRegistrationCompletedEvent;
             client.WebApiClient.AuthorizationChangedEvent += WebApiClient_AuthorizationChangedEvent;
             client.WebApiClient.WebApiRequestEvent += WebApiClientWebApiRequestEvent;
-            client.WebApiClient.WebApiResponseEvent += WebApiClient_WebApiResponseEvent;
+            client.WebApiClient.WebApiResponseEvent += WebApiClient_WebApiResponseEvent;            
 
             _rootCommand = new RootCommand(console);
             _rootCommand.RegisterCommand(new UserCommands(client));
@@ -60,6 +63,7 @@ namespace Quilt4Net.Sample.Console
             _rootCommand.RegisterCommand(new IssueCommands(issueHandler));
             _rootCommand.RegisterCommand(new SettingCommands(client));
             _rootCommand.RegisterCommand(new ServiceCommands(client));
+            _rootCommand.RegisterCommand(new WebCommands(issueHandler, client.WebApiClient));
             new CommandEngine(_rootCommand).Run(args);
 
             sessionHandler.Dispose();

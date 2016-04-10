@@ -13,6 +13,7 @@ namespace Quilt4Net.Core.Interfaces
         event EventHandler<SessionEndStartedEventArgs> SessionEndStartedEvent;
         event EventHandler<SessionEndCompletedEventArgs> SessionEndCompletedEvent;
         bool IsRegisteredOnServer { get; }
+        string SessionUrl { get; }
         DateTime ClientStartTime { get; }
         string Environment { get; }
         IApplicationInformation Application { get; }
