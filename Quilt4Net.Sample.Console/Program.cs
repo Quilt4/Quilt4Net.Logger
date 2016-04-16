@@ -71,7 +71,14 @@ namespace Quilt4Net.Sample.Console
 
         private static void WebApiClient_WebApiResponseEvent(object sender, Core.Interfaces.WebApiResponseEventArgs e)
         {
-            _rootCommand.OutputEvent("Got response from WebAPI call after {0} sec.", OutputLevel.Default, e.Elapsed.TotalSeconds);
+            if (e.IsSuccess)
+            {
+                _rootCommand.OutputEvent("Got response from WebAPI call after {0} sec.", OutputLevel.Default, e.Elapsed.TotalSeconds);
+            }
+            else
+            {
+                _rootCommand.OutputError(e.Exception);
+            }
         }
 
         private static void WebApiClientWebApiRequestEvent(object sender, Core.Interfaces.WebApiRequestEventArgs e)
@@ -86,8 +93,15 @@ namespace Quilt4Net.Sample.Console
 
         private static void SessionSessionRegistrationCompletedEvent(object sender, SessionRegistrationCompletedEventArgs e)
         {
-            var message = $"Session {e.Result.ErrorMessage ?? "registered in"} {e.Result.Elapsed.TotalMilliseconds.ToString("0")}ms.";
-            _rootCommand.OutputEvent(message);
+            if (e.Result.IsSuccess)
+            {
+                var message = $"Session {e.Result.ErrorMessage ?? "registered in"} {e.Result.Elapsed.TotalMilliseconds.ToString("0")}ms.";
+                _rootCommand.OutputEvent(message);
+            }
+            else
+            {
+                _rootCommand.OutputError(e.Result.Exception);
+            }
         }
 
         private static void Session_SessionEndStartedEvent(object sender, SessionEndStartedEventArgs e)
@@ -97,8 +111,15 @@ namespace Quilt4Net.Sample.Console
 
         private static void Session_SessionEndCompletedEvent(object sender, SessionEndCompletedEventArgs e)
         {
-            var message = $"Session {e.Result.ErrorMessage ?? "ended in"} {e.Result.Elapsed.TotalMilliseconds.ToString("0")}ms.";
-            _rootCommand.OutputEvent(message);
+            if (e.Result.IsSuccess)
+            {
+                var message = $"Session {e.Result.ErrorMessage ?? "ended in"} {e.Result.Elapsed.TotalMilliseconds.ToString("0")}ms.";
+                _rootCommand.OutputEvent(message);
+            }
+            else
+            {
+                _rootCommand.OutputError(e.Result.Exception);
+            }
         }
 
         private static void Issue_IssueRegistrationStartedEvent(object sender, IssueRegistrationStartedEventArgs e)
@@ -108,8 +129,15 @@ namespace Quilt4Net.Sample.Console
 
         private static void Issue_IssueRegistrationCompletedEvent(object sender, IssueRegistrationCompletedEventArgs e)
         {
-            var message = $"Issue {e.Result.ErrorMessage ?? "registered in"} {e.Result.Elapsed.TotalMilliseconds.ToString("0")}ms.";
-            _rootCommand.OutputEvent(message);
+            if (e.Result.IsSuccess)
+            {
+                var message = $"Issue {e.Result.ErrorMessage ?? "registered in"} {e.Result.Elapsed.TotalMilliseconds.ToString("0")}ms.";
+                _rootCommand.OutputEvent(message);
+            }
+            else
+            {
+                _rootCommand.OutputError(e.Result.Exception);
+            }
         }
 
         private static void WebApiClient_AuthorizationChangedEvent(object sender, AuthorizationChangedEventArgs e)

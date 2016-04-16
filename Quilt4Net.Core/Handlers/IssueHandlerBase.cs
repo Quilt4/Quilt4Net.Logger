@@ -14,7 +14,7 @@ namespace Quilt4Net.Core
         private readonly object _syncRoot = new object();
         private static int _instanceCounter;
         private readonly ISessionHandler _sessionHandler;
-        private readonly List<Tuple<IssueRequest, Exception>> _issuesThatFailedToRegister = new List<Tuple<IssueRequest, Exception>>();
+        private readonly Queue<Tuple<IssueRequest, Exception>> _issuesThatFailedToRegister = new Queue<Tuple<IssueRequest, Exception>>();
 
         protected internal IssueHandlerBase(ISessionHandler sessionHandler)
         {
@@ -131,7 +131,7 @@ namespace Quilt4Net.Core
             catch (Exception exception)
             {
                 result.SetException(exception);
-                _issuesThatFailedToRegister.Add(new Tuple<IssueRequest, Exception>(request, exception));
+                _issuesThatFailedToRegister.Enqueue(new Tuple<IssueRequest, Exception>(request, exception));
 
                 if (doThrow)
                     throw;
