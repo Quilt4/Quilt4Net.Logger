@@ -79,6 +79,8 @@ namespace Quilt4Net.Core
 
         public void RegisterStart(Exception exception, ExceptionIssueLevel issueLevel = ExceptionIssueLevel.Error, string userHandle = null)
         {
+            HandleIssueThreadGuid(exception);
+
             Task.Run(async () =>
                 {
                     var sessionKey = await _sessionHandler.GetSessionKeyAsync();
