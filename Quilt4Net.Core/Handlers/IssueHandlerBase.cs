@@ -232,22 +232,25 @@ namespace Quilt4Net.Core
 
             if (exception == null) return refItg;
 
-            if (!exception.Data.Contains("IssueThreadGuid"))
+            lock (exception)
             {
-                exception.Data.Add("IssueThreadGuid", refItg);
-            }
-            else
-            {
-                Guid result;
-                if (Guid.TryParse(exception.Data["IssueThreadGuid"].ToString(), out result))
+                if (!exception.Data.Contains("IssueThreadGuid"))
                 {
-                    refItg = result;
+                    exception.Data.Add("IssueThreadGuid", refItg);
                 }
                 else
                 {
-                    //NOTE: When there is a general message/warning event. Fire this information.
-                    //Provided IssueThreadGuid cannot be parsed as Guid. Apply a new valid value.
-                    exception.Data["IssueThreadGuid"] = refItg;
+                    Guid result;
+                    if (Guid.TryParse(exception.Data["IssueThreadGuid"].ToString(), out result))
+                    {
+                        refItg = result;
+                    }
+                    else
+                    {
+                        //NOTE: When there is a general message/warning event. Fire this information.
+                        //Provided IssueThreadGuid cannot be parsed as Guid. Apply a new valid value.
+                        exception.Data["IssueThreadGuid"] = refItg;
+                    }
                 }
             }
 
