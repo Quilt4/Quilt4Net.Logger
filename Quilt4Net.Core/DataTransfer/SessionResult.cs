@@ -53,6 +53,11 @@ namespace Quilt4Net.Core.DataTransfer
             _stopWatch.Stop();
         }
 
+        public void SetAlreadyRegistered()
+        {
+            _exception = new SessionAlreadyRegisteredException();
+        }
+
         public bool IsSuccess => _exception == null;
         public string ErrorMessage => _exception?.Message;
         public Exception Exception => _exception;

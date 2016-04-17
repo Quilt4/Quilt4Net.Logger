@@ -1,4 +1,5 @@
-﻿using Quilt4Net.Core.Events;
+﻿using System;
+using Quilt4Net.Core.Events;
 using Quilt4Net.Sample.Console.Commands.Invitation;
 using Quilt4Net.Sample.Console.Commands.Issue;
 using Quilt4Net.Sample.Console.Commands.Project;
@@ -17,6 +18,7 @@ namespace Quilt4Net.Sample.Console
     {
         private static RootCommand _rootCommand;
 
+        [STAThread]
         static void Main(string[] args)
         {
             var console = new ClientConsole();

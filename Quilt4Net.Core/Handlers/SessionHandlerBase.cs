@@ -147,22 +147,8 @@ namespace Quilt4Net.Core
         {
             if (!IsRegisteredOnServer)
             {
-                SessionResult response;
-                try
-                {
-                    response = await RegisterEx(GetProjectApiKey());
-                }
-                catch (SessionAlreadyRegisteredException)
-                {
-                    return _sessionKey;
-                }
-
-                if (response == null)
-                {
-                    return _sessionKey;
-                }
-
-                return response.Response.SessionKey;
+                await RegisterEx(GetProjectApiKey());
+                return _sessionKey;
             }
 
             return _sessionKey;
@@ -193,46 +179,62 @@ namespace Quilt4Net.Core
             {
                 if (_ongoingSessionRegistration)
                 {
-                    _sessionRegistered.WaitOne();
-                    return null;
+                    var waitTime = new TimeSpan(0, 0, 3, 0);
+                    if (!_sessionRegistered.WaitOne(waitTime))
+                    {
+                        if (string.IsNullOrEmpty(_sessionKey))
+                        {
+                            throw new TimeoutException("Done waiting for another thread trying to get the session registered.").AddData("WaitSeconds", waitTime.TotalSeconds.ToString("0"));
+                        }
+                    }
                 }
-
                 _ongoingSessionRegistration = true;
             }
 
-            if (!string.IsNullOrEmpty(_sessionKey)) throw new SessionAlreadyRegisteredException();
-
             try
             {
-                request = new SessionRequest
-                              {
-                                  ProjectApiKey = projectApiKey,
-                                  ClientStartTime = DateTime.UtcNow,
-                                  Environment = Environment,
-                                  Application = Client.Information.Application.GetApplicationData(),
-                                  Machine = Client.Information.Machine.GetMachineData(),
-                                  User = Client.Information.User.GetDataUser(),                                  
-                              };
+                if (!string.IsNullOrEmpty(_sessionKey))
+                {
+                    result.SetAlreadyRegistered();
+                }
+                else
+                {
+                    try
+                    {
+                        request = new SessionRequest
+                        {
+                            ProjectApiKey = projectApiKey,
+                            ClientStartTime = DateTime.UtcNow,
+                            Environment = Environment,
+                            Application = Client.Information.Application.GetApplicationData(),
+                            Machine = Client.Information.Machine.GetMachineData(),
+                            User = Client.Information.User.GetDataUser(),
+                        };
 
-                OnSessionRegistrationStartedEvent(new SessionRegistrationStartedEventArgs(request));
+                        OnSessionRegistrationStartedEvent(new SessionRegistrationStartedEventArgs(request));
 
-                response = await Client.WebApiClient.CreateAsync<SessionRequest, SessionResponse>("Client/Session", request);
+                        response = await Client.WebApiClient.CreateAsync<SessionRequest, SessionResponse>("Client/Session", request);
 
-                if (response.SessionKey == null) throw new InvalidOperationException("No session key returned from the server.");
-                _sessionKey = response.SessionKey;
-                _sessionUrl = response.SessionUrl;
-            }
-            catch (Exception exception)
-            {
-                result.SetException(exception);
-                throw;
+                        if (response.SessionKey == null) throw new InvalidOperationException("No session key returned from the server.");
+                        _sessionKey = response.SessionKey;
+                        _sessionUrl = response.SessionUrl;
+                    }
+                    catch (Exception exception)
+                    {
+                        result.SetException(exception);
+                        throw;
+                    }
+                    finally
+                    {
+                        result.SetCompleted(response);
+                        OnSessionRegistrationCompletedEvent(new SessionRegistrationCompletedEventArgs(request, result));
+                    }
+                }
             }
             finally
             {
                 _ongoingSessionRegistration = false;
                 _sessionRegistered.Set();
-                result.SetCompleted(response);
-                OnSessionRegistrationCompletedEvent(new SessionRegistrationCompletedEventArgs(request, result));
             }
 
             return result;
