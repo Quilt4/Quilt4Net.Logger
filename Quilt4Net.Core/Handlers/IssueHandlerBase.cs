@@ -11,6 +11,7 @@ namespace Quilt4Net.Core
 {
     public abstract class IssueHandlerBase : IIssueHandler
     {
+        private const string IssueThreadKeyName = "IssueThreadKey";
         private readonly object _syncRoot = new object();
         private static int _instanceCounter;
         private readonly ISessionHandler _sessionHandler;
@@ -71,6 +72,8 @@ namespace Quilt4Net.Core
 
         public async Task<IssueResult> RegisterAsync(Exception exception, ExceptionIssueLevel issueLevel = ExceptionIssueLevel.Error, string userHandle = null)
         {
+            HandleIssueThreadKey(exception);
+
             var sessionKey = await _sessionHandler.GetSessionKeyAsync();
             var issueData = PrepareIssueData(sessionKey, exception, issueLevel, userHandle);
             var respnse = await RegisterEx(true, issueData);
@@ -79,7 +82,7 @@ namespace Quilt4Net.Core
 
         public void RegisterStart(Exception exception, ExceptionIssueLevel issueLevel = ExceptionIssueLevel.Error, string userHandle = null)
         {
-            HandleIssueThreadGuid(exception);
+            HandleIssueThreadKey(exception);
 
             Task.Run(async () =>
                 {
@@ -91,6 +94,8 @@ namespace Quilt4Net.Core
 
         public IssueResult Register(Exception exception, ExceptionIssueLevel issueLevel = ExceptionIssueLevel.Error, string userHandle = null)
         {
+            HandleIssueThreadKey(exception);
+
             try
             {
                 var sessionKey = _sessionHandler.GetSessionKeyAsync().Result;
@@ -156,7 +161,7 @@ namespace Quilt4Net.Core
                                     UserHandle = userHandle,
                                     ClientTime = DateTime.UtcNow,
                                     IssueKey = Guid.NewGuid(),
-                                    IssueThreadKey = HandleIssueThreadGuid(exception),
+                                    IssueThreadKey = HandleIssueThreadKey(exception),
                                     IssueType = issueType,
                                     SessionKey = sessionKey,                                    
                                 };
@@ -166,7 +171,7 @@ namespace Quilt4Net.Core
 
         private static Dictionary<string, string> GetExceptionData(Exception exception)
         {
-            return exception.Data.Cast<DictionaryEntry>().Where(x => x.Value != null).ToDictionary(item => item.Key.ToString(), item => item.Value.ToString());
+            return exception.Data.Cast<DictionaryEntry>().Where(x => x.Value != null && x.Key.ToString() != IssueThreadKeyName).ToDictionary(item => item.Key.ToString(), item => item.Value.ToString());
         }
 
         private IssueTypeData CreateIssueTypeData(Exception exception)
@@ -197,7 +202,8 @@ namespace Quilt4Net.Core
             }
             else
             {
-                yield return exception.InnerException != null ? CreateIssueTypeData(exception.InnerException) : null;
+                if (exception.InnerException != null)
+                    yield return CreateIssueTypeData(exception.InnerException);
             }
         }
 
@@ -226,35 +232,77 @@ namespace Quilt4Net.Core
             return issueData;
         }
 
-        private static Guid HandleIssueThreadGuid(Exception exception)
+        private static Guid HandleIssueThreadKey(Exception exception)
         {
             var refItg = Guid.NewGuid();
-
             if (exception == null) return refItg;
 
             lock (exception)
             {
-                if (!exception.Data.Contains("IssueThreadGuid"))
+                if (!exception.Data.Contains(IssueThreadKeyName))
                 {
-                    exception.Data.Add("IssueThreadGuid", refItg);
+                    if (exception.InnerException != null)
+                    {
+                        var anotherRefItg = GetIssueThreadKey(exception.InnerException);
+                        refItg = anotherRefItg ?? refItg;
+                    }
+
+                    //Check all levels of inner exceptions to get the key
+                    exception.Data.Add(IssueThreadKeyName, refItg);
                 }
                 else
                 {
                     Guid result;
-                    if (Guid.TryParse(exception.Data["IssueThreadGuid"].ToString(), out result))
+                    if (Guid.TryParse(exception.Data[IssueThreadKeyName].ToString(), out result))
                     {
                         refItg = result;
                     }
                     else
                     {
                         //NOTE: When there is a general message/warning event. Fire this information.
-                        //Provided IssueThreadGuid cannot be parsed as Guid. Apply a new valid value.
-                        exception.Data["IssueThreadGuid"] = refItg;
+                        //Provided IssueThreadKey cannot be parsed as Guid. Apply a new valid value.
+                        exception.Data[IssueThreadKeyName] = refItg;
                     }
                 }
+
+                ClearIssueThreadKey(exception.InnerException);
             }
 
             return refItg;
+        }       
+
+        private static Guid? GetIssueThreadKey(Exception exception)
+        {
+            if (exception.Data.Contains(IssueThreadKeyName))
+            {
+                Guid result;
+                if (Guid.TryParse(exception.Data[IssueThreadKeyName].ToString(), out result))
+                {
+                    return result;
+                }
+            }
+
+            if (exception.InnerException != null)
+            {
+                return GetIssueThreadKey(exception.InnerException);
+            }
+
+            return null;
+        }
+
+        private static void ClearIssueThreadKey(Exception exception)
+        {
+            if (exception == null) return;
+
+            if (exception.Data.Contains(IssueThreadKeyName))
+            {
+                exception.Data.Remove(IssueThreadKeyName);
+            }
+
+            if (exception.InnerException != null)
+            {
+                ClearIssueThreadKey(exception.InnerException);
+            }
         }
 
         protected virtual void OnIssueRegistrationStartedEvent(IssueRegistrationStartedEventArgs e)

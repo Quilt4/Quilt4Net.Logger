@@ -171,15 +171,32 @@ namespace Quilt4Net.Core
                 request = new WebApiRequestEventArgs(client.BaseAddress, requestUri, OperationType.Post, JsonConvert.SerializeObject(data));
                 OnWebApiRequestEvent(request);
 
-                var response = await client.PostAsync(requestUri, content);
-                if (!response.IsSuccessStatusCode)
+                var response = Task.Run(() =>
                 {
-                    throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
+                    try
+                    {
+                        return client.PostAsync(requestUri, content);
+                    }
+                    catch (Exception exception)
+                    {
+                        System.Diagnostics.Debug.WriteLine(exception.Message);
+                        throw;
+                    }
+                });
+
+                if (!response.Wait(client.Timeout))
+                {
+                    throw new TimeoutException();
                 }
 
-                var contentData = response.Content.ReadAsStringAsync().Result;
-                OnWebApiResponseEvent(new WebApiResponseEventArgs(request, response, contentData));
-                return response;
+                if (!response.Result.IsSuccessStatusCode)
+                {
+                    throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response.Result);
+                }
+
+                var contentData = response.Result.Content.ReadAsStringAsync().Result;
+                OnWebApiResponseEvent(new WebApiResponseEventArgs(request, response.Result, contentData));
+                return response.Result;
             }
             catch (Exception exception)
             {
