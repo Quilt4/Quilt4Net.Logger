@@ -9,6 +9,6 @@ namespace Quilt4Net.Core.Interfaces
         bool UseBuildTime { get; set; }
         ISessionConfiguration Session { get; }
         ITargetConfiguration Target { get; }
-        bool AllowMultipleInstances { get; }
+        bool AllowMultipleInstances { get; set; }
     }
 }

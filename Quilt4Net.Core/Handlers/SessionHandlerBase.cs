@@ -154,6 +154,8 @@ namespace Quilt4Net.Core
             return _sessionKey;
         }
 
+        public SessionRegistrationCompletedEventArgs LastSessionRegistrationCompletedEventArgs { get; private set; }
+
         private string GetProjectApiKey()
         {
             var projectApiKey = Client.Configuration.ProjectApiKey;
@@ -227,7 +229,8 @@ namespace Quilt4Net.Core
                     finally
                     {
                         result.SetCompleted(response);
-                        OnSessionRegistrationCompletedEvent(new SessionRegistrationCompletedEventArgs(request, result));
+                        LastSessionRegistrationCompletedEventArgs = new SessionRegistrationCompletedEventArgs(request, result);
+                        OnSessionRegistrationCompletedEvent(LastSessionRegistrationCompletedEventArgs);
                     }
                 }
             }

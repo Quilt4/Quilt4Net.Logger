@@ -23,5 +23,6 @@ namespace Quilt4Net.Core.Interfaces
         Task EndAsync();
         void End();
         Task<string> GetSessionKeyAsync();
+        SessionRegistrationCompletedEventArgs LastSessionRegistrationCompletedEventArgs { get; }
     }
 }
