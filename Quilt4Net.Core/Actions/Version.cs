@@ -9,7 +9,7 @@ namespace Quilt4Net.Core.Actions
     public class Version : IVersion
     {
         private readonly IWebApiClient _webApiClient;
-        private readonly string _controller = "Client/Version";
+        private readonly string _controller = "Version";
 
         internal Version(IWebApiClient webApiClient)
         {

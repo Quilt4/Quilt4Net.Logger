@@ -8,7 +8,7 @@ namespace Quilt4Net.Core.Actions
     public class Log : ILog
     {
         private readonly IWebApiClient _webApiClient;
-        private readonly string _controller = "Client/Service/Log";
+        private readonly string _controller = "Service/Log";
 
         internal Log(IWebApiClient webApiClient)
         {

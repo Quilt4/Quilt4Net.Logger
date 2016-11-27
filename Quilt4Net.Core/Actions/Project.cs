@@ -9,7 +9,7 @@ namespace Quilt4Net.Core.Actions
     public class Project : IProject
     {
         private readonly IWebApiClient _webApiClient;
-        private readonly string _controller = "Client/Project";
+        private readonly string _controller = "Project";
 
         internal Project(IWebApiClient webApiClient)
         {

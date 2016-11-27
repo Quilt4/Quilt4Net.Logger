@@ -9,7 +9,7 @@ namespace Quilt4Net.Core.Actions
     public class Invitation : IInvitation
     {
         private readonly IWebApiClient _webApiClient;
-        private readonly string _controller = "Client/Invitation";
+        private readonly string _controller = "Invitation";
 
         internal Invitation(IWebApiClient webApiClient)
         {

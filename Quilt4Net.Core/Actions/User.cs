@@ -56,12 +56,12 @@ namespace Quilt4Net.Core.Actions
 
         public async Task<IEnumerable<UserResponse>> GetListAsync()
         {
-            return await _webApiClient.ReadAsync<UserResponse>("Client/User");
+            return await _webApiClient.ReadAsync<UserResponse>("User");
         }
 
         public async Task<IEnumerable<QueryUserResponse>> SearchAsync(string searchString)
         {
-            return await _webApiClient.ExecuteQueryAsync<QueryUserRequest, IEnumerable<QueryUserResponse>>("Client/User", searchString);
+            return await _webApiClient.ExecuteQueryAsync<QueryUserRequest, IEnumerable<QueryUserResponse>>("User", searchString);
         }
     }
 }

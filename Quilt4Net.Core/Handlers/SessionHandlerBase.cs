@@ -125,7 +125,7 @@ namespace Quilt4Net.Core
             {
                 OnSessionEndStartedEvent(new SessionEndStartedEventArgs(sessionKey));
 
-                await Client.WebApiClient.ExecuteCommandAsync("Client/Session", "End", sessionKey);
+                await Client.WebApiClient.ExecuteCommandAsync("Session", "End", sessionKey);
             }
             catch (Exception exception)
             {
@@ -215,7 +215,7 @@ namespace Quilt4Net.Core
 
                         OnSessionRegistrationStartedEvent(new SessionRegistrationStartedEventArgs(request));
 
-                        response = await Client.WebApiClient.CreateAsync<SessionRequest, SessionResponse>("Client/Session", request);
+                        response = await Client.WebApiClient.CreateAsync<SessionRequest, SessionResponse>("Session", request);
 
                         if (response.SessionKey == null) throw new InvalidOperationException("No session key returned from the server.");
                         _sessionKey = response.SessionKey;

@@ -9,7 +9,7 @@ namespace Quilt4Net.Core.Actions
     public class Application : IApplication
     {
         private readonly IWebApiClient _webApiClient;
-        private readonly string _controller = "Client/Application";
+        private readonly string _controller = "Application";
 
         internal Application(IWebApiClient webApiClient)
         {
