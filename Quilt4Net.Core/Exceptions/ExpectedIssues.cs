@@ -121,7 +121,7 @@ namespace Quilt4Net.Core
         }
 
         public async Task<Exception> GetExceptionFromResponse(HttpResponseMessage response)
-        {            
+        {
             var result = await response.Content.ReadAsStringAsync();
             var error = JsonConvert.DeserializeObject<Error>(result);
 
@@ -134,7 +134,7 @@ namespace Quilt4Net.Core
 
             var type = Type.GetType(error.Type);
 
-            Exception exception;            
+            Exception exception;
             if (type == null)
             {
                 return new ExpectedIssues(_configuration).GetException(ExpectedIssues.ServiceCallError, new Exception(response.ToString()));

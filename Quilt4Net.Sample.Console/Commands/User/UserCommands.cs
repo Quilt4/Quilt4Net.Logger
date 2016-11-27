@@ -9,7 +9,7 @@ namespace Quilt4Net.Sample.Console.Commands.User
         public UserCommands(IQuilt4NetClient client)
             : base("User")
         {
-            RegisterCommand(new CreateUserCommand(client));
+            RegisterCommand(new RegisterUserCommand(client));
             RegisterCommand(new LoginUserCommand(client));
             RegisterCommand(new LogoutUserCommand(client));
             RegisterCommand(new GetUserInfoCommand(client));

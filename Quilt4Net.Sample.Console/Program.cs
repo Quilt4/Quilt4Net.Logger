@@ -55,17 +55,17 @@ namespace Quilt4Net.Sample.Console
             issueHandler.IssueRegistrationCompletedEvent += Issue_IssueRegistrationCompletedEvent;
             client.WebApiClient.AuthorizationChangedEvent += WebApiClient_AuthorizationChangedEvent;
             client.WebApiClient.WebApiRequestEvent += WebApiClientWebApiRequestEvent;
-            client.WebApiClient.WebApiResponseEvent += WebApiClient_WebApiResponseEvent;            
+            client.WebApiClient.WebApiResponseEvent += WebApiClient_WebApiResponseEvent;
 
             _rootCommand = new RootCommand(console);
             _rootCommand.RegisterCommand(new UserCommands(client));
             _rootCommand.RegisterCommand(new ProjectCommands(client));
             _rootCommand.RegisterCommand(new InvitationCommands(client));
             _rootCommand.RegisterCommand(new SessionCommands(sessionHandler));
-            _rootCommand.RegisterCommand(new IssueCommands(issueHandler));
+            _rootCommand.RegisterCommand(new IssueCommands(sessionHandler, issueHandler));
             _rootCommand.RegisterCommand(new SettingCommands(client));
             _rootCommand.RegisterCommand(new ServiceCommands(client));
-            _rootCommand.RegisterCommand(new WebCommands(issueHandler, client.WebApiClient));
+            //_rootCommand.RegisterCommand(new WebCommands(issueHandler, client.WebApiClient));
             new CommandEngine(_rootCommand).Run(args);
 
             sessionHandler.Dispose();

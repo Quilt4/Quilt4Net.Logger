@@ -41,7 +41,7 @@ namespace Quilt4Net.Sample.Console.Commands.Session
             else
             {
                 OutputError(response.ErrorMessage + " (" + response.Elapsed.TotalMilliseconds.ToString("0") + "ms)");
-            }            
+            }
 
             return true;
         }

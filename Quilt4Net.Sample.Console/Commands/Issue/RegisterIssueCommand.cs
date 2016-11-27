@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Quilt4Net.Core;
 using Quilt4Net.Core.Interfaces;
@@ -9,62 +7,38 @@ namespace Quilt4Net.Sample.Console.Commands.Issue
 {
     internal class RegisterIssueCommand : ActionCommandBase
     {
+        private readonly ISessionHandler _sessionHandler;
         private readonly IIssueHandler _issueHandler;
 
-        public RegisterIssueCommand(IIssueHandler issueHandler)
+        public RegisterIssueCommand(ISessionHandler sessionHandler, IIssueHandler issueHandler)
             : base("Register", "Register issue")
         {
+            _sessionHandler = sessionHandler;
             _issueHandler = issueHandler;
         }
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            Guid? domainKey = null;
-            var dictionary = new Dictionary<string, string>
-                {
-                    { "scanMode", "A" },
-                    { "resume", true.ToString() },
-                    { "farmName", "B" },
-                    { "domainKey", (domainKey ?? Guid.Empty).ToString() }
-                };
+            if (string.IsNullOrEmpty(_sessionHandler.Client.Configuration.ProjectApiKey))
+            {
+                var index = 0;
+                var projectApiKey = QueryParam<string>("ProjectApiKey", GetParam(paramList, index++));
+                _sessionHandler.Client.Configuration.ProjectApiKey = projectApiKey;
+            }
 
-            Quilt4Net.Singleton.Configuration.Instance.AllowMultipleInstances = true;
-            Quilt4Net.Singleton.Issue.Instance.Register("Starting detective.", MessageIssueLevel.Information, data: dictionary);
-
-            //try
-            //{
-            //    try
-            //    {
-            //        try
-            //        {
-            //            throw new InvalidOperationException("Some issue!");
-            //        }
-            //        catch (Exception exception)
-            //        {
-            //            exception.AddData("A", "A1");
-            //            _issueHandler.Register(exception);
-            //            throw new InvalidOperationException("Next level", exception);
-            //        }
-            //    }
-            //    catch (Exception exception)
-            //    {
-            //        exception.AddData("A", "A1");
-            //        _issueHandler.Register(exception);
-            //        throw new InvalidOperationException("Outer!", exception);
-            //    }
-            //}
-            //catch (Exception exception)
-            //{
-            //    exception.AddData("B", "B1");
-            //    _issueHandler.Register(exception);
-            //    throw;
-            //}
-
-            //Task.Run(() => DoRegisterIssue());
-            //Task.Run(() => DoRegisterIssue());
-            //Task.Run(() => DoRegisterIssue());
-            //Task.Run(() => DoRegisterIssue());
-            //Task.Run(() => DoRegisterIssue());
+            var response = await _issueHandler.RegisterAsync("Some warning", MessageIssueLevel.Warning);
+            if (response.IsSuccess)
+            {
+                OutputInformation("Session registration took " + response.Elapsed.TotalMilliseconds.ToString("0") + "ms.");
+                OutputInformation("IssueKey: " + response.Response.IssueKey);
+                OutputInformation("IssueTypeUrl: " + response.Response.IssueTypeUrl);
+                OutputInformation("IssueUrl: " + response.Response.IssueUrl);
+                OutputInformation("Ticket: " + response.Response.Ticket);
+            }
+            else
+            {
+                OutputError(response.ErrorMessage + " (" + response.Elapsed.TotalMilliseconds.ToString("0") + "ms)");
+            }
 
             return true;
         }
