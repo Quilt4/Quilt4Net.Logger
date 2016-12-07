@@ -25,12 +25,12 @@ namespace Quilt4Net.Sample.Console.Commands.Session
 
         public override async Task<bool> InvokeAsync(string paramList)
         {
-            if (string.IsNullOrEmpty(_sessionHandler.Client.Configuration.ProjectApiKey))
-            {
+            //if (string.IsNullOrEmpty(_sessionHandler.Client.Configuration.ProjectApiKey))
+            //{
                 var index = 0;
                 var projectApiKey = QueryParam<string>("ProjectApiKey", GetParam(paramList, index++));
                 _sessionHandler.Client.Configuration.ProjectApiKey = projectApiKey;
-            }
+            //}
 
             var response = await _sessionHandler.RegisterAsync(Assembly.GetExecutingAssembly());
             if (response.IsSuccess)

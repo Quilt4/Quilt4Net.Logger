@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Quilt4Net.Core.DataTransfer;
@@ -49,11 +50,20 @@ namespace Quilt4Net.Core
                 });
         }
 
+        public async Task<string> PostAsync(string controller, string jsonData)
+        {
+            return await Execute(async client =>
+            {
+                var response = await PostRawAsync(client, $"api/{controller}", jsonData);
+                return response.Content.ReadAsStringAsync().Result;
+            });
+        }
+
         public async Task<TResult> CreateAsync<T, TResult>(string controller, T data)
         {
             return await Execute(async client =>
                 {
-                    var response = await PostAsync<T>(client, $"api/{controller}", data);
+                    var response = await PostAsync(client, $"api/{controller}", data);
                     return response.Content.ReadAsAsync<TResult>().Result;
                 });
         }
@@ -160,22 +170,37 @@ namespace Quilt4Net.Core
             return result;
         }
 
+        private async Task<HttpResponseMessage> PostRawAsync(HttpClient client, string requestUri, string jsonData)
+        {
+            return await PostAsync(client, requestUri, () => new Tuple<HttpContent, string>(new StringContent(jsonData, Encoding.UTF8, "application/json"), jsonData));
+        }
+
         private async Task<HttpResponseMessage> PostAsync<T>(HttpClient client, string requestUri, T data)
+        {
+            return await PostAsync(client, requestUri, () =>
+            {
+                var jsonFormatter = new JsonMediaTypeFormatter();
+                var content = new ObjectContent<T>(data, jsonFormatter);
+                var serializeObject = JsonConvert.SerializeObject(data);
+                return new Tuple<HttpContent, string>(content, serializeObject);
+            });
+        }
+
+        private async Task<HttpResponseMessage> PostAsync(HttpClient client, string requestUri, Func<Tuple<HttpContent,string>> buildContent)
         {
             WebApiRequestEventArgs request = null;
             try
             {
-                var jsonFormatter = new JsonMediaTypeFormatter();
-                var content = new ObjectContent<T>(data, jsonFormatter);
+                var content = buildContent();
+                request = new WebApiRequestEventArgs(client.BaseAddress, requestUri, OperationType.Post, content.Item2);
 
-                request = new WebApiRequestEventArgs(client.BaseAddress, requestUri, OperationType.Post, JsonConvert.SerializeObject(data));
                 OnWebApiRequestEvent(request);
 
                 var response = Task.Run(() =>
                 {
                     try
                     {
-                        return client.PostAsync(requestUri, content);
+                        return client.PostAsync(requestUri, content.Item1);
                     }
                     catch (Exception exception)
                     {

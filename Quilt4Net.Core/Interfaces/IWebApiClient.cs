@@ -26,6 +26,9 @@ namespace Quilt4Net.Core.Interfaces
         Task<TResult> PostQueryAsync<T, TResult>(string controller, string action, T data);
         Task<TResult> PostQueryAsync<TResult>(string controller, string action, FormUrlEncodedContent cnt);
 
+        //Basic operations
+        Task<string> PostAsync(string controller, string jsonData);
+
         //Authorization
         event EventHandler<AuthorizationChangedEventArgs> AuthorizationChangedEvent;
         void SetAuthorization(string userName, string tokenType, string accessToken);

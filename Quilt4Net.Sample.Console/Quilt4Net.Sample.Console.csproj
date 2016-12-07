@@ -98,6 +98,7 @@
     <Compile Include="Commands\Service\ServiceCommands.cs" />
     <Compile Include="Commands\Service\Log\ServiceLogCommands.cs" />
     <Compile Include="Commands\Service\ServiceInfoCommand.cs" />
+    <Compile Include="Commands\Service\ServicePostCommand.cs" />
     <Compile Include="Commands\Session\EndSessionCommand.cs" />
     <Compile Include="Commands\Session\ListSessionsCommand.cs" />
     <Compile Include="Commands\Session\RegisterSessionCommand.cs" />

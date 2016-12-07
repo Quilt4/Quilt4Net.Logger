@@ -53,6 +53,7 @@
     <Compile Include="ExceptionIssueLevel.cs" />
     <Compile Include="Exceptions\ServiceCallExcepton.cs" />
     <Compile Include="DataTransfer\ApplicationInformation.cs" />
+    <Compile Include="Handlers\BasicDataHandler.cs" />
     <Compile Include="Interfaces\InstanceCreatedEventArgs.cs" />
     <Compile Include="Interfaces\OperationType.cs" />
     <Compile Include="Interfaces\WebApiRequestEventArgs.cs" />

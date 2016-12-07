@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Quilt4Net.Core.Interfaces;
 using Quilt4Net.Sample.Console.Commands.Service.Address;
 using Quilt4Net.Sample.Console.Commands.Service.ApiKey;
@@ -15,6 +16,7 @@ namespace Quilt4Net.Sample.Console.Commands.Service
             RegisterCommand(new ServiceApiKeyCommands(client));
             RegisterCommand(new ServiceInfoCommand(client));
             RegisterCommand(new ServiceLogCommands(client));
+            RegisterCommand(new ServicePostCommand(client));
         }
     }
 }

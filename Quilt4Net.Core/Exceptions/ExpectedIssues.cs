@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -10,7 +9,6 @@ namespace Quilt4Net.Core
 {
     internal class ExpectedIssues
     {
-        private readonly IConfiguration _configuration;
         public const int ProjectApiKeyNotSet = 1001;
         public const int UnknownType = 1002;
         public const int CannotSetProjectApiKey = 1003;
@@ -25,6 +23,7 @@ namespace Quilt4Net.Core
         public const int CannotSetTimeout = 1012;
         public const int Timeout = 1013;
         public const int CallTerminatedByServer = 1014;
+        private readonly IConfiguration _configuration;
 
         private readonly Dictionary<int, string> _data = new Dictionary<int, string>();
 
@@ -52,22 +51,6 @@ namespace Quilt4Net.Core
             return _data[code];
         }
 
-        internal class ProjectApiKeyNotSetException : Exception
-        {
-            public ProjectApiKeyNotSetException(string message)
-                : base(message)
-            {
-            }
-        }
-
-        private class FirstAssemblyException : Exception
-        {
-            public FirstAssemblyException(string message)
-                : base(message)
-            {
-            }
-        }
-
         public Exception GetException(int code, Exception innerEception = null)
         {
             Exception exception;
@@ -89,7 +72,7 @@ namespace Quilt4Net.Core
                 case Timeout:
                     exception = new TimeoutException(GetMessage(code), innerEception);
                     break;
-                case CallTerminatedByServer:                    
+                case CallTerminatedByServer:
                     exception = new InvalidOperationException(GetMessage(code), innerEception);
                     break;
                 default:
@@ -100,7 +83,7 @@ namespace Quilt4Net.Core
             exception.HelpLink = GetHelpLink(code);
             return exception;
         }
-        
+
         private string GetMessage(int code)
         {
             var message = _data[code];
@@ -117,13 +100,21 @@ namespace Quilt4Net.Core
         private string GetHelpLink(int code)
         {
             var location = _configuration.Target.Location;
-            return $"{location}#/help/error/{code}";
+            return $"{location}help/error/{code}";
         }
 
         public async Task<Exception> GetExceptionFromResponse(HttpResponseMessage response)
         {
             var result = await response.Content.ReadAsStringAsync();
-            var error = JsonConvert.DeserializeObject<Error>(result);
+            Error error;
+            try
+            {
+                error = JsonConvert.DeserializeObject<Error>(result);
+            }
+            catch (JsonReaderException)
+            {
+                error = new Error();
+            }
 
             if (error.Type == null)
             {
@@ -137,18 +128,15 @@ namespace Quilt4Net.Core
             Exception exception;
             if (type == null)
             {
-                return new ExpectedIssues(_configuration).GetException(ExpectedIssues.ServiceCallError, new Exception(response.ToString()));
+                return new ExpectedIssues(_configuration).GetException(ServiceCallError, new Exception(response.ToString()));
             }
-            else
+            try
             {
-                try
-                {
-                    exception = (Exception)Activator.CreateInstance(type, "The service throw an exception. " + error.Message);
-                }
-                catch (Exception exp)
-                {
-                    exception = new InvalidOperationException(error.Message, exp);
-                }
+                exception = (Exception)Activator.CreateInstance(type, "The service throw an exception. " + error.Message);
+            }
+            catch (Exception exp)
+            {
+                exception = new InvalidOperationException(error.Message, exp);
             }
 
             if (error.Data != null)
@@ -162,7 +150,23 @@ namespace Quilt4Net.Core
             return exception;
         }
 
-        class Error
+        internal class ProjectApiKeyNotSetException : Exception
+        {
+            public ProjectApiKeyNotSetException(string message)
+                : base(message)
+            {
+            }
+        }
+
+        private class FirstAssemblyException : Exception
+        {
+            public FirstAssemblyException(string message)
+                : base(message)
+            {
+            }
+        }
+
+        private class Error
         {
             public string StatusCode { get; set; }
             public int Code { get; set; }
@@ -170,6 +174,5 @@ namespace Quilt4Net.Core
             public string Message { get; set; }
             public Dictionary<string, string> Data { get; set; }
         }
-
     }
 }
