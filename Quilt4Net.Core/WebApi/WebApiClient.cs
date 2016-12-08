@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
@@ -14,29 +15,25 @@ namespace Quilt4Net.Core
 {
     internal class WebApiClient : IWebApiClient
     {
-        private readonly object _syncRoot = new object();
         private static int _instanceCounter;
         private readonly IConfiguration _configuration;
+        private readonly object _syncRoot = new object();
         private Authorization _authorization;
-
-        public event EventHandler<AuthorizationChangedEventArgs> AuthorizationChangedEvent;
 
         internal WebApiClient(IConfiguration configuration)
         {
             lock (_syncRoot)
             {
                 if (_instanceCounter != 0)
-                {
                     if (!configuration.AllowMultipleInstances)
-                    {
                         throw new InvalidOperationException("Multiple instances is not allowed. Set configuration setting AllowMultipleInstances to true if you want to use multiple instances of this object.");
-                    }
-                }
                 _instanceCounter++;
             }
 
             _configuration = configuration;
         }
+
+        public event EventHandler<AuthorizationChangedEventArgs> AuthorizationChangedEvent;
 
         public event EventHandler<WebApiRequestEventArgs> WebApiRequestEvent;
         public event EventHandler<WebApiResponseEventArgs> WebApiResponseEvent;
@@ -44,10 +41,10 @@ namespace Quilt4Net.Core
         public async Task CreateAsync<T>(string controller, T data)
         {
             await Execute(async client =>
-                {
-                    await PostAsync<T>(client, $"api/{controller}", data);
-                    return true;
-                });
+            {
+                await PostAsync(client, $"api/{controller}", data);
+                return true;
+            });
         }
 
         public async Task<string> PostAsync(string controller, string jsonData)
@@ -62,19 +59,19 @@ namespace Quilt4Net.Core
         public async Task<TResult> CreateAsync<T, TResult>(string controller, T data)
         {
             return await Execute(async client =>
-                {
-                    var response = await PostAsync(client, $"api/{controller}", data);
-                    return response.Content.ReadAsAsync<TResult>().Result;
-                });
+            {
+                var response = await PostAsync(client, $"api/{controller}", data);
+                return response.Content.ReadAsAsync<TResult>().Result;
+            });
         }
 
         public async Task<TResult> ReadAsync<TResult>(string controller, string id)
         {
             var result = await Execute(async client =>
-                {
-                    var response = await GetAsync(client, $"api/{controller}/{id}");
-                    return response.Content.ReadAsAsync<TResult>().Result;
-                });
+            {
+                var response = await GetAsync(client, $"api/{controller}/{id}");
+                return response.Content.ReadAsAsync<TResult>().Result;
+            });
             return result;
         }
 
@@ -91,28 +88,28 @@ namespace Quilt4Net.Core
         public async Task UpdateAsync<T>(string controller, string id, T data)
         {
             await Execute(async client =>
-                {
-                    await PutAsync(client, $"api/{controller}/{id}", data);
-                    return true;
-                });
+            {
+                await PutAsync(client, $"api/{controller}/{id}", data);
+                return true;
+            });
         }
 
         public async Task DeleteAsync(string controller, string id)
         {
             await Execute(async client =>
-                {
-                    await DeleteAsync(client, $"api/{controller}/{id}");
-                    return true;
-                });
+            {
+                await DeleteAsync(client, $"api/{controller}/{id}");
+                return true;
+            });
         }
 
         public async Task ExecuteCommandAsync<T>(string controller, string action, T data)
         {
             await Execute(async client =>
-                {
-                    await PostAsync(client, $"api/{controller}/{action}", data);
-                    return true;
-                });
+            {
+                await PostAsync(client, $"api/{controller}/{action}", data);
+                return true;
+            });
         }
 
         public async Task<TResult> ExecuteQueryAsync<T, TResult>(string controller)
@@ -130,26 +127,6 @@ namespace Quilt4Net.Core
             return await ExecuteQueryAsync<T, TResult>(controller + "/" + id);
         }
 
-        ////public async Task<TResult> ExecuteQueryAsync<T, TResult>(string controller, IDictionary<string, string> parameters)
-        //public async Task<TResult> ExecuteQueryAsync<T, TResult>(string controller, T data)
-        //{
-        //    var info = typeof(T).GetRuntimeProperties();
-        //    var param = string.Empty;
-        //    var sign = "?";
-        //    foreach (var propertyInfo in info)
-        //    {
-        //        param += sign + propertyInfo.Name + "=" + propertyInfo.GetValue(data);
-        //        sign = "&";
-        //    }
-
-        //    var result = await Execute(async client =>
-        //    {
-        //        var response = await GetAsync(client, $"api/{controller}{param}");
-        //        return response.Content.ReadAsAsync<TResult>().Result;
-        //    });
-        //    return result;
-        //}
-
         public async Task<TResult> PostQueryAsync<TResult>(string controller, string action, FormUrlEncodedContent cnt)
         {
             var result = await Execute(async client =>
@@ -163,12 +140,20 @@ namespace Quilt4Net.Core
         public async Task<TResult> PostQueryAsync<T, TResult>(string controller, string action, T data)
         {
             var result = await Execute(async client =>
-                {
-                    var response = await PostAsync(client, $"api/{controller}/{action}", data);
-                    return response.Content.ReadAsAsync<TResult>().Result;
-                });
+            {
+                var response = await PostAsync(client, $"api/{controller}/{action}", data);
+                return response.Content.ReadAsAsync<TResult>().Result;
+            });
             return result;
         }
+
+        public void SetAuthorization(string userName, string tokenType, string accessToken)
+        {
+            _authorization = string.IsNullOrEmpty(accessToken) ? null : new Authorization(tokenType, accessToken);
+            OnAuthorizationChangedEvent(new AuthorizationChangedEventArgs(userName, _authorization));
+        }
+
+        public bool IsAuthorized => _authorization != null;
 
         private async Task<HttpResponseMessage> PostRawAsync(HttpClient client, string requestUri, string jsonData)
         {
@@ -186,7 +171,7 @@ namespace Quilt4Net.Core
             });
         }
 
-        private async Task<HttpResponseMessage> PostAsync(HttpClient client, string requestUri, Func<Tuple<HttpContent,string>> buildContent)
+        private async Task<HttpResponseMessage> PostAsync(HttpClient client, string requestUri, Func<Tuple<HttpContent, string>> buildContent)
         {
             WebApiRequestEventArgs request = null;
             try
@@ -204,20 +189,16 @@ namespace Quilt4Net.Core
                     }
                     catch (Exception exception)
                     {
-                        System.Diagnostics.Debug.WriteLine(exception.Message);
+                        Debug.WriteLine(exception.Message);
                         throw;
                     }
                 });
 
                 if (!response.Wait(client.Timeout))
-                {
                     throw new TimeoutException();
-                }
 
                 if (!response.Result.IsSuccessStatusCode)
-                {
                     throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response.Result);
-                }
 
                 var contentData = response.Result.Content.ReadAsStringAsync().Result;
                 OnWebApiResponseEvent(new WebApiResponseEventArgs(request, response.Result, contentData));
@@ -240,9 +221,7 @@ namespace Quilt4Net.Core
 
                 var response = await client.GetAsync(requestUri);
                 if (!response.IsSuccessStatusCode)
-                {
                     throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
-                }
 
                 var contentData = response.Content.ReadAsStringAsync().Result;
                 OnWebApiResponseEvent(new WebApiResponseEventArgs(request, response, contentData));
@@ -268,9 +247,7 @@ namespace Quilt4Net.Core
 
                 var response = await client.PutAsync(requestUri, content);
                 if (!response.IsSuccessStatusCode)
-                {
                     throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
-                }
 
                 OnWebApiResponseEvent(new WebApiResponseEventArgs(request, response));
             }
@@ -291,9 +268,7 @@ namespace Quilt4Net.Core
 
                 var response = await client.DeleteAsync(requestUri);
                 if (!response.IsSuccessStatusCode)
-                {
                     throw await new ExpectedIssues(_configuration).GetExceptionFromResponse(response);
-                }
 
                 OnWebApiResponseEvent(new WebApiResponseEventArgs(request, response));
             }
@@ -303,14 +278,6 @@ namespace Quilt4Net.Core
                 throw;
             }
         }
-
-        public void SetAuthorization(string userName, string tokenType, string accessToken)
-        {
-            _authorization = string.IsNullOrEmpty(accessToken) ? null : new Authorization(tokenType, accessToken);
-            OnAuthorizationChangedEvent(new AuthorizationChangedEventArgs(userName, _authorization));
-        }
-
-        public bool IsAuthorized => _authorization != null;
 
         private async Task<T> Execute<T>(Func<HttpClient, Task<T>> action)
         {
@@ -336,9 +303,7 @@ namespace Quilt4Net.Core
 
             //TODO: This is where the hash is supposed to be calculated for the message, so that the server can verify that the origin is correct.
             if (_authorization != null)
-            {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(_authorization.TokenType, _authorization.AccessToken);
-            }
 
             return client;
         }

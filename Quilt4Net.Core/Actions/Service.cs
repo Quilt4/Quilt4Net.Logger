@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Quilt4Net.Core.DataTransfer;
 using Quilt4Net.Core.Interfaces;

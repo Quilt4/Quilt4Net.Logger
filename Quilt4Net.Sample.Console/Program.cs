@@ -7,7 +7,6 @@ using Quilt4Net.Sample.Console.Commands.Service;
 using Quilt4Net.Sample.Console.Commands.Session;
 using Quilt4Net.Sample.Console.Commands.Setting;
 using Quilt4Net.Sample.Console.Commands.User;
-using Quilt4Net.Sample.Console.Commands.Web;
 using Tharga.Toolkit.Console;
 using Tharga.Toolkit.Console.Command;
 using Tharga.Toolkit.Console.Command.Base;
