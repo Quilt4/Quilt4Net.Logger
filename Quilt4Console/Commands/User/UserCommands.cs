@@ -11,10 +11,10 @@ namespace Quilt4Console.Commands.User
             RegisterCommand(new RegisterUserCommand(client));
             RegisterCommand(new LoginUserCommand(client));
             RegisterCommand(new LogoutUserCommand(client));
-            //RegisterCommand(new GetUserInfoCommand(client));
-            //RegisterCommand(new ChangeUserPasswordCommand(client));
-            //RegisterCommand(new ListUsersCommand(client));
-            //RegisterCommand(new SearchUsersCommand(client));
+            RegisterCommand(new GetUserInfoCommand(client));
+            RegisterCommand(new ChangeUserPasswordCommand(client));
+            RegisterCommand(new ListUsersCommand(client));
+            RegisterCommand(new SearchUsersCommand(client));
             //RegisterCommand(new UserRoleCommands(client));
         }
     }

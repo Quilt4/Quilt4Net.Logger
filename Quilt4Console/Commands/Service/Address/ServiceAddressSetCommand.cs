@@ -19,14 +19,14 @@ namespace Quilt4Console.Commands.Service.Address
         public override async Task<bool> InvokeAsync(string paramList)
         {
             var index = 0;
-            var address = QueryParam<string>("Address", GetParam(paramList, index++), new Dictionary<string, string> { { _client.Configuration.Target.Location , _client.Configuration.Target.Location } });
+            var address = QueryParam("Address", GetParam(paramList, index++), new Dictionary<string, string> { { _client.Configuration.Target.Location , _client.Configuration.Target.Location } });
             _client.Configuration.Target.Location = address;
             OutputInformation("Server address set to {0}.", _client.Configuration.Target.Location);
 
             var response = await _client.Actions.Service.GetServiceInfo();
             OutputInformation("Version: {0}{1}", response.Version, string.IsNullOrEmpty(response.Environment) ? "" : $" ({response.Environment})");
 
-            var registry = new Setting();
+            var registry = new Tharga.Toolkit.Registry.Setting();
             await registry.SetSettingAsync("Target.Location", address, ELocalLevel.CurrentUser, null);
 
             return true;

@@ -63,16 +63,33 @@
     <Compile Include="..\Build\AssemblyVersionInfo.cs">
       <Link>Properties\AssemblyVersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Commands\Issue\IssueCommands.cs" />
+    <Compile Include="Commands\Issue\ListIssueCommand.cs" />
+    <Compile Include="Commands\Issue\Type\IssueTypeCommands.cs" />
+    <Compile Include="Commands\Issue\Type\ListIssueTypesCommand.cs" />
+    <Compile Include="Commands\Project\CreateProjectCommand.cs" />
+    <Compile Include="Commands\Project\DeleteProjectCommand.cs" />
+    <Compile Include="Commands\Project\GetProjectCommand.cs" />
+    <Compile Include="Commands\Project\ListMemberProjectsCommand.cs" />
     <Compile Include="Commands\Project\ListProjectsCommand.cs" />
     <Compile Include="Commands\Project\ProjectCommands.cs" />
+    <Compile Include="Commands\Project\UpdateProjectCommand.cs" />
     <Compile Include="Commands\Service\Address\ServiceAddressCommands.cs" />
     <Compile Include="Commands\Service\Address\ServiceAddressGetCommand.cs" />
     <Compile Include="Commands\Service\Address\ServiceAddressSetCommand.cs" />
     <Compile Include="Commands\Service\ServiceCommands.cs" />
     <Compile Include="Commands\Service\ServiceInfoCommand.cs" />
+    <Compile Include="Commands\Session\ListSessionsCommand.cs" />
+    <Compile Include="Commands\Session\SessionCommands.cs" />
+    <Compile Include="Commands\Setting\ListSettingsCommand.cs" />
+    <Compile Include="Commands\Setting\SettingCommands.cs" />
+    <Compile Include="Commands\User\ChangeUserPasswordCommand.cs" />
+    <Compile Include="Commands\User\GetUserInfoCommand.cs" />
+    <Compile Include="Commands\User\ListUsersCommand.cs" />
     <Compile Include="Commands\User\LoginUserCommand.cs" />
     <Compile Include="Commands\User\LogoutUserCommand.cs" />
     <Compile Include="Commands\User\RegisterUserCommand.cs" />
+    <Compile Include="Commands\User\SearchUsersCommand.cs" />
     <Compile Include="Commands\User\UserCommands.cs" />
     <Compile Include="EventConsole.cs" />
     <Compile Include="Program.cs" />

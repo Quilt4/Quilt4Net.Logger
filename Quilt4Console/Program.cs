@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Quilt4Console.Commands;
+using Quilt4Console.Commands.Issue;
 using Quilt4Console.Commands.Project;
 using Quilt4Console.Commands.Service;
+using Quilt4Console.Commands.Session;
+using Quilt4Console.Commands.Setting;
 using Quilt4Console.Commands.User;
 using Quilt4Net;
 using Tharga.Toolkit.Console;
@@ -30,6 +33,10 @@ namespace Quilt4Console
             rootCommand.RegisterCommand(new ServiceCommands(client));
             rootCommand.RegisterCommand(new UserCommands(client));
             rootCommand.RegisterCommand(new ProjectCommands(client));
+            rootCommand.RegisterCommand(new SettingCommands(client));
+            //rootCommand.RegisterCommand(new SessionCommands(sessionHandler));
+            rootCommand.RegisterCommand(new IssueCommands(sessionHandler, issueHandler));
+
             new CommandEngine(rootCommand).Run(args);
         }
 
