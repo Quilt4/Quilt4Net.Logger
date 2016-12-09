@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Quilt4Net.Core.Interfaces;
 using Tharga.Toolkit.Console.Command.Base;
+using Tharga.Toolkit.Registry;
 
 namespace Quilt4Console.Commands.Service.Address
 {
@@ -24,6 +25,9 @@ namespace Quilt4Console.Commands.Service.Address
 
             var response = await _client.Actions.Service.GetServiceInfo();
             OutputInformation("Version: {0}{1}", response.Version, string.IsNullOrEmpty(response.Environment) ? "" : $" ({response.Environment})");
+
+            var registry = new Setting();
+            await registry.SetSettingAsync("Target.Location", address, ELocalLevel.CurrentUser, null);
 
             return true;
         }
