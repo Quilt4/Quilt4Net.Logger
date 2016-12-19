@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <package>
   <metadata>
     <id>$id$</id>
@@ -6,14 +7,15 @@
     <title>Quilt4Net</title>
     <authors>Quilt4Net</authors>
     <description>Assure quality in .net systems.</description>
-    <projectUrl>https://www.quilt4.com</projectUrl>    
+    <projectUrl>https://www.quilt4.com</projectUrl>
     <licenseUrl>https://github.com/Quilt4/Quilt4Net/blob/master/LICENSE</licenseUrl>
     <iconUrl>https://www.quilt4net.com/Images/Quilt4NetIcon-48.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <language>en-US</language>
     <tags>quilt4 dynatrace splunk log4net log exception analyze quality</tags>
     <dependencies>
-      <dependency id="Newtonsoft.Json" version="8.0.3" />
+      <dependency id="Newtonsoft.Json" version="9.0.1" />
+      <dependency id="System.Net.Http.Formatting.Extension" version="5.2.3.0" />
     </dependencies>
   </metadata>
   <files>
