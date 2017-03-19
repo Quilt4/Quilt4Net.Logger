@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <package>
   <metadata>
     <id>$id$</id>
@@ -6,7 +7,7 @@
     <title>Quilt4Net</title>
     <authors>Quilt4Net</authors>
     <description>Assure quality in .net systems.</description>
-    <projectUrl>https://www.quilt4.com</projectUrl>    
+    <projectUrl>https://www.quilt4.com</projectUrl>
     <licenseUrl>https://github.com/Quilt4/Quilt4Net/blob/master/LICENSE</licenseUrl>
     <iconUrl>https://www.quilt4net.com/Images/Quilt4NetIcon-48.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
