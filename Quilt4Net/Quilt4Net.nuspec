@@ -16,6 +16,7 @@
     <dependencies>
       <dependency id="Newtonsoft.Json" version="9.0.1" />
       <dependency id="System.Net.Http.Formatting.Extension" version="5.2.3" />
+      <dependency id="Microsoft.AspNet.WebApi.Client" version="5.2.3" />
     </dependencies>
   </metadata>
   <files>
