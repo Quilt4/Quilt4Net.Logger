@@ -11,7 +11,7 @@ namespace Quilt4Net.Tests
     public class Getting_Session_key
     {
         [Test]
-        public async void When_several_threads_are_getting_session_key_at_the_same_time()
+        public void When_several_threads_are_getting_session_key_at_the_same_time()
         {
             //Arrange
             var sessionRegistrationStartedEventCount = 0;
@@ -55,7 +55,7 @@ namespace Quilt4Net.Tests
 
         [Test]
         [Ignore("Fix!")]
-        public async void When_several_threads_are_ending_session_at_the_same_time()
+        public void When_several_threads_are_ending_session_at_the_same_time()
         {
             //Arrange
             var sessionEndCompletedEventCount = 0;
@@ -83,7 +83,7 @@ namespace Quilt4Net.Tests
             var session = new SessionHandler(clientMock.Object);
             session.SessionEndCompletedEvent += delegate { sessionEndCompletedEventCount++; };
             session.SessionEndStartedEvent += delegate { sessionEndStartedEventCount++; };            
-            var response = await session.GetSessionKeyAsync();
+            var response = session.GetSessionKeyAsync().Result;
 
             //Act
             var task1 = Task.Run(() => session.EndAsync());
@@ -100,7 +100,7 @@ namespace Quilt4Net.Tests
         }
 
         [Test]
-        public async void When_registering_session_and_quilt4net_is_disabled()
+        public void When_registering_session_and_quilt4net_is_disabled()
         {
             //Arrange
             var sessionRegistrationStartedEventCount = 0;
@@ -117,7 +117,7 @@ namespace Quilt4Net.Tests
             session.SessionRegistrationCompletedEvent += delegate { sessionRegistrationCompletedEventCount++; };
 
             //Act
-            var response = await session.GetSessionKeyAsync();
+            var response = session.GetSessionKeyAsync().Result;
 
             //Assert
             Assert.That(response, Is.Null);
