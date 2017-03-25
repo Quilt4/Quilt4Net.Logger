@@ -117,7 +117,8 @@ namespace Quilt4Net.Core
             var result = await Execute(async client =>
             {
                 var response = await GetAsync(client, $"api/{controller}");
-                return response.Content.ReadAsAsync<TResult>().Result;
+                var output = response.Content.ReadAsAsync<TResult>().Result;
+                return output;
             });
             return result;
         }

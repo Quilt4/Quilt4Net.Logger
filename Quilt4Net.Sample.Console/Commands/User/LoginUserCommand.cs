@@ -23,7 +23,7 @@ namespace Quilt4Net.Sample.Console.Commands.User
         {
             var index = 0;
             var username = QueryParam<string>("UserName", GetParam(paramList, index++));
-            var password = QueryParam<string>("Password", GetParam(paramList, index++));
+            var password = QueryPassword("Password", GetParam(paramList, index++));
             await _client.Actions.User.LoginAsync(username, password);
             return true;
         }

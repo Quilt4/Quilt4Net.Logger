@@ -108,10 +108,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Quilt4Net.Core\Quilt4Net.Core.csproj">
-      <Project>{6d022f03-0708-4f5f-a436-4931cd106dc7}</Project>
-      <Name>Quilt4Net.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Quilt4Net\Quilt4Net.csproj">
       <Project>{7617b049-94f7-421e-aa74-8a68267e3319}</Project>
       <Name>Quilt4Net</Name>

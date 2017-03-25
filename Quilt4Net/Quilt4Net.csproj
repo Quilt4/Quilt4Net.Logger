@@ -40,17 +40,137 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Management" />
     <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http">
+      <HintPath>..\packages\System.Net.Http.2.0.20126.16343\lib\net40\System.Net.Http.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Http.Formatting.Extension.5.2.3.0\lib\System.Net.Http.Extensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Http.Formatting.Extension.5.2.3.0\lib\System.Net.Http.Formatting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives, Version=4.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Http.Formatting.Extension.5.2.3.0\lib\System.Net.Http.Primitives.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+      <HintPath>..\packages\System.Net.Http.2.0.20126.16343\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Build\AssemblyVersionInfo.cs">
       <Link>Properties\AssemblyVersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Core\Actions\Action.cs" />
+    <Compile Include="Core\Actions\Application.cs" />
+    <Compile Include="Core\Actions\Invitation.cs" />
+    <Compile Include="Core\Actions\Log.cs" />
+    <Compile Include="Core\Actions\Project.cs" />
+    <Compile Include="Core\Actions\ServerSetting.cs" />
+    <Compile Include="Core\Actions\Service.cs" />
+    <Compile Include="Core\Actions\User.cs" />
+    <Compile Include="Core\Actions\Version.cs" />
+    <Compile Include="Core\Configuration\ConfigurationBase.cs" />
+    <Compile Include="Core\Configuration\SessionConfigurationBase.cs" />
+    <Compile Include="Core\Configuration\TargetConfigurationBase.cs" />
+    <Compile Include="Core\DataTransfer\AddRoleModel.cs" />
+    <Compile Include="Core\DataTransfer\ApplicationData.cs" />
+    <Compile Include="Core\DataTransfer\ApplicationInformation.cs" />
+    <Compile Include="Core\DataTransfer\ApplicationResponse.cs" />
+    <Compile Include="Core\DataTransfer\Authorization.cs" />
+    <Compile Include="Core\DataTransfer\ChangePasswordBindingModel.cs" />
+    <Compile Include="Core\DataTransfer\DatabaseInfoResponse.cs" />
+    <Compile Include="Core\DataTransfer\InvitationResponse.cs" />
+    <Compile Include="Core\DataTransfer\InviteAcceptRequest.cs" />
+    <Compile Include="Core\DataTransfer\InviteRequest.cs" />
+    <Compile Include="Core\DataTransfer\IssueLevel.cs" />
+    <Compile Include="Core\DataTransfer\IssueRequest.cs" />
+    <Compile Include="Core\DataTransfer\IssueResponse.cs" />
+    <Compile Include="Core\DataTransfer\IssueResult.cs" />
+    <Compile Include="Core\DataTransfer\IssueTypeData.cs" />
+    <Compile Include="Core\DataTransfer\IssueTypeResponse.cs" />
+    <Compile Include="Core\DataTransfer\LoginData.cs" />
+    <Compile Include="Core\DataTransfer\LoginResult.cs" />
+    <Compile Include="Core\DataTransfer\MachineData.cs" />
+    <Compile Include="Core\DataTransfer\MemberResponse.cs" />
+    <Compile Include="Core\DataTransfer\ProjectRequest.cs" />
+    <Compile Include="Core\DataTransfer\ProjectResponse.cs" />
+    <Compile Include="Core\DataTransfer\QueryUserRequest.cs" />
+    <Compile Include="Core\DataTransfer\QueryUserResponse.cs" />
+    <Compile Include="Core\DataTransfer\RegisterBindingModel.cs" />
+    <Compile Include="Core\DataTransfer\ServiceInfoResponse.cs" />
+    <Compile Include="Core\DataTransfer\ServiceLogResponse.cs" />
+    <Compile Include="Core\DataTransfer\SessionRequest.cs" />
+    <Compile Include="Core\DataTransfer\SessionResponse.cs" />
+    <Compile Include="Core\DataTransfer\SessionResult.cs" />
+    <Compile Include="Core\DataTransfer\SettingResponse.cs" />
+    <Compile Include="Core\DataTransfer\UserData.cs" />
+    <Compile Include="Core\DataTransfer\UserInfoViewModel.cs" />
+    <Compile Include="Core\DataTransfer\UserResponse.cs" />
+    <Compile Include="Core\DataTransfer\VersionResponse.cs" />
+    <Compile Include="Core\Events\AuthorizationChangedEventArgs.cs" />
+    <Compile Include="Core\Events\IssueRegistrationCompletedEventArgs.cs" />
+    <Compile Include="Core\Events\IssueRegistrationStartedEventArgs.cs" />
+    <Compile Include="Core\Events\SessionEndCompletedEventArgs.cs" />
+    <Compile Include="Core\Events\SessionEndStartedEventArgs.cs" />
+    <Compile Include="Core\Events\SessionRegistrationCompletedEventArgs.cs" />
+    <Compile Include="Core\Events\SessionRegistrationStartedEventArgs.cs" />
+    <Compile Include="Core\ExceptionIssueLevel.cs" />
+    <Compile Include="Core\Exceptions\ExpectedIssues.cs" />
+    <Compile Include="Core\Exceptions\ServiceCallExcepton.cs" />
+    <Compile Include="Core\Exceptions\SessionAlreadyRegisteredException.cs" />
+    <Compile Include="Core\Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Core\Extensions\HelperExtension.cs" />
+    <Compile Include="Core\Extensions\IssueLevelExtension.cs" />
+    <Compile Include="Core\Handlers\BasicDataHandler.cs" />
+    <Compile Include="Core\Handlers\IssueHandlerBase.cs" />
+    <Compile Include="Core\Handlers\SessionHandlerBase.cs" />
+    <Compile Include="Core\Informations\ApplicationInformationBase.cs" />
+    <Compile Include="Core\Informations\Information.cs" />
+    <Compile Include="Core\Informations\MachineInformationBase.cs" />
+    <Compile Include="Core\Informations\UserInformationBase.cs" />
+    <Compile Include="Core\Interfaces\IActions.cs" />
+    <Compile Include="Core\Interfaces\IApplication.cs" />
+    <Compile Include="Core\Interfaces\IApplicationInformation.cs" />
+    <Compile Include="Core\Interfaces\IConfiguration.cs" />
+    <Compile Include="Core\Interfaces\IHashHandler.cs" />
+    <Compile Include="Core\Interfaces\IInformation.cs" />
+    <Compile Include="Core\Interfaces\IInvitation.cs" />
+    <Compile Include="Core\Interfaces\IIssueHandler.cs" />
+    <Compile Include="Core\Interfaces\ILog.cs" />
+    <Compile Include="Core\Interfaces\ILoginResult.cs" />
+    <Compile Include="Core\Interfaces\IMachineInformation.cs" />
+    <Compile Include="Core\Interfaces\InstanceCreatedEventArgs.cs" />
+    <Compile Include="Core\Interfaces\IProject.cs" />
+    <Compile Include="Core\Interfaces\IQuilt4NetClient.cs" />
+    <Compile Include="Core\Interfaces\IServerSetting.cs" />
+    <Compile Include="Core\Interfaces\IService.cs" />
+    <Compile Include="Core\Interfaces\ISessionConfiguration.cs" />
+    <Compile Include="Core\Interfaces\ISessionHandler.cs" />
+    <Compile Include="Core\Interfaces\ITargetConfiguration.cs" />
+    <Compile Include="Core\Interfaces\IUser.cs" />
+    <Compile Include="Core\Interfaces\IUserInformation.cs" />
+    <Compile Include="Core\Interfaces\IVersion.cs" />
+    <Compile Include="Core\Interfaces\IWebApiClient.cs" />
+    <Compile Include="Core\Interfaces\OperationType.cs" />
+    <Compile Include="Core\Interfaces\WebApiRequestEventArgs.cs" />
+    <Compile Include="Core\Interfaces\WebApiResponseEventArgs.cs" />
+    <Compile Include="Core\MessageIssueLevel.cs" />
+    <Compile Include="Core\WebApi\WebApiClient.cs" />
     <Compile Include="Interfaces\IIssueHandler.cs" />
     <Compile Include="Interfaces\IQuilt4NetClient.cs" />
     <Compile Include="Interfaces\ISessionHandler.cs" />
@@ -74,14 +194,9 @@
     <Compile Include="Singleton\Quilt4NetClient.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Quilt4Net.Core\Quilt4Net.Core.csproj">
-      <Project>{6d022f03-0708-4f5f-a436-4931cd106dc7}</Project>
-      <Name>Quilt4Net.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
     <None Include="install.ps1" />
+    <None Include="packages.config" />
     <None Include="Quilt4Net.nuspec" />
     <None Include="Transformations\app.config.install.xdt" />
     <None Include="Transformations\app.config.uninstall.xdt" />
