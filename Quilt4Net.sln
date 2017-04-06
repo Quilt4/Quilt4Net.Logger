@@ -16,9 +16,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{FC718711-A786-4FBA-BC41-97FCE9B3FD5E}"
 	ProjectSection(SolutionItems) = preProject
 		Build\AssemblyVersionInfo.cs = Build\AssemblyVersionInfo.cs
-		Build\build.tasks = Build\build.tasks
-		Build\CI.msbuild = Build\CI.msbuild
-		Build\Release.msbuild = Build\Release.msbuild
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quilt4Net", "Quilt4Net\Quilt4Net.csproj", "{7617B049-94F7-421E-AA74-8A68267E3319}"

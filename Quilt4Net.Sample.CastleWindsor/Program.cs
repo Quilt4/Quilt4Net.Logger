@@ -18,9 +18,9 @@ namespace Quilt4Net.Sample.CastleWindsor
             container.Install(FromAssembly.This());
 
             var client = container.Resolve<IQuilt4NetClient>();
-            client.WebApiClient.WebApiRequestEvent += WebApiClientWebApiRequestEvent;
-            client.WebApiClient.WebApiResponseEvent += WebApiClient_WebApiResponseEvent;
-            client.WebApiClient.AuthorizationChangedEvent += WebApiClient_AuthorizationChangedEvent;
+            //client.Client.WebApiRequestEvent += WebApiClientWebApiRequestEvent;
+            //client.Client.WebApiResponseEvent += WebApiClient_WebApiResponseEvent;
+            //client.Client.AuthorizationChangedEvent += WebApiClient_AuthorizationChangedEvent;
 
             var business1 = container.Resolve<ISomeBusiness1>();
             var business2 = container.Resolve<ISomeBusiness2>();
@@ -75,17 +75,17 @@ namespace Quilt4Net.Sample.CastleWindsor
                 .LifestyleTransient());
 
             //container.Register(Component.For<IConfiguration>().ImplementedBy(typeof(Quilt4Net.Configuration)).LifestyleSingleton());
-            //container.Register(Component.For<IQuilt4NetClient>().ImplementedBy(typeof(Quilt4Net.Quilt4NetClient)).LifestyleSingleton());
+            //container.Register(Component.For<IQuilt4NetClient>().ImplementedBy(typeof(Quilt4Net.Quilt4Client)).LifestyleSingleton());
             //container.Register(Component.For<ISessionHandler>().ImplementedBy(typeof(Quilt4Net.SessionHandler)).LifestyleSingleton());
             //container.Register(Component.For<IIssueHandler>().ImplementedBy(typeof(Quilt4Net.IssueHandler)).LifestyleSingleton());
 
-            //container.Register(Classes.FromAssemblyContaining(typeof(Quilt4NetClient))
+            //container.Register(Classes.FromAssemblyContaining(typeof(Quilt4Client))
             //    .Where(Component.IsInSameNamespaceAs<IssueHandler>())
             //    .WithService.FromInterface(typeof(IIssueHandler))
             //    .LifestyleTransient());
 
             //TODO: Using this should fail the execution (since two clients are created in the same runner)
-            container.Register(Classes.FromAssemblyContaining(typeof(Quilt4NetClient))
+            container.Register(Classes.FromAssemblyContaining(typeof(Quilt4Client))
                 .Where(Component.IsInSameNamespaceAs<IssueHandler>())
                 .WithService.DefaultInterfaces()
                 //.LifestyleTransient());

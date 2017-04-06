@@ -8,6 +8,7 @@ namespace Quilt4Net.Core.Interfaces
     public interface ISessionHandler : IDisposable
     {
         IQuilt4NetClient Client { get; }
+        //string SessionKey { get; }
         event EventHandler<SessionRegistrationStartedEventArgs> SessionRegistrationStartedEvent;
         event EventHandler<SessionRegistrationCompletedEventArgs> SessionRegistrationCompletedEvent;
         event EventHandler<SessionEndStartedEventArgs> SessionEndStartedEvent;

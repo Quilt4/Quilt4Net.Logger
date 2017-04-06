@@ -4,7 +4,7 @@ namespace Quilt4Net.Core.Interfaces
     {
         IActions Actions { get; }
         IInformation Information { get; }
-        IWebApiClient WebApiClient { get; }
+        IClient Client { get; }
         IConfiguration Configuration { get; }
     }
 }

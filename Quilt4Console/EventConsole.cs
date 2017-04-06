@@ -9,7 +9,7 @@ namespace Quilt4Console
     {
         private readonly ProgramRootCommand _rootCommand;
 
-        public EventConsole(ProgramRootCommand rootCommand, Configuration configuration, Quilt4NetClient client, SessionHandler sessionHandler, IssueHandler issueHandler)
+        public EventConsole(ProgramRootCommand rootCommand, Configuration configuration, Quilt4Client client, SessionHandler sessionHandler, IssueHandler issueHandler)
         {
             _rootCommand = rootCommand;
 
@@ -19,9 +19,9 @@ namespace Quilt4Console
             sessionHandler.SessionEndCompletedEvent += Session_SessionEndCompletedEvent;
             issueHandler.IssueRegistrationStartedEvent += Issue_IssueRegistrationStartedEvent;
             issueHandler.IssueRegistrationCompletedEvent += Issue_IssueRegistrationCompletedEvent;
-            client.WebApiClient.AuthorizationChangedEvent += WebApiClient_AuthorizationChangedEvent;
-            client.WebApiClient.WebApiRequestEvent += WebApiClient_WebApiRequestEvent;
-            client.WebApiClient.WebApiResponseEvent += WebApiClient_WebApiResponseEvent;
+            //client.Client.AuthorizationChangedEvent += WebApiClient_AuthorizationChangedEvent;
+            //client.Client.WebApiRequestEvent += WebApiClient_WebApiRequestEvent;
+            //client.Client.WebApiResponseEvent += WebApiClient_WebApiResponseEvent;
         }
 
         private void Session_SessionRegistrationStartedEvent(object sender, SessionRegistrationStartedEventArgs e)

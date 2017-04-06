@@ -11,7 +11,8 @@ namespace Quilt4Net.Core
     {
         private readonly object _syncRoot = new object();
         private static int _instanceCounter;
-        private string _sessionKey;
+        private string _sessionKey; // = Guid.NewGuid().ToString();
+        private bool _isRegisteredOnServer;
         private string _sessionUrl;
         private bool _ongoingSessionRegistration;
         private bool _ongoingSessionEnding;
@@ -37,12 +38,14 @@ namespace Quilt4Net.Core
         }
 
         public IQuilt4NetClient Client { get; }
+        //public string SessionKey => _sessionKey;
+
         public event EventHandler<SessionRegistrationStartedEventArgs> SessionRegistrationStartedEvent;
         public event EventHandler<SessionRegistrationCompletedEventArgs> SessionRegistrationCompletedEvent;
         public event EventHandler<SessionEndStartedEventArgs> SessionEndStartedEvent;
         public event EventHandler<SessionEndCompletedEventArgs> SessionEndCompletedEvent;
 
-        public bool IsRegisteredOnServer => !string.IsNullOrEmpty(_sessionKey);
+        public bool IsRegisteredOnServer => _isRegisteredOnServer;
         public string SessionUrl => _sessionUrl;
         public DateTime ClientStartTime { get; }
         public string Environment => Client.Configuration.Session != null ? Client.Configuration.Session.Environment : string.Empty;
@@ -50,38 +53,43 @@ namespace Quilt4Net.Core
 
         public async Task<SessionResult> RegisterAsync()
         {
-            return await RegisterEx(GetProjectApiKey());
+            await Task.Run(() => { RegisterEx(GetProjectApiKey()); });
+            throw new NotImplementedException("Wait for response from server is not yet implemented.");
         }
 
         public void RegisterStart()
         {
-            var projectApiKey = GetProjectApiKey();
+            RegisterEx(GetProjectApiKey());
+            //var projectApiKey = GetProjectApiKey();
 
-            Task.Run(async () =>
-                {
-                    try
-                    {
-                        await RegisterEx(projectApiKey);
-                    }
-                    catch (Exception exception)
-                    {
-                        //TODO: Just catch specific types here
-                        System.Diagnostics.Debug.WriteLine(exception.Message);
-                    }
-                });
+            //Task.Run(async () =>
+            //    {
+            //        try
+            //        {
+            //            await RegisterEx(projectApiKey);
+            //        }
+            //        catch (Exception exception)
+            //        {
+            //            //TODO: Just catch specific types here
+            //            System.Diagnostics.Debug.WriteLine(exception.Message);
+            //        }
+            //    });
         }
 
         public SessionResult Register()
         {
-            try
-            {
-                var response = RegisterEx(GetProjectApiKey()).Result;
-                return response;
-            }
-            catch (AggregateException exception)
-            {
-                throw exception.InnerException;
-            }
+            RegisterEx(GetProjectApiKey());
+            throw new NotImplementedException("Wait for response from server is not yet implemented.");
+
+            //try
+            //{
+            //    var response = RegisterEx(GetProjectApiKey()).Result;
+            //    return response;
+            //}
+            //catch (AggregateException exception)
+            //{
+            //    throw exception?.InnerException ?? exception;
+            //}
         }
 
         public async Task EndAsync()
@@ -100,7 +108,7 @@ namespace Quilt4Net.Core
             }
             catch (AggregateException exception)
             {
-                throw exception.InnerException;
+                throw exception?.InnerException ?? exception;
             }
         }
 
@@ -125,7 +133,8 @@ namespace Quilt4Net.Core
             {
                 OnSessionEndStartedEvent(new SessionEndStartedEventArgs(sessionKey));
 
-                await Client.WebApiClient.ExecuteCommandAsync("Session", "End", sessionKey);
+                throw new NotImplementedException();
+                //await Client.Client.ExecuteCommandAsync("Session", "End", sessionKey);
             }
             catch (Exception exception)
             {
@@ -136,6 +145,7 @@ namespace Quilt4Net.Core
             {
                 _sessionKey = null;
                 _sessionUrl = null;
+                _isRegisteredOnServer = false;
                 _ongoingSessionEnding = false;
                 _sessionEnded.Set();
                 result.SetCompleted();
@@ -147,7 +157,7 @@ namespace Quilt4Net.Core
         {
             if (!IsRegisteredOnServer)
             {
-                await RegisterEx(GetProjectApiKey());
+                RegisterEx(GetProjectApiKey());
                 return _sessionKey;
             }
 
@@ -166,81 +176,96 @@ namespace Quilt4Net.Core
             return projectApiKey;
         }
 
-        private async Task<SessionResult> RegisterEx(string projectApiKey)
+        private void RegisterEx(string projectApiKey)
         {
-            if (!Client.Configuration.Enabled)
+            //throw new NotImplementedException();
+
+            //    if (!Client.Configuration.Enabled)
+            //    {
+            //        return null;
+            //    }
+
+            //    var result = new SessionResult();
+                SessionRequest request = null;
+            //    SessionResponse response = null;
+
+            //    lock (_syncRoot)
+            //    {
+            //        if (_ongoingSessionRegistration)
+            //        {
+            //            var waitTime = new TimeSpan(0, 0, 3, 0);
+            //            if (!_sessionRegistered.WaitOne(waitTime))
+            //            {
+            //                if (string.IsNullOrEmpty(_sessionKey))
+            //                {
+            //                    throw new TimeoutException("Done waiting for another thread trying to get the session registered.").AddData("WaitSeconds", waitTime.TotalSeconds.ToString("0"));
+            //                }
+            //            }
+            //        }
+            //        _ongoingSessionRegistration = true;
+            //    }
+
+            //    try
+            //    {
+            //        if (!string.IsNullOrEmpty(_sessionKey))
+            //        {
+            //            result.SetAlreadyRegistered();
+            //        }
+            //        else
+            //        {
+            //            try
+            //            {
+            request = new SessionRequest
             {
-                return null;
-            }
+                SessionKey = Guid.NewGuid(),
+                ProjectApiKey = projectApiKey,
+                ClientStartTime = DateTime.UtcNow,
+                Environment = Environment,
+                Application = Client.Information.Application.GetApplicationData(),
+                Machine = Client.Information.Machine.GetMachineData(),
+                User = Client.Information.User.GetDataUser(),
+            };
 
-            var result = new SessionResult();
-            SessionRequest request = null;
-            SessionResponse response = null;
+            //                OnSessionRegistrationStartedEvent(new SessionRegistrationStartedEventArgs(request));
 
-            lock (_syncRoot)
-            {
-                if (_ongoingSessionRegistration)
-                {
-                    var waitTime = new TimeSpan(0, 0, 3, 0);
-                    if (!_sessionRegistered.WaitOne(waitTime))
-                    {
-                        if (string.IsNullOrEmpty(_sessionKey))
-                        {
-                            throw new TimeoutException("Done waiting for another thread trying to get the session registered.").AddData("WaitSeconds", waitTime.TotalSeconds.ToString("0"));
-                        }
-                    }
-                }
-                _ongoingSessionRegistration = true;
-            }
+            //                response = await Client.Client.ExecuteCommandAsync<SessionResponse, SessionRequest>(request);
 
-            try
-            {
-                if (!string.IsNullOrEmpty(_sessionKey))
-                {
-                    result.SetAlreadyRegistered();
-                }
-                else
-                {
-                    try
-                    {
-                        request = new SessionRequest
-                        {
-                            ProjectApiKey = projectApiKey,
-                            ClientStartTime = DateTime.UtcNow,
-                            Environment = Environment,
-                            Application = Client.Information.Application.GetApplicationData(),
-                            Machine = Client.Information.Machine.GetMachineData(),
-                            User = Client.Information.User.GetDataUser(),
-                        };
+            //                //TODO: Put a request for a new session registration on a queue.
+            //                //Have it sent and handled by the service
+            //                //Wait for a response for a period of time
+            //                //Return the response
 
-                        OnSessionRegistrationStartedEvent(new SessionRegistrationStartedEventArgs(request));
 
-                        response = await Client.WebApiClient.CreateAsync<SessionRequest, SessionResponse>("Session", request);
+            _sessionKey = Guid.NewGuid().ToString();
+            Client.Client.ExecuteCommand(Guid.NewGuid(), request);
 
-                        if (response.SessionKey == null) throw new InvalidOperationException("No session key returned from the server.");
-                        _sessionKey = response.SessionKey;
-                        _sessionUrl = response.SessionUrl;
-                    }
-                    catch (Exception exception)
-                    {
-                        result.SetException(exception);
-                        throw;
-                    }
-                    finally
-                    {
-                        result.SetCompleted(response);
-                        LastSessionRegistrationCompletedEventArgs = new SessionRegistrationCompletedEventArgs(request, result);
-                        OnSessionRegistrationCompletedEvent(LastSessionRegistrationCompletedEventArgs);
-                    }
-                }
-            }
-            finally
-            {
-                _ongoingSessionRegistration = false;
-                _sessionRegistered.Set();
-            }
+            //                //response = await Client.Client.CreateAsync<SessionRequest, SessionResponse>("Session", request);
 
-            return result;
+            //                if (response?.SessionKey == null) throw new InvalidOperationException("No session key returned from the server.");
+            //                _isRegisteredOnServer = true;
+            //                _sessionKey = request.SessionKey.ToString(); //response.SessionKey;
+            //                _sessionUrl = response.SessionUrl;
+            //            }
+            //            catch (Exception exception)
+            //            {
+            //                result.SetException(exception);
+            //                throw;
+            //            }
+            //            finally
+            //            {
+            //                result.SetCompleted(response);
+            //                LastSessionRegistrationCompletedEventArgs = new SessionRegistrationCompletedEventArgs(request, result);
+            //                OnSessionRegistrationCompletedEvent(LastSessionRegistrationCompletedEventArgs);
+            //            }
+            //        }
+            //    }
+            //    finally
+            //    {
+            //        _ongoingSessionRegistration = false;
+            //        _sessionRegistered.Set();
+            //    }
+
+            //    return result;
         }
 
         protected virtual void OnSessionRegistrationStartedEvent(SessionRegistrationStartedEventArgs e)

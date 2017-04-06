@@ -5,7 +5,7 @@ namespace Quilt4Net.Core.Actions
 {
     public class Action : IActions
     {
-        private readonly IWebApiClient _webApiClient;
+        private readonly IClient _webApiClient;
         private readonly Lazy<IUser> _user;
         private readonly Lazy<IProject> _project;
         private readonly Lazy<IInvitation> _invitation;
@@ -14,17 +14,17 @@ namespace Quilt4Net.Core.Actions
         private readonly Lazy<IServerSetting> _serverSetting;
         private readonly Lazy<IService> _service;
 
-        internal Action(IWebApiClient webApiClient)
+        internal Action(IClient webApiClient)
         {
             _webApiClient = webApiClient;
 
-            _user = new Lazy<IUser>(() => new User(_webApiClient));
-            _project = new Lazy<IProject>(() => new Project(_webApiClient));
-            _invitation = new Lazy<IInvitation>(() => new Invitation(_webApiClient));
-            _application = new Lazy<IApplication>(() => new Application(_webApiClient));
-            _version = new Lazy<IVersion>(() => new Version(_webApiClient));
-            _serverSetting = new Lazy<IServerSetting>(() => new ServerSetting(_webApiClient));
-            _service = new Lazy<IService>(() => new Service(_webApiClient));
+            //_user = new Lazy<IUser>(() => new User(_webApiClient));
+            //_project = new Lazy<IProject>(() => new Project(_webApiClient));
+            //_invitation = new Lazy<IInvitation>(() => new Invitation(_webApiClient));
+            //_application = new Lazy<IApplication>(() => new Application(_webApiClient));
+            //_version = new Lazy<IVersion>(() => new Version(_webApiClient));
+            //_serverSetting = new Lazy<IServerSetting>(() => new ServerSetting(_webApiClient));
+            //_service = new Lazy<IService>(() => new Service(_webApiClient));
         }
 
         public IService Service => _service.Value;

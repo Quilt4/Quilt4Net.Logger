@@ -1,13 +1,15 @@
 ﻿using System;
+using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core.DataTransfer
 {
-    public class SessionRequest
+    public class SessionRequest : ICommand
     {
         internal SessionRequest()
         {
         }
 
+        public Guid SessionKey { get; set; }
         public string ProjectApiKey { get; set; }
         public DateTime ClientStartTime { get; set; }
         public string Environment { get; set; }

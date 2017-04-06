@@ -6,6 +6,17 @@ using Quilt4Net.Core.Events;
 
 namespace Quilt4Net.Core.Interfaces
 {
+    public interface ICommand
+    {
+    }
+
+    public interface IClient
+    {
+        void ExecuteCommand(Guid commandKey, ICommand command);
+        Task<T> WaitForCommandAsync<T>(Guid commandKey);
+        IEnumerable<ICommand> GetAll();
+    }
+
     public interface IWebApiClient
     {
         event EventHandler<WebApiRequestEventArgs> WebApiRequestEvent;

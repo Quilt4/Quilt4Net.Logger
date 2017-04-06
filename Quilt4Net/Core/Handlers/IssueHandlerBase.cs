@@ -38,7 +38,9 @@ namespace Quilt4Net.Core
         {
             var sessionKey = await _sessionHandler.GetSessionKeyAsync();
             var issueData = PrepareIssueData(sessionKey, message, issueLevel, userHandle, data);
-            return await RegisterEx(true, issueData);
+            var commandKey = RegisterEx(issueData);
+            var result = await Client.Client.WaitForCommandAsync<IssueResult>(commandKey);
+            return result;
         }
 
         public void RegisterStart(string message, MessageIssueLevel issueLevel, string userHandle = null, IDictionary<string, string> data = null)
@@ -47,7 +49,8 @@ namespace Quilt4Net.Core
             {
                 var sessionKey = await _sessionHandler.GetSessionKeyAsync();
                 var issueData = PrepareIssueData(sessionKey, message, issueLevel, userHandle, data);
-                await RegisterEx(false, issueData);
+                var commandKey = RegisterEx(issueData);
+                //var result = await Client.Client.WaitForCommandAsync<IssueResult>(commandKey);
             });
         }
 
@@ -57,12 +60,13 @@ namespace Quilt4Net.Core
             {
                 var sessionKey = _sessionHandler.GetSessionKeyAsync().Result;
                 var issueData = PrepareIssueData(sessionKey, message, issueLevel, userHandle, data);
-                var response = RegisterEx(true, issueData).Result;
-                return response;
+                var commandKey = RegisterEx(issueData);
+                var result = Client.Client.WaitForCommandAsync<IssueResult>(commandKey).Result;
+                return result;
             }
             catch (AggregateException exception)
             {
-                throw exception.InnerException;
+                throw exception?.InnerException ?? exception;
             }
         }
 
@@ -72,8 +76,9 @@ namespace Quilt4Net.Core
 
             var sessionKey = await _sessionHandler.GetSessionKeyAsync();
             var issueData = PrepareIssueData(sessionKey, exception, issueLevel, userHandle);
-            var respnse = await RegisterEx(true, issueData);
-            return respnse;
+            var commandKey = RegisterEx(issueData);
+            var result = await Client.Client.WaitForCommandAsync<IssueResult>(commandKey);
+            return result;
         }
 
         public void RegisterStart(Exception exception, ExceptionIssueLevel issueLevel = ExceptionIssueLevel.Error, string userHandle = null)
@@ -84,7 +89,8 @@ namespace Quilt4Net.Core
             {
                 var sessionKey = await _sessionHandler.GetSessionKeyAsync();
                 var issueData = PrepareIssueData(sessionKey, exception, issueLevel, userHandle);
-                await RegisterEx(false, issueData);
+                var commandKey = RegisterEx(issueData);
+                //var result = await Client.Client.WaitForCommandAsync<IssueResult>(commandKey);
             });
         }
 
@@ -96,8 +102,9 @@ namespace Quilt4Net.Core
             {
                 var sessionKey = _sessionHandler.GetSessionKeyAsync().Result;
                 var issueData = PrepareIssueData(sessionKey, exception, issueLevel, userHandle);
-                var response = RegisterEx(true, issueData).Result;
-                return response;
+                var commandKey = RegisterEx(issueData);
+                var result = Client.Client.WaitForCommandAsync<IssueResult>(commandKey).Result;
+                return result;
             }
             catch (AggregateException exp)
             {
@@ -107,43 +114,52 @@ namespace Quilt4Net.Core
 
         public async Task<IEnumerable<IssueTypeResponse>> GetIssueTypesAsync(Guid versionKey)
         {
-            return await _sessionHandler.Client.WebApiClient.ExecuteQueryAsync<Guid, IEnumerable<IssueTypeResponse>>("IssueType", versionKey.ToString());
+            throw new NotImplementedException();
+            //return await _sessionHandler.Client.Client.ExecuteQueryAsync<Guid, IEnumerable<IssueTypeResponse>>("IssueType", versionKey.ToString());
         }
 
         public async Task<IEnumerable<IssueResponse>> GetIssuesAsync(Guid versionKey)
         {
-            return await _sessionHandler.Client.WebApiClient.ExecuteQueryAsync<Guid, IEnumerable<IssueResponse>>("Issue", versionKey.ToString());
+            throw new NotImplementedException();
+            //return await _sessionHandler.Client.Client.ExecuteQueryAsync<Guid, IEnumerable<IssueResponse>>("Issue", versionKey.ToString());
         }
 
-        private async Task<IssueResult> RegisterEx(bool doThrow, IssueRequest request)
+        private Guid RegisterEx(IssueRequest request)
         {
-            if (string.IsNullOrEmpty(request.SessionKey))
-                throw new ArgumentException("No SessionKey has been assigned.");
+            //if (string.IsNullOrEmpty(request.SessionKey))
+            //    throw new ArgumentException("No SessionKey has been assigned.");
 
-            var result = new IssueResult();
-            IssueResponse response = null;
+            //var result = new IssueResult();
+            //IssueResponse response = null;
 
-            try
-            {
-                OnIssueRegistrationStartedEvent(new IssueRegistrationStartedEventArgs(request));
+            //try
+            //{
+            //    OnIssueRegistrationStartedEvent(new IssueRegistrationStartedEventArgs(request));
 
-                response = await _sessionHandler.Client.WebApiClient.CreateAsync<IssueRequest, IssueResponse>("Issue", request);
-            }
-            catch (Exception exception)
-            {
-                result.SetException(exception);
-                _issuesThatFailedToRegister.Enqueue(new Tuple<IssueRequest, Exception>(request, exception));
+            //    throw new NotImplementedException();
 
-                if (doThrow)
-                    throw;
-            }
-            finally
-            {
-                result.SetCompleted(response);
-                OnIssueRegistrationCompletedEvent(new IssueRegistrationCompletedEventArgs(request, result));
-            }
+            var commandKey = Guid.NewGuid();
+            _sessionHandler.Client.Client.ExecuteCommand(commandKey, request);
+            return commandKey;
 
-            return result;
+            //    //response = await _sessionHandler.Client.Client.CreateAsync<IssueRequest, IssueResponse>("Issue", request);
+            //}
+            //catch (Exception exception)
+            //{
+            //    result.SetException(exception);
+            //    _issuesThatFailedToRegister.Enqueue(new Tuple<IssueRequest, Exception>(request, exception));
+
+            //    if (doThrow)
+            //        throw;
+            //}
+            //finally
+            //{
+            //    result.SetCompleted(response);
+            //    OnIssueRegistrationCompletedEvent(new IssueRegistrationCompletedEventArgs(request, result));
+            //}
+
+            ////return result;
+            //throw new NotImplementedException();
         }
 
         private IssueRequest PrepareIssueData(string sessionKey, Exception exception, ExceptionIssueLevel issueLevel, string userHandle)

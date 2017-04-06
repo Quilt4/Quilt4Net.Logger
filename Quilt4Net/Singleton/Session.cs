@@ -3,7 +3,7 @@ namespace Quilt4Net.Singleton
     public class Session : SessionHandler
     {
         private Session()
-            : base(Quilt4NetClient.Instance)
+            : base(Quilt4Client.Instance)
         {
         }
 

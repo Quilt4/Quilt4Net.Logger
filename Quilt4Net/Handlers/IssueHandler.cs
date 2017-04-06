@@ -8,6 +8,6 @@ namespace Quilt4Net
         public IssueHandler(ISessionHandler sessionHandler)
             : base(sessionHandler)
         {
-        }       
+        }
     }
 }

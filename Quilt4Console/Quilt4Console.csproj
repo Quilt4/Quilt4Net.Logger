@@ -60,6 +60,7 @@
     <Compile Include="Commands\Project\ListProjectsCommand.cs" />
     <Compile Include="Commands\Project\ProjectCommands.cs" />
     <Compile Include="Commands\Project\UpdateProjectCommand.cs" />
+    <Compile Include="Commands\Queue\QueueCommands.cs" />
     <Compile Include="Commands\Service\Address\ServiceAddressCommands.cs" />
     <Compile Include="Commands\Service\Address\ServiceAddressGetCommand.cs" />
     <Compile Include="Commands\Service\Address\ServiceAddressSetCommand.cs" />

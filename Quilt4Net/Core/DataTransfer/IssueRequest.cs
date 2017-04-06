@@ -1,8 +1,9 @@
 ﻿using System;
+using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core.DataTransfer
 {
-    public class IssueRequest
+    public class IssueRequest : ICommand
     {
         internal IssueRequest()
         {
