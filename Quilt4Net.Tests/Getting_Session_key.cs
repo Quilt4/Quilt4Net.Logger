@@ -82,7 +82,7 @@ namespace Quilt4Net.Tests
             clientMock.SetupGet(x => x.Information.User).Returns(() => userHelperMock.Object);
             var session = new SessionHandler(clientMock.Object);
             session.SessionEndCompletedEvent += delegate { sessionEndCompletedEventCount++; };
-            session.SessionEndStartedEvent += delegate { sessionEndStartedEventCount++; };            
+            session.SessionEndStartedEvent += delegate { sessionEndStartedEventCount++; };
             var response = session.GetSessionKeyAsync().Result;
 
             //Act
