@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Net.Http;
+//using System.Net.Http;
 
 namespace Quilt4Net.Core.Interfaces
 {
@@ -12,18 +12,18 @@ namespace Quilt4Net.Core.Interfaces
             Exception = exception;
         }
 
-        internal WebApiResponseEventArgs(WebApiRequestEventArgs request, HttpResponseMessage response, string contentData = null)
-        {
-            Elapsed = request.SetComplete();
-            Request = request;
-            Response = response;
-            ContentData = contentData;
-        }
+        //internal WebApiResponseEventArgs(WebApiRequestEventArgs request, HttpResponseMessage response, string contentData = null)
+        //{
+        //    Elapsed = request.SetComplete();
+        //    Request = request;
+        //    Response = response;
+        //    ContentData = contentData;
+        //}
 
         public bool IsSuccess => Exception == null;
         public WebApiRequestEventArgs Request { get; }
         public Exception Exception { get; }
-        public HttpResponseMessage Response { get; }
+        //public HttpResponseMessage Response { get; }
         public string ContentData { get; }
         public TimeSpan Elapsed { get; private set; }
     }

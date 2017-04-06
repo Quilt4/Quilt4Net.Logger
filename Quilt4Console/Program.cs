@@ -22,31 +22,31 @@ namespace Quilt4Console
             var console = new ClientConsole();
             var rootCommand = new ProgramRootCommand(console);
 
-            var configuration = new Quilt4Net.Configuration();
-            var client = new Quilt4NetClient(configuration);
-            var sessionHandler = new SessionHandler(client);
-            var issueHandler = new IssueHandler(sessionHandler);
-            new EventConsole(rootCommand, configuration, client, sessionHandler, issueHandler);
+            //var configuration = new Configuration();
+            //var client = new Quilt4NetClient(configuration);
+            //var sessionHandler = new SessionHandler(client);
+            //var issueHandler = new IssueHandler(sessionHandler);
+            //new EventConsole(rootCommand, configuration, client, sessionHandler, issueHandler);
 
-            LoadSettings(client);
+            //LoadSettings(client);
 
-            rootCommand.RegisterCommand(new ServiceCommands(client));
-            rootCommand.RegisterCommand(new UserCommands(client));
-            rootCommand.RegisterCommand(new ProjectCommands(client));
-            rootCommand.RegisterCommand(new SettingCommands(client));
-            //rootCommand.RegisterCommand(new SessionCommands(sessionHandler));
-            rootCommand.RegisterCommand(new IssueCommands(sessionHandler, issueHandler));
+            //rootCommand.RegisterCommand(new ServiceCommands(client));
+            //rootCommand.RegisterCommand(new UserCommands(client));
+            //rootCommand.RegisterCommand(new ProjectCommands(client));
+            //rootCommand.RegisterCommand(new SettingCommands(client));
+            ////rootCommand.RegisterCommand(new SessionCommands(sessionHandler));
+            //rootCommand.RegisterCommand(new IssueCommands(sessionHandler, issueHandler));
 
             new CommandEngine(rootCommand).Run(args);
         }
 
-        private static async Task LoadSettings(Quilt4NetClient client)
-        {
-            var registry = new Setting();
-            var address = await registry.GetSettingAsync("Target.Location", ELocalLevel.CurrentUser, client.Configuration.Target.Location);
-            client.Configuration.Target.Location = address;
+        //private static async Task LoadSettings(Quilt4NetClient client)
+        //{
+        //    var registry = new Setting();
+        //    var address = await registry.GetSettingAsync("Target.Location", ELocalLevel.CurrentUser, client.Configuration.Target.Location);
+        //    client.Configuration.Target.Location = address;
 
-            Console.WriteLine("Connecting to quilt4 server " + address, OutputLevel.Information);
-        }
+        //    Console.WriteLine("Connecting to quilt4 server " + address, OutputLevel.Information);
+        //}
     }
 }

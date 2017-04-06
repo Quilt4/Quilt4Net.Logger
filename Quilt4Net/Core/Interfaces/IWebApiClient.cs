@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
+//using System.Net.Http;
 using System.Threading.Tasks;
 using Quilt4Net.Core.Events;
 
@@ -24,7 +24,7 @@ namespace Quilt4Net.Core.Interfaces
         Task<TResult> ExecuteQueryAsync<T, TResult>(string controller);
         Task<TResult> ExecuteQueryAsync<T, TResult>(string controller, string id);
         Task<TResult> PostQueryAsync<T, TResult>(string controller, string action, T data);
-        Task<TResult> PostQueryAsync<TResult>(string controller, string action, FormUrlEncodedContent cnt);
+        //Task<TResult> PostQueryAsync<TResult>(string controller, string action, FormUrlEncodedContent cnt);
 
         //Basic operations
         Task<string> PostAsync(string controller, string jsonData);

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
+//using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+//using Newtonsoft.Json;
 using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core
@@ -103,52 +103,52 @@ namespace Quilt4Net.Core
             return $"{location}help/error/{code}";
         }
 
-        public async Task<Exception> GetExceptionFromResponse(HttpResponseMessage response)
-        {
-            var result = await response.Content.ReadAsStringAsync();
-            Error error;
-            try
-            {
-                error = JsonConvert.DeserializeObject<Error>(result);
-            }
-            catch (JsonReaderException)
-            {
-                error = new Error();
-            }
+        //public async Task<Exception> GetExceptionFromResponse(HttpResponseMessage response)
+        //{
+        //    var result = await response.Content.ReadAsStringAsync();
+        //    Error error;
+        //    try
+        //    {
+        //        error = JsonConvert.DeserializeObject<Error>(result);
+        //    }
+        //    catch (JsonReaderException)
+        //    {
+        //        error = new Error();
+        //    }
 
-            if (error.Type == null)
-            {
-                var msg = FormatMessage((int)response.StatusCode, response.ReasonPhrase + ".");
-                var exp = new ServiceCallExcepton(msg, response, new Exception(response.ToString())) { HelpLink = GetHelpLink((int)response.StatusCode) };
-                return exp;
-            }
+        //    if (error?.Type == null)
+        //    {
+        //        var msg = FormatMessage((int)response.StatusCode, response.ReasonPhrase + ".");
+        //        var exp = new ServiceCallExcepton(msg, response, new Exception(response.ToString())) { HelpLink = GetHelpLink((int)response.StatusCode) };
+        //        return exp;
+        //    }
 
-            var type = Type.GetType(error.Type);
+        //    var type = Type.GetType(error.Type);
 
-            Exception exception;
-            if (type == null)
-            {
-                return new ExpectedIssues(_configuration).GetException(ServiceCallError, new Exception(response.ToString()));
-            }
-            try
-            {
-                exception = (Exception)Activator.CreateInstance(type, "The service throw an exception. " + error.Message);
-            }
-            catch (Exception exp)
-            {
-                exception = new InvalidOperationException(error.Message, exp);
-            }
+        //    Exception exception;
+        //    if (type == null)
+        //    {
+        //        return new ExpectedIssues(_configuration).GetException(ServiceCallError, new Exception(response.ToString()));
+        //    }
+        //    try
+        //    {
+        //        exception = (Exception)Activator.CreateInstance(type, "The service throw an exception. " + error.Message);
+        //    }
+        //    catch (Exception exp)
+        //    {
+        //        exception = new InvalidOperationException(error.Message, exp);
+        //    }
 
-            if (error.Data != null)
-            {
-                foreach (var data in error.Data)
-                {
-                    exception.Data.Add(data.Key, data.Value);
-                }
-            }
+        //    if (error.Data != null)
+        //    {
+        //        foreach (var data in error.Data)
+        //        {
+        //            exception.Data.Add(data.Key, data.Value);
+        //        }
+        //    }
 
-            return exception;
-        }
+        //    return exception;
+        //}
 
         internal class ProjectApiKeyNotSetException : Exception
         {
