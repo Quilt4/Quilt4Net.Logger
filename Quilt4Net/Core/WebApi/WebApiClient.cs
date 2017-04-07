@@ -22,59 +22,71 @@ namespace Quilt4Net.Core.WebApi
 {
     internal class SignalRClient : IClient
     {
-        private readonly BlockingCollection<ICommand> _commands = new BlockingCollection<ICommand>();
+        private readonly BlockingCollection<CommandDto> _commands = new BlockingCollection<CommandDto>();
 
         public SignalRClient(IConfiguration configuration)
         {
-            var connection = new HubConnection("http://localhost:8088/");
-            connection.StateChanged += change => { Console.WriteLine("StateChanged from " + change.OldState + " to " + change.NewState); };
-            var myHub = connection.CreateHubProxy("MyHub");
-            connection.Start().ContinueWith(task =>
-            {
-                if (task.IsFaulted)
-                {
-                    Console.WriteLine("There was an error opening the connection:{0}", task.Exception.GetBaseException());
-                }
-                else
-                {
-                    Console.WriteLine("Connected");
-                }
-
-            }).Wait();
-
             Task.Run(() =>
             {
-                while (true)
-                {
-                    var item = _commands.Take();
-                    //item
-                    //TODO: Execut command
-                    //System.Diagnostics.Debug.WriteLine("x");
+                var connection = new HubConnection("http://localhost:8088/");
+                connection.StateChanged += change => { Console.WriteLine("StateChanged from " + change.OldState + " to " + change.NewState); };
+                var myHub = connection.CreateHubProxy("MyHub");
 
-                    //TODO: Send message to server...
-                    myHub.Invoke<string>("Send", "HELLO World ").ContinueWith(task =>
+                while (string.IsNullOrEmpty(connection.ConnectionId))
+                {
+                    connection.Start().ContinueWith(task =>
                     {
                         if (task.IsFaulted)
                         {
-                            Console.WriteLine("There was an error calling send: {0}", task.Exception.GetBaseException());
+                            System.Threading.Thread.Sleep(10000); //NOTE: Time to wait between reconnects.
+                            Console.WriteLine("There was an error opening the connection:{0}", task.Exception.GetBaseException());
                         }
                         else
                         {
-                            Console.WriteLine("R1: " + task.Result);
+                            Console.WriteLine("Connected");
                         }
-                    });
+                    }).Wait();
+                }
 
-                    myHub.On<string>("addMessage", param =>
+                //myHub.On<string>("addMessage", param =>
+                //{
+                //    Console.WriteLine("R2: " + param);
+                //});
+
+                while (true)
+                {
+                    var item = _commands.Take();
+
+                    var success = false;
+                    while (!success)
                     {
-                        Console.WriteLine("R1: " + param);
-                    });
+                        myHub.Invoke<Guid>("Execute", item).ContinueWith(task =>
+                        {
+                            if (task.IsFaulted)
+                            {
+                                //TODO: Add a maximum number of retries before failing the command
+                                Console.WriteLine("There was an error calling send: {0}", task.Exception.GetBaseException());
+                                System.Threading.Thread.Sleep(10000);
+                            }
+                            else
+                            {
+                                Console.WriteLine("ServerCommandKey: " + task.Result);
+                                success = true;
+                            }
+                        }).Wait();
+                    }
                 }
             });
         }
 
         public void ExecuteCommand(Guid commandKey, ICommand command)
         {
-            _commands.Add(command);
+            _commands.Add(new CommandDto
+            {
+                CommandKey = commandKey,
+                Name = command.GetType().Name,
+                Data = command,
+            });
         }
 
         public async Task<T> WaitForCommandAsync<T>(Guid commandKey)
@@ -90,6 +102,13 @@ namespace Quilt4Net.Core.WebApi
         {
             throw new NotImplementedException();
         }
+    }
+
+    public class CommandDto
+    {
+        public Guid CommandKey { get; set; }
+        public string Name { get; set; }
+        public ICommand Data { get; set; }
     }
 
 //    internal class WebApiClient : IWebApiClient
