@@ -15,6 +15,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNet.SignalR.Client;
 using Quilt4Net.Core.Interfaces;
 
 namespace Quilt4Net.Core.WebApi
@@ -25,16 +26,50 @@ namespace Quilt4Net.Core.WebApi
 
         public SignalRClient(IConfiguration configuration)
         {
-            //Task.Run(() =>
-            //{
-            //    while (true)
-            //    {
-            //        var item = _commands.Take();
-            //        //item
-            //        //TODO: Execut command
-            //        System.Diagnostics.Debug.WriteLine("x");
-            //    }
-            //});
+            var connection = new HubConnection("http://localhost:8088/");
+            connection.StateChanged += change => { Console.WriteLine("StateChanged from " + change.OldState + " to " + change.NewState); };
+            var myHub = connection.CreateHubProxy("MyHub");
+            connection.Start().ContinueWith(task =>
+            {
+                if (task.IsFaulted)
+                {
+                    Console.WriteLine("There was an error opening the connection:{0}", task.Exception.GetBaseException());
+                }
+                else
+                {
+                    Console.WriteLine("Connected");
+                }
+
+            }).Wait();
+
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    var item = _commands.Take();
+                    //item
+                    //TODO: Execut command
+                    //System.Diagnostics.Debug.WriteLine("x");
+
+                    //TODO: Send message to server...
+                    myHub.Invoke<string>("Send", "HELLO World ").ContinueWith(task =>
+                    {
+                        if (task.IsFaulted)
+                        {
+                            Console.WriteLine("There was an error calling send: {0}", task.Exception.GetBaseException());
+                        }
+                        else
+                        {
+                            Console.WriteLine("R1: " + task.Result);
+                        }
+                    });
+
+                    myHub.On<string>("addMessage", param =>
+                    {
+                        Console.WriteLine("R1: " + param);
+                    });
+                }
+            });
         }
 
         public void ExecuteCommand(Guid commandKey, ICommand command)
