@@ -14,7 +14,7 @@
               string fileName = item.GetMetadata("FullPath");
               string find = item.GetMetadata("Find");
               string replaceWith = item.GetMetadata("ReplaceWith");
-              
+
               if(!File.Exists(fileName)) {
                 Log.LogError(null, null, null, null, 0, 0, 0, 0, String.Format("Could not find version file: {0}", fileName), new object[0]);
               }

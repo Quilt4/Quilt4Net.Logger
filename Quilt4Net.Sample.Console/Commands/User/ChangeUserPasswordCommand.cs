@@ -1,6 +1,5 @@
-using System.Threading.Tasks;
 using Quilt4Net.Core.Interfaces;
-using Tharga.Toolkit.Console.Command.Base;
+using Tharga.Toolkit.Console.Commands.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.User
 {
@@ -14,16 +13,13 @@ namespace Quilt4Net.Sample.Console.Commands.User
             _client = client;
         }
 
-        public override async Task<bool> InvokeAsync(string paramList)
+        public override void Invoke(string[] param)
         {
-            var index = 0;
-            var oldPassword = QueryParam<string>("Old Password", GetParam(paramList, index++));
-            var newPassword = QueryParam<string>("New Password", GetParam(paramList, index++));
-            var confirmPassword = QueryParam<string>("Confirm Password", GetParam(paramList, index++));
+            var oldPassword = QueryParam<string>("Old Password", param);
+            var newPassword = QueryParam<string>("New Password", param);
+            var confirmPassword = QueryParam<string>("Confirm Password", param);
 
-            await _client.Actions.User.ChangePassword(oldPassword, newPassword, confirmPassword);
-
-            return true;
+            _client.Actions.User.ChangePassword(oldPassword, newPassword, confirmPassword);
         }
     }
 }

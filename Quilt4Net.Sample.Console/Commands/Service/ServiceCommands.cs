@@ -1,6 +1,6 @@
 using Quilt4Net.Core.Interfaces;
 using Quilt4Net.Sample.Console.Commands.Service.Log;
-using Tharga.Toolkit.Console.Command.Base;
+using Tharga.Toolkit.Console.Commands.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Service
 {

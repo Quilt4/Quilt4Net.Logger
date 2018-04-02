@@ -15,7 +15,6 @@
     <tags>quilt4 dynatrace splunk log4net log exception analyze quality</tags>
     <dependencies>
       <dependency id="Newtonsoft.Json" version="9.0.1" />
-      <dependency id="System.Net.Http.Formatting.Extension" version="5.2.3.0" />
     </dependencies>
   </metadata>
   <files>

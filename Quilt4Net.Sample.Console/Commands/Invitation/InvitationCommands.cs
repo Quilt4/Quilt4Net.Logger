@@ -1,5 +1,5 @@
 ﻿using Quilt4Net.Core.Interfaces;
-using Tharga.Toolkit.Console.Command.Base;
+using Tharga.Toolkit.Console.Commands.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Invitation
 {

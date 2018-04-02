@@ -1,6 +1,5 @@
-﻿using System.Threading.Tasks;
-using Quilt4Net.Core.Interfaces;
-using Tharga.Toolkit.Console.Command.Base;
+﻿using Quilt4Net.Core.Interfaces;
+using Tharga.Toolkit.Console.Commands.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.User.Role
 {
@@ -14,14 +13,12 @@ namespace Quilt4Net.Sample.Console.Commands.User.Role
             _client = client;
         }
 
-        public override async Task<bool> InvokeAsync(string paramList)
+        public override void Invoke(string[] param)
         {
-            var index = 0;
-            var username = QueryParam<string>("UserName", GetParam(paramList, index++));
-            var roleName = QueryParam<string>("RoleName", GetParam(paramList, index++));
+            var username = QueryParam<string>("UserName", param);
+            var roleName = QueryParam<string>("RoleName", param);
 
-            await _client.Actions.User.AddRoleAsync(username, roleName);
-            return true;
+            _client.Actions.User.AddRoleAsync(username, roleName);
         }
     }
 }

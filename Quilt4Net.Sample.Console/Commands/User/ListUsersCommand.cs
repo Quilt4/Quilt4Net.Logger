@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Quilt4Net.Core.Interfaces;
-using Tharga.Toolkit.Console.Command.Base;
+using Tharga.Toolkit.Console.Commands.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.User
 {
@@ -16,16 +15,14 @@ namespace Quilt4Net.Sample.Console.Commands.User
             _client = client;
         }
 
-        public override async Task<bool> InvokeAsync(string paramList)
+        public override void Invoke(string[] param)
         {
-            var response = await _client.Actions.User.GetListAsync();
+            var response = _client.Actions.User.GetListAsync().Result;
 
-            var data = new List<string[]> { new [] { "UserName", "EMail" } };
-            data.AddRange(response.Select(x => new [] { x.UserName, x.EMail }));
+            var data = new List<string[]> { new[] { "UserName", "EMail" } };
+            data.AddRange(response.Select(x => new[] { x.UserName, x.EMail }));
 
             OutputTable(data.ToArray());
-
-            return true;
         }
     }
 }

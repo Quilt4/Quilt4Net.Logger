@@ -1,14 +1,13 @@
 ﻿using System.Linq;
-using System.Threading.Tasks;
 using Quilt4Net.Core.Interfaces;
-using Tharga.Toolkit.Console.Command.Base;
+using Tharga.Toolkit.Console.Commands.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Web
 {
     internal class WebIssueTypeCommand : ActionCommandBase
     {
-        private readonly IIssueHandler _issueHandler;
         private readonly IWebApiClient _client;
+        private readonly IIssueHandler _issueHandler;
 
         public WebIssueTypeCommand(IIssueHandler issueHandler, IWebApiClient client)
             : base("IssueType", "Simulate the web issue type command")
@@ -17,17 +16,13 @@ namespace Quilt4Net.Sample.Console.Commands.Web
             _client = client;
         }
 
-        public override async Task<bool> InvokeAsync(string paramList)
+        public override void Invoke(string[] param)
         {
-            var index = 0;
-            var projectKey = QueryParam("Project", GetParam(paramList, index++), (await _issueHandler.Client.Actions.Project.GetListAsync()).ToDictionary(x => x.ProjectKey, x => x.Name));
-            var applicationKey = QueryParam("Application", GetParam(paramList, index++), (await _issueHandler.Client.Actions.Application.GetListAsync(projectKey)).ToDictionary(x => x.ApplicationKey, x => x.Name));
-            var versionKey = QueryParam("Version", GetParam(paramList, index++), (await _issueHandler.Client.Actions.Version.GetListAsync(applicationKey)).ToDictionary(x => x.VersionKey, x => x.VersionNumber));
-            var issueTypeKey = QueryParam("IssueType", GetParam(paramList, index++), (await _issueHandler.GetIssueTypesAsync(versionKey)).ToDictionary(x => x.IssueTypeKey, x => x.Message));
-
-            var result = await _client.ReadAsync<object>("project", string.Format("{0}/application/{1}/version/{2}/issuetype/{3}", projectKey, applicationKey, versionKey, issueTypeKey));
-
-            return true;
+            var projectKey = QueryParam("Project", param, _issueHandler.Client.Actions.Project.GetListAsync().Result.ToDictionary(x => x.ProjectKey, x => x.Name));
+            var applicationKey = QueryParam("Application", param, _issueHandler.Client.Actions.Application.GetListAsync(projectKey).Result.ToDictionary(x => x.ApplicationKey, x => x.Name));
+            var versionKey = QueryParam("Version", param, _issueHandler.Client.Actions.Version.GetListAsync(applicationKey).Result.ToDictionary(x => x.VersionKey, x => x.VersionNumber));
+            var issueTypeKey = QueryParam("IssueType", param, _issueHandler.GetIssueTypesAsync(versionKey).Result.ToDictionary(x => x.IssueTypeKey, x => x.Message));
+            _client.ReadAsync<object>("project", $"{projectKey}/application/{applicationKey}/version/{versionKey}/issuetype/{issueTypeKey}");
         }
     }
 }

@@ -1,7 +1,6 @@
 using System;
-using System.Threading.Tasks;
 using Quilt4Net.Core.Interfaces;
-using Tharga.Toolkit.Console.Command.Base;
+using Tharga.Toolkit.Console.Commands.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Session
 {
@@ -15,12 +14,15 @@ namespace Quilt4Net.Sample.Console.Commands.Session
             _sessionHandler = sessionHandler;
         }
 
-        public override bool CanExecute()
+        public override bool CanExecute(out string reasonMessage)
         {
+            reasonMessage = string.Empty;
+            if (!_sessionHandler.Client.Actions.User.IsAuthorized)
+                reasonMessage = "Not Authorized";
             return _sessionHandler.Client.Actions.User.IsAuthorized;
         }
 
-        public override async Task<bool> InvokeAsync(string paramList)
+        public override void Invoke(string[] param)
         {
             throw new NotImplementedException();
             //var sessions = (await _sessionHandler.GetListAsync()).ToArray();

@@ -1,6 +1,5 @@
-﻿using System.Threading.Tasks;
-using Quilt4Net.Core.Interfaces;
-using Tharga.Toolkit.Console.Command.Base;
+﻿using Quilt4Net.Core.Interfaces;
+using Tharga.Toolkit.Console.Commands.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Service.Log
 {
@@ -14,21 +13,22 @@ namespace Quilt4Net.Sample.Console.Commands.Service.Log
             _client = client;
         }
 
-        public override bool CanExecute()
+        public override bool CanExecute(out string reasonMessage)
         {
+            reasonMessage = string.Empty;
+            if (!_client.Actions.User.IsAuthorized)
+                reasonMessage = "Not Authorized";
             return _client.Actions.User.IsAuthorized;
         }
 
-        public override async Task<bool> InvokeAsync(string paramList)
+        public override void Invoke(string[] param)
         {
-            var response = await _client.Actions.Service.Log.GetListAsync();
+            var response = _client.Actions.Service.Log.GetListAsync().Result;
             foreach (var item in response)
             {
                 OutputInformation(item.Message);
                 OutputInformation(new string('-', 40));
             }
-
-            return true;
         }
     }
 }

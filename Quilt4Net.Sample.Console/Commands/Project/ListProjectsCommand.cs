@@ -1,7 +1,6 @@
 using System.Linq;
-using System.Threading.Tasks;
 using Quilt4Net.Core.Interfaces;
-using Tharga.Toolkit.Console.Command.Base;
+using Tharga.Toolkit.Console.Commands.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Project
 {
@@ -15,19 +14,21 @@ namespace Quilt4Net.Sample.Console.Commands.Project
             _client = client;
         }
 
-        public override bool CanExecute()
+        public override bool CanExecute(out string reasonMessage)
         {
+            reasonMessage = string.Empty;
+            if (!_client.Actions.User.IsAuthorized)
+                reasonMessage = "Not Authorized";
             return _client.Actions.User.IsAuthorized;
         }
 
-        public override async Task<bool> InvokeAsync(string paramList)
+        public override void Invoke(string[] param)
         {
-            var projects = (await _client.Actions.Project.GetListAsync()).ToArray();
-            if (!projects.Any()) return true;
+            var projects = _client.Actions.Project.GetListAsync().Result.ToArray();
+            if (!projects.Any()) return;
             var title = new[] { new[] { "Name", "ProjectApiKey" } };
             var data = title.Union(projects.Select(x => new[] { x.Name, x.ProjectApiKey }).ToArray()).ToArray();
             OutputTable(data);
-            return true;
         }
     }
 }

@@ -1,6 +1,5 @@
-using System.Threading.Tasks;
 using Quilt4Net.Core.Interfaces;
-using Tharga.Toolkit.Console.Command.Base;
+using Tharga.Toolkit.Console.Commands.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.User
 {
@@ -14,16 +13,14 @@ namespace Quilt4Net.Sample.Console.Commands.User
             _client = client;
         }
 
-        public override async Task<bool> InvokeAsync(string paramList)
+        public override void Invoke(string[] param)
         {
-            var index = 0;
-            var userName = QueryParam<string>("UserName", GetParam(paramList,index++));
-            var email = QueryParam<string>("EMail", GetParam(paramList, index++));
-            var firstName = QueryParam<string>("First Name", GetParam(paramList, index++));
-            var lastName = QueryParam<string>("Last Name", GetParam(paramList, index++));
-            var password = QueryParam<string>("Password", GetParam(paramList, index++));
-            await _client.Actions.User.CreateAsync(userName, email, firstName, lastName, password);
-            return true;
+            var userName = QueryParam<string>("UserName", param);
+            var email = QueryParam<string>("EMail", param);
+            var firstName = QueryParam<string>("First Name", param);
+            var lastName = QueryParam<string>("Last Name", param);
+            var password = QueryParam<string>("Password", param);
+            _client.Actions.User.CreateAsync(userName, email, firstName, lastName, password);
         }
     }
 }

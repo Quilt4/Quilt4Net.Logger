@@ -1,6 +1,5 @@
-using System.Threading.Tasks;
 using Quilt4Net.Core.Interfaces;
-using Tharga.Toolkit.Console.Command.Base;
+using Tharga.Toolkit.Console.Commands.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.User
 {
@@ -14,17 +13,11 @@ namespace Quilt4Net.Sample.Console.Commands.User
             _client = client;
         }
 
-        public override async Task<bool> InvokeAsync(string paramList)
+        public override void Invoke(string[] param)
         {
-            var index = 0;
-            var searchString = QueryParam<string>("Search string", GetParam(paramList, index++));
-            var response = await _client.Actions.User.SearchAsync(searchString);
-            foreach (var item in response)
-            {
-                OutputInformation("{0}\t{1}", item.UserName, item.EMail);
-            }
-
-            return true;
+            var searchString = QueryParam<string>("Search string", param);
+            var response = _client.Actions.User.SearchAsync(searchString).Result;
+            foreach (var item in response) OutputInformation($"{item.UserName}\t{item.EMail}");
         }
     }
 }

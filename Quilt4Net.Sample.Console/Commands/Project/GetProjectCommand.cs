@@ -1,7 +1,6 @@
 using System.Linq;
-using System.Threading.Tasks;
 using Quilt4Net.Core.Interfaces;
-using Tharga.Toolkit.Console.Command.Base;
+using Tharga.Toolkit.Console.Commands.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Project
 {
@@ -15,17 +14,19 @@ namespace Quilt4Net.Sample.Console.Commands.Project
             _client = client;
         }
 
-        public override bool CanExecute()
+        public override bool CanExecute(out string reasonMessage)
         {
+            reasonMessage = string.Empty;
+            if (!_client.Actions.User.IsAuthorized)
+                reasonMessage = "Not Authorized";
             return _client.Actions.User.IsAuthorized;
         }
 
-        public override async Task<bool> InvokeAsync(string paramList)
+        public override void Invoke(string[] param)
         {
-            var projectKey = QueryParam("Project", GetParam(paramList, 0), (await _client.Actions.Project.GetListAsync()).ToDictionary(x => x.ProjectKey, x => x.Name));
-            var project = await _client.Actions.Project.GetAsync(projectKey);
-            OutputInformation("{0}\t{1}", project.Name, project.ProjectApiKey);
-            return true;
+            var projectKey = QueryParam("Project", param, (_client.Actions.Project.GetListAsync().Result).ToDictionary(x => x.ProjectKey, x => x.Name));
+            var project = _client.Actions.Project.GetAsync(projectKey).Result;
+            OutputInformation($"{project.Name}\t{project.ProjectApiKey}");
         }
     }
 }

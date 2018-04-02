@@ -1,7 +1,6 @@
 using System.Linq;
-using System.Threading.Tasks;
 using Quilt4Net.Core.Interfaces;
-using Tharga.Toolkit.Console.Command.Base;
+using Tharga.Toolkit.Console.Commands.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Invitation
 {
@@ -15,13 +14,10 @@ namespace Quilt4Net.Sample.Console.Commands.Invitation
             _client = client;
         }
 
-        public override async Task<bool> InvokeAsync(string paramList)
+        public override void Invoke(string[] param)
         {
-            var index = 0;
-            var projectInviteCode = QueryParam("Project", GetParam(paramList, index++), (await _client.Actions.Invitation.GetListAsync()).ToDictionary(x => x.InviteCode, x => x.ProjectName));
-            await _client.Actions.Invitation.Accept(projectInviteCode);
-
-            return true;
+            var projectInviteCode = QueryParam("Project", param, _client.Actions.Invitation.GetListAsync().Result.ToDictionary(x => x.InviteCode, x => x.ProjectName));
+            _client.Actions.Invitation.Accept(projectInviteCode);
         }
     }
 }

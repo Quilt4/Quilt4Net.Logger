@@ -1,7 +1,6 @@
 using System.Reflection;
-using System.Threading.Tasks;
 using Quilt4Net.Interfaces;
-using Tharga.Toolkit.Console.Command.Base;
+using Tharga.Toolkit.Console.Commands.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Session
 {
@@ -15,24 +14,24 @@ namespace Quilt4Net.Sample.Console.Commands.Session
             _sessionHandler = sessionHandler;
         }
 
-        public override bool CanExecute()
+        public override bool CanExecute(out string reasonMessage)
         {
-            //if (!_client.User.IsAuthorized)
-            //    return false;
-
+            reasonMessage = string.Empty;
+            if (_sessionHandler.IsRegisteredOnServer)
+                reasonMessage = "Registered on server";
             return !_sessionHandler.IsRegisteredOnServer;
         }
 
-        public override async Task<bool> InvokeAsync(string paramList)
+        public override void Invoke(string[] param)
         {
             if (string.IsNullOrEmpty(_sessionHandler.Client.Configuration.ProjectApiKey))
             {
                 var index = 0;
-                var projectApiKey = QueryParam<string>("ProjectApiKey", GetParam(paramList, index++));
+                var projectApiKey = QueryParam<string>("ProjectApiKey", param);
                 _sessionHandler.Client.Configuration.ProjectApiKey = projectApiKey;
             }
 
-            var response = await _sessionHandler.RegisterAsync(Assembly.GetExecutingAssembly());
+            var response = _sessionHandler.RegisterAsync(Assembly.GetExecutingAssembly()).Result;
             if (response.IsSuccess)
             {
                 OutputInformation("Session registration took " + response.Elapsed.TotalMilliseconds.ToString("0") + "ms.");
@@ -41,9 +40,8 @@ namespace Quilt4Net.Sample.Console.Commands.Session
             else
             {
                 OutputError(response.ErrorMessage + " (" + response.Elapsed.TotalMilliseconds.ToString("0") + "ms)");
-            }            
+            }
 
-            return true;
         }
     }
 }

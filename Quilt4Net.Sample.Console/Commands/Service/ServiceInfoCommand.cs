@@ -1,6 +1,5 @@
-using System.Threading.Tasks;
 using Quilt4Net.Core.Interfaces;
-using Tharga.Toolkit.Console.Command.Base;
+using Tharga.Toolkit.Console.Commands.Base;
 
 namespace Quilt4Net.Sample.Console.Commands.Service
 {
@@ -14,26 +13,26 @@ namespace Quilt4Net.Sample.Console.Commands.Service
             _client = client;
         }
 
-        public override async Task<bool> InvokeAsync(string paramList)
+        public override void Invoke(string[] param)
         {
-            var response = await _client.Actions.Service.GetServiceInfo();
+            var response = _client.Actions.Service.GetServiceInfo().Result;
 
-            OutputInformation("Version: {0}{1}", response.Version, string.IsNullOrEmpty(response.Environment) ? "" : $" ({response.Environment})");
+            var msg = string.IsNullOrEmpty(response.Environment) ? "" : $" ({response.Environment})";
+            OutputInformation($"Version: {response.Version}{msg}");
             if (!string.IsNullOrEmpty(response.Message))
             {
-                OutputWarning("{0}", response.Message);
+                OutputWarning(response.Message);
             }
 
             var databaseInfo = response.Database;
             if (databaseInfo != null)
             {
-                OutputInformation("Database: {0}", databaseInfo.CanConnect ? $"Database {databaseInfo.Database}, Patch version {databaseInfo.Version}." : "Cannot connect to database.");
-                OutputInformation("HasOwnProjectApiKey: {0}", response.HasOwnProjectApiKey);
-                OutputInformation("CanWriteToSystemLog: {0}", response.CanWriteToSystemLog);
-                OutputInformation("StartTime: {0}", response.StartTime);
+                var db = databaseInfo.CanConnect ? $"Database {databaseInfo.Database}, Patch version {databaseInfo.Version}." : "Cannot connect to database.";
+                OutputInformation($"Database: {db}" );
+                OutputInformation($"HasOwnProjectApiKey: {response.HasOwnProjectApiKey}");
+                OutputInformation($"CanWriteToSystemLog: {response.CanWriteToSystemLog}");
+                OutputInformation($"StartTime: {response.StartTime}");
             }
-
-            return true;
         }
     }
 }
