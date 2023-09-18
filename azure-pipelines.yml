@@ -16,3 +16,21 @@ stages:
   displayName: Build stage
   jobs:
     - template: build.yml
+
+- stage: Production
+  displayName: Deploy to Production
+  dependsOn: Build
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  jobs:
+    - template: deploy.yml
+
+- stage: Finalize
+  displayName: Finalize
+  dependsOn: Production
+  jobs:
+  - job: Finalize
+    displayName: Finalize
+
+    steps:
+    - task: jabbera.git-tag-on-release-task.git-tag-on-release-task.git-tag-on-release-task@9
+      displayName: 'Tag Artifacts'

@@ -1,0 +1,17 @@
+jobs:
+- job: Deploy
+  displayName: Deploy to Production
+
+  steps:
+  - download: current
+    artifact: drop
+  - checkout: self
+    persistCredentials: true
+
+  - task: NuGetCommand@2
+    displayName: 'Push nuget packages to nuget.org'
+    inputs:
+      command: 'push'
+      packagesToPush: '$(Pipeline.Workspace)/**/*.nupkg;!$(Pipeline.Workspace)/**/*.symbols.nupkg'
+      nuGetFeedType: 'external'
+      publishFeedCredentials: 'Nuget.org'
