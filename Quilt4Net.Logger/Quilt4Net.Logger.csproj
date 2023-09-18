@@ -38,6 +38,8 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="Quilt4Net.Server" />
 		<InternalsVisibleTo Include="Quilt4Net.Logger.Blazor" />
+		<InternalsVisibleTo Include="Quilt4Net.Logger.Tests" />
+		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
 	</ItemGroup>
 
 </Project>
