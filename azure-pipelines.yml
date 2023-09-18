@@ -1,0 +1,18 @@
+trigger:
+- master
+
+name: 3.0.$(Rev:r)
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:
+    - template: build.yml
