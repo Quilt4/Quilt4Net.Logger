@@ -1,0 +1,79 @@
+jobs:
+- job: Build
+  displayName: Build and Test
+
+  steps:
+  - task: DotNetCoreCLI@2
+    displayName: 'Restoring nuget packages'
+    inputs:
+      command: 'restore'
+      projects: '**/*.csproj'
+      feedsToUse: 'select'
+      vstsFeed: 'eda8985f-7491-4ceb-b57f-a6ce8a0c96d4'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Build'
+    inputs:
+      command: 'build'
+      projects: '**/*.csproj'
+      arguments: '-c $(buildConfiguration) --no-restore /p:Version=$(Build.BuildNumber) /p:NoWarn=0618'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Test'
+    inputs:
+      command: 'test'
+      projects: '**/*.Tests.csproj'
+      arguments: '-c $(buildConfiguration) --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
+      publishTestResults: true
+
+  - script: |
+      dotnet tool install -g dotnet-reportgenerator-globaltool
+      reportgenerator -reports:$(Build.SourcesDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/coverlet/reports -reporttypes:"Cobertura"
+    displayName: Create code coverage report
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish code coverage report'
+    inputs:
+      codeCoverageTool: 'Cobertura'
+      summaryFileLocation: '$(Build.SourcesDirectory)/coverlet/reports/Cobertura.xml'
+
+  #- task: BuildQualityChecks@8
+  #  displayName: Code quality checks
+  #  inputs:
+  #    checkWarnings: true
+  #    warningFailOption: 'build'
+  #    allowWarningVariance: true
+  #    warningVariance: '1'
+  #    checkCoverage: true
+  #    coverageFailOption: 'build'
+  #    coverageType: 'blocks'
+  #    allowCoverageVariance: true
+  #    coverageVariance: '5'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Pack Quilt4Net.Logger'
+    inputs:
+      command: 'pack'
+      packagesToPack: '**/Quilt4Net.Logger.csproj'
+      versioningScheme: 'byBuildNumber'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Pack Quilt4Net.Logger.Blazor'
+    inputs:
+      command: 'pack'
+      packagesToPack: '**/Quilt4Net.Logger.Blazor.csproj'
+      versioningScheme: 'byBuildNumber'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Push nuget packages locally'
+    inputs:
+      command: 'push'
+      packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+      nuGetFeedType: 'internal'
+      publishVstsFeed: 'eda8985f-7491-4ceb-b57f-a6ce8a0c96d4'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: drop'
+    inputs:
+      PathtoPublish: '$(build.artifactstagingdirectory)'
+      ArtifactName: 'drop'
