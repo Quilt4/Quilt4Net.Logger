@@ -8,7 +8,7 @@
 		<Authors>Thargelion AB</Authors>
 		<Company>Thargelion AB</Company>
 		<Product>Quilt4Net Logger</Product>
-		<Tag>Logging</Tag>
+		<Tag>Logging Quilt</Tag>
 		<Description>Native package used to send logg data to Quilt4Net service.</Description>
 		<PackageIconUrl>https://quilt4net.com/quilt4net-48x48.png</PackageIconUrl>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
