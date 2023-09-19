@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 namespace Quilt4Net;
 
 [ProviderAlias("Quilt4NetBlazorLogger")]
-internal class Quilt4NetBlazorProvider : Quilt4NetProvider
+public class Quilt4NetBlazorProvider : Quilt4NetProvider
 {
     public Quilt4NetBlazorProvider(IServiceProvider serviceProvider, Action<Quilt4NetOptions> options)
         : base(serviceProvider, options)

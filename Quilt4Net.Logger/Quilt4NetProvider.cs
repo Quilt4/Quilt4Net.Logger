@@ -9,7 +9,7 @@ using Quilt4Net.Internals;
 namespace Quilt4Net;
 
 [ProviderAlias("Quilt4NetLogger")]
-internal class Quilt4NetProvider : ILoggerProvider
+public class Quilt4NetProvider : ILoggerProvider
 {
     protected readonly IServiceProvider _serviceProvider;
 
