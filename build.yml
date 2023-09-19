@@ -16,7 +16,7 @@ jobs:
     inputs:
       command: 'build'
       projects: '**/*.csproj'
-      arguments: '-c $(buildConfiguration) --no-restore /p:Version=$(Build.BuildNumber) /p:NoWarn=0618;CS1591'
+      arguments: '-c $(buildConfiguration) --no-restore /p:Version=$(Build.BuildNumber) /p:NoWarn=0618'
 
   - task: DotNetCoreCLI@2
     displayName: 'Test'
