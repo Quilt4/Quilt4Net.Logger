@@ -87,5 +87,6 @@ internal class Sender : ISender
 
     public void Dispose()
     {
+        _httpClient?.Dispose();
     }
 }

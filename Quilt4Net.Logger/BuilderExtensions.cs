@@ -13,16 +13,11 @@ public static class BuilderExtensions
         builder.Services.AddSingleton<ISender>(serviceProvider =>
         {
             var loader = serviceProvider.GetService<IConfigurationDataLoader>();
-            HttpClient httpClient;
-            try
-            {
-                var httpClientFactory = serviceProvider.GetService<IHttpClientFactory>();
-                httpClient = httpClientFactory?.CreateClient("Quilt4Net") ?? new HttpClient();
-            }
-            catch (Exception e)
-            {
-                httpClient = new HttpClient();
-            }
+
+            var o = new Quilt4NetOptions { HttpClientLoader = _ => new HttpClient() };
+            options?.Invoke(o);
+            var httpClient = o.HttpClientLoader?.Invoke(serviceProvider) ?? new HttpClient();
+
             return new Sender(loader, httpClient);
         });
         return builder;
