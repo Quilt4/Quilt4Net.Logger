@@ -9,8 +9,8 @@ internal static class LogDataExtensions
         return new LogDataItem
         {
             Key = x.Key,
-            Value = System.Text.Json.JsonSerializer.Serialize(x.Value),
-            Type = x.Value.GetType().FullName
+            Value = x.Value == null ? null : System.Text.Json.JsonSerializer.Serialize(x.Value),
+            Type = x.Value?.GetType().FullName
         };
     }
 
