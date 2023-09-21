@@ -49,15 +49,27 @@ internal class Quilt4NetLogger : ILogger
 
     private void Send(LogMessage logMessage)
     {
+        var logDataItems = new List<LogDataItem>();
+        try
+        {
+            logDataItems = logMessage.GetData()
+                .Where(x => x.Key != "Message" && $"{x.Value}" != logMessage.Message)
+                .Select(ToLogData)
+                .ToList();
+        }
+        catch (Exception e)
+        {
+            logDataItems.Add(new LogDataItem { Key = "Q.Exception", Value = e.Message, Type = e.Message.GetType().Name });
+            logDataItems.Add(new LogDataItem { Key = "Q.StackTrace", Value = e.StackTrace, Type = e.StackTrace?.GetType().Name });
+        }
+
         var logInput = new LogInput
         {
             CategoryName = _categoryName,
             LogLevel = (int)logMessage.LogLevel,
             Message = logMessage.Message,
             AppData = _appData,
-            Data = logMessage.GetData()
-                .Where(x => x.Key != "Message" && $"{x.Value}" != logMessage.Message)
-                .Select(ToLogData).ToArray(),
+            Data = logDataItems.ToArray(),
         };
 
         _sender.Send(logInput);

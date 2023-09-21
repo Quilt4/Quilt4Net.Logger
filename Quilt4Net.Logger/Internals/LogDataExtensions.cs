@@ -53,7 +53,15 @@ internal static class LogDataExtensions
 
     public static Dictionary<string, object> GetData(this LogMessage logMessage)
     {
-        var data = logMessage.Data?.ToDictionary(x => x.Key, x => x.Value) ?? new Dictionary<string, object>();
+        var data = new Dictionary<string, object>();
+        if (logMessage.Data != null)
+        {
+            foreach (var item in logMessage.Data)
+            {
+                data.TryAdd(item.Key, item.Value);
+                //var data = logMessage.Data?.ToDictionary(x => x.Key, x => x.Value) ?? new Dictionary<string, object>();
+            }
+        }
 
         if (logMessage.Exception != null)
         {
