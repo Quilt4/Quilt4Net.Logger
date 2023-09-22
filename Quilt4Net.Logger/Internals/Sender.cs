@@ -8,27 +8,24 @@ internal class Sender : ISender
 {
     private readonly HttpClient _httpClient;
     private readonly string _apiKey;
-    private readonly Action<LogCompleteEventArgs> _logCompleteEvent;
-    private readonly Action<LogFailEventArgs> _logFailEvent;
+    private readonly Action<LogEventArgs> _logEvent;
 
     public Sender(IConfigurationDataLoader configurationDataLoader, HttpClient httpClient)
     {
         var configuration = configurationDataLoader.Get();
         _httpClient = httpClient;
 
-        SetBaseAddress(configuration);
+        SetBaseAddress(configuration.BaseAddress, _httpClient);
 
         _apiKey = configuration.ApiKey;
-        _logCompleteEvent = configuration.LogCompleteEvent;
-        _logFailEvent = configuration.LogFailEvent;
+        _logEvent = configuration.LogEvent;
     }
 
-    private void SetBaseAddress(ConfigurationData configuration)
+    private void SetBaseAddress(string baseAddress, HttpClient httpClient)
     {
-        var baseAddress = configuration.BaseAddress;
         if (!baseAddress.EndsWith("/")) baseAddress += "/";
         if (!Uri.TryCreate(baseAddress, UriKind.Absolute, out var address)) throw new InvalidOperationException($"Cannot parse '{baseAddress}' to an absolute uri.");
-        _httpClient.BaseAddress = address;
+        httpClient.BaseAddress = address;
     }
 
     public void Send(LogInput logInput)
@@ -37,29 +34,33 @@ internal class Sender : ISender
         {
             var sw = new Stopwatch();
             sw.Start();
+            //_logEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, "Initiate send.", sw.Elapsed));
 
             try
             {
                 var content = BuildContent(logInput);
                 content.Headers.Add("X-API-KEY", _apiKey);
 
+                //_logEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, "Post starting.", sw.Elapsed));
                 var response = await _httpClient.PostAsync("Collect", content);
+                //_logEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, "Post complete.", sw.Elapsed));
+
                 if (!response.IsSuccessStatusCode)
                 {
                     var payload = await response.Content.ReadAsStringAsync();
                     var errorMessage = GetErrorMessage(payload);
-                    _logFailEvent?.Invoke(new LogFailEventArgs(logInput, response.StatusCode, errorMessage?.Message ?? response.ReasonPhrase, sw.StopAndGetElapsed()));
+                    _logEvent?.Invoke(new LogEventArgs(ELogState.CallFailed, logInput, response.StatusCode, errorMessage?.Message ?? response.ReasonPhrase, sw.StopAndGetElapsed()));
                 }
                 else
                 {
                     string resourceLocation = null;
                     if (response.Headers.TryGetValues("Location", out var locationValues)) resourceLocation = locationValues.FirstOrDefault();
-                    _logCompleteEvent?.Invoke(new LogCompleteEventArgs(logInput, resourceLocation, sw.StopAndGetElapsed()));
+                    _logEvent?.Invoke(new LogEventArgs(ELogState.Complete, logInput, response.StatusCode, resourceLocation, sw.StopAndGetElapsed()));
                 }
             }
             catch (Exception e)
             {
-                _logFailEvent?.Invoke(new LogFailEventArgs(logInput, null, e.Message, sw.StopAndGetElapsed()));
+                _logEvent?.Invoke(new LogEventArgs(ELogState.Exception, logInput, null, e.Message, sw.StopAndGetElapsed()));
             }
         });
     }

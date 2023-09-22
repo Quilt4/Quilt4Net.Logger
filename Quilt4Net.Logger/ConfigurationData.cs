@@ -8,6 +8,5 @@ internal record ConfigurationData
     public string ApiKey { get; init; }
     public LogLevel MinLogLevel { get; init; }
     public LogAppData AppData { get; init; }
-    public Action<LogCompleteEventArgs> LogCompleteEvent { get; init; }
-    public Action<LogFailEventArgs> LogFailEvent { get; init; }
+    public Action<LogEventArgs> LogEvent { get; init; }
 }

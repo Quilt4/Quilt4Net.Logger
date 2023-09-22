@@ -8,6 +8,5 @@ public record Quilt4NetOptions
     public string BaseAddress { get; set; }
     public ILoggingDefaultData LoggingDefaultData { get; } = new LoggingDefaultData();
     public Func<IServiceProvider, HttpClient> HttpClientLoader { get; set; }
-    public Action<LogFailEventArgs> LogFailEvent { get; set; }
-    public Action<LogCompleteEventArgs> LogCompleteEvent { get; set; }
+    public Action<LogEventArgs> LogEvent { get; set; }
 }
