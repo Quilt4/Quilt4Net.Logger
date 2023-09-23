@@ -7,6 +7,6 @@ public record Quilt4NetOptions
     public string ApiKey { get; set; }
     public string BaseAddress { get; set; }
     public ILoggingDefaultData LoggingDefaultData { get; } = new LoggingDefaultData();
-    public Func<IServiceProvider, HttpClient> HttpClientLoader { get; set; }
+    //public Func<IServiceProvider, HttpClient> HttpClientLoader { get; set; }
     public Action<LogEventArgs> LogEvent { get; set; }
 }

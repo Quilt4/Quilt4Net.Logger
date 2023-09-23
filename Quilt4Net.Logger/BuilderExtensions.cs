@@ -10,16 +10,19 @@ public static class BuilderExtensions
     {
         builder.Services.AddSingleton<ILoggerProvider>(serviceProvider => new Quilt4NetProvider(serviceProvider, options));
         builder.Services.AddSingleton<IConfigurationDataLoader, ConfigurationDataLoader>();
-        builder.Services.AddSingleton<ISender>(serviceProvider =>
-        {
-            var loader = serviceProvider.GetService<IConfigurationDataLoader>();
+        builder.Services.AddSingleton<ISender, Sender>();
+        builder.Services.AddHttpClient();
+        //builder.Services.AddSingleton<ISender>(serviceProvider =>
+        //{
+        //    var loader = serviceProvider.GetService<IConfigurationDataLoader>();
+        //    var httpClientFactory = serviceProvider.GetService<IHttpClientFactory>();
 
-            var o = new Quilt4NetOptions { HttpClientLoader = _ => new HttpClient() };
-            options?.Invoke(o);
-            var httpClient = o.HttpClientLoader?.Invoke(serviceProvider) ?? new HttpClient();
+        //    //var o = new Quilt4NetOptions { HttpClientLoader = _ => new HttpClient() };
+        //    //options?.Invoke(o);
+        //    //var httpClient = o.HttpClientLoader?.Invoke(serviceProvider) ?? new HttpClient();
 
-            return new Sender(loader, httpClient);
-        });
+        //    return new Sender(loader, httpClient);
+        //});
         return builder;
     }
 }

@@ -10,10 +10,10 @@ internal class Sender : ISender
     private readonly string _apiKey;
     private readonly Action<LogEventArgs> _logEvent;
 
-    public Sender(IConfigurationDataLoader configurationDataLoader, HttpClient httpClient)
+    public Sender(IConfigurationDataLoader configurationDataLoader)
     {
         var configuration = configurationDataLoader.Get();
-        _httpClient = httpClient;
+        _httpClient = new HttpClient();
 
         SetBaseAddress(configuration.BaseAddress, _httpClient);
 
