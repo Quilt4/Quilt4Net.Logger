@@ -6,12 +6,12 @@ internal class ConfigurationDataLoader : IConfigurationDataLoader
 
     public ConfigurationData Get()
     {
-        return _configurationData?.Invoke() ?? throw new InvalidOperationException("ConfigurationData has not been set.");
+        return _configurationData?.Invoke() ?? throw new ConfigurationException("ConfigurationData has not been set.");
     }
 
     public void Set(Func<ConfigurationData> configurationData)
     {
-        if (_configurationData != null) throw new InvalidOperationException("ConfigurationData has already been set.");
+        if (_configurationData != null) throw new ConfigurationException("ConfigurationData has already been set.");
         _configurationData = configurationData;
     }
 }

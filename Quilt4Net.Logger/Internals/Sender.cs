@@ -65,6 +65,18 @@ internal class Sender : ISender
         });
     }
 
+    public async Task GetConfigurationAsync(CancellationToken cancellationToken)
+    {
+        var content = new HttpRequestMessage(HttpMethod.Get, "Collect");
+        content.Headers.Add("X-API-KEY", _apiKey);
+
+        var result = await _httpClient.SendAsync(content, cancellationToken);
+        if (result.IsSuccessStatusCode)
+        {
+            var configurations = await result.Content.ReadFromJsonAsync<Configuration[]>(cancellationToken: cancellationToken);
+        }
+    }
+
     protected virtual HttpContent BuildContent(LogInput logInput)
     {
         var content = JsonContent.Create(logInput);

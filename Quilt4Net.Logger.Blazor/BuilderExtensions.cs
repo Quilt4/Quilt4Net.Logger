@@ -11,22 +11,7 @@ public static class BuilderExtensions
         builder.Services.AddSingleton<ILoggerProvider>(serviceProvider => new Quilt4NetBlazorProvider(serviceProvider, options));
         builder.Services.AddSingleton<IConfigurationDataLoader>(_ => new ConfigurationDataLoader());
         builder.Services.AddSingleton<ISender, Sender>();
-        builder.Services.AddHttpClient();
-        //builder.Services.AddSingleton<ISender>(serviceProvider =>
-        //{
-        //    var loader = serviceProvider.GetService<IConfigurationDataLoader>();
-        //    HttpClient httpClient;
-        //    try
-        //    {
-        //        var httpClientFactory = serviceProvider.GetService<IHttpClientFactory>();
-        //        httpClient = httpClientFactory?.CreateClient("Quilt4Net") ?? new HttpClient();
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        httpClient = new HttpClient();
-        //    }
-        //    return new Sender(loader, httpClient);
-        //});
+        builder.Services.AddHostedService<ConfigurationEngine>();
         return builder;
     }
 }
