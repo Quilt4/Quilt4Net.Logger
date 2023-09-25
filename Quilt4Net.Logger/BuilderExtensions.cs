@@ -28,7 +28,7 @@ public static class BuilderExtensions
             var sw = new Stopwatch();
             sw.Start();
 
-            await Task.Delay(TimeSpan.FromMilliseconds(100)); //Wait for configuration to be loaded
+            await Task.Delay(TimeSpan.FromMilliseconds(200)); //Wait for configuration to be loaded
 
             bool started = false;
             for(var i = 0; i < 5; i++)
@@ -49,7 +49,7 @@ public static class BuilderExtensions
             try
             {
                 var configurationDataLoader = serviceProvider.GetService<IConfigurationDataLoader>();
-                configurationDataLoader.Get().LogEvent.Invoke(new LogEventArgs(ELogState.Debug, null, null, $"The configuration engine was {(started ? "" : "NOT ")}stared.", sw.StopAndGetElapsed()));
+                configurationDataLoader.Get().LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, null, $"The configuration engine was {(started ? "" : "NOT ")}stared.", sw.StopAndGetElapsed()));
             }
             catch (Exception e)
             {
