@@ -17,7 +17,7 @@ jobs:
       publishFeedCredentials: 'nuget.org'
 
   - script: |
-       git tag $(Build.BuildNumber)
-       git push origin $(Build.BuildNumber)
+       git tag 'logger-$(Build.BuildNumber)'
+       git push origin 'logger-$(Build.BuildNumber)'
     workingDirectory: $(Build.SourcesDirectory)
     displayName: Tag

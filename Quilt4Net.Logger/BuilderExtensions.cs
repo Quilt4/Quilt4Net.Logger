@@ -49,7 +49,7 @@ public static class BuilderExtensions
             try
             {
                 var configurationDataLoader = serviceProvider.GetService<IConfigurationDataLoader>();
-                configurationDataLoader.Get().LogEvent.Invoke(new LogEventArgs(ELogState.Debug, null, null, $"The configuration engine was {(started ? " " : "NOT ")}stared.", sw.StopAndGetElapsed()));
+                configurationDataLoader.Get().LogEvent.Invoke(new LogEventArgs(ELogState.Debug, null, null, $"The configuration engine was {(started ? "" : "NOT ")}stared.", sw.StopAndGetElapsed()));
             }
             catch (Exception e)
             {

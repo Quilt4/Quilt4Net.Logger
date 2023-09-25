@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 namespace Quilt4Net.Internals;
 
@@ -9,6 +10,8 @@ internal class Sender : ISender
     private readonly HttpClient _httpClient;
     private readonly string _apiKey;
     private readonly Action<LogEventArgs> _logEvent;
+    private readonly LogLevel _minLogLevel;
+    private Configuration _configuration = new ();
 
     public Sender(IConfigurationDataLoader configurationDataLoader)
     {
@@ -19,6 +22,7 @@ internal class Sender : ISender
 
         _apiKey = configuration.ApiKey;
         _logEvent = configuration.LogEvent;
+        _minLogLevel = configuration.MinLogLevel;
     }
 
     private void SetBaseAddress(string baseAddress, HttpClient httpClient)
@@ -30,6 +34,12 @@ internal class Sender : ISender
 
     public void Send(LogInput logInput)
     {
+        if (_configuration?.LogLevel != null && logInput.LogLevel < _configuration.LogLevel)
+        {
+            _logEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, $"Skip because only logging {_configuration.LogLevel} and above, this message was {logInput.LogLevel}.", TimeSpan.Zero));
+            return;
+        }
+
         Task.Run(async () =>
         {
             var sw = new Stopwatch();
@@ -65,15 +75,15 @@ internal class Sender : ISender
         });
     }
 
-    public async Task GetConfigurationAsync(CancellationToken cancellationToken)
+    public async Task UpdateConfigurationAsync(CancellationToken cancellationToken)
     {
-        var content = new HttpRequestMessage(HttpMethod.Get, "Collect");
+        var content = new HttpRequestMessage(HttpMethod.Get, $"Collect?MinLogLevel={(int)_minLogLevel}");
         content.Headers.Add("X-API-KEY", _apiKey);
 
         var result = await _httpClient.SendAsync(content, cancellationToken);
         if (result.IsSuccessStatusCode)
         {
-            var configurations = await result.Content.ReadFromJsonAsync<Configuration[]>(cancellationToken: cancellationToken);
+            _configuration = await result.Content.ReadFromJsonAsync<Configuration>(cancellationToken: cancellationToken);
         }
     }
 
