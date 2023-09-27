@@ -17,8 +17,9 @@ namespace Quilt4Net
             {
                 var loader = serviceProvider.GetService<IConfigurationDataLoader>();
                 var httpClientFactory = serviceProvider.GetService<IHttpClientFactory>();
-                var httpClient = httpClientFactory?.CreateClient("Quilt4Net") ?? new HttpClient();
-                return new Sender(loader, httpClient);
+                //var httpClient = httpClientFactory?.CreateClient("Quilt4Net") ?? new HttpClient();
+                //return new Sender(loader, httpClient);
+                throw new NotImplementedException();
             });
 
             return builder;

@@ -12,6 +12,10 @@ public static class BuilderExtensions
         builder.Services.AddSingleton<IConfigurationDataLoader>(_ => new ConfigurationDataLoader());
         builder.Services.AddSingleton<ISender, Sender>();
         builder.Services.AddHostedService<ConfigurationEngine>();
+        builder.Services.AddHttpClient("Quilt4Net.Sender", httpClient =>
+        {
+            httpClient.BaseAddress = new Uri("");
+        });
         return builder;
     }
 }

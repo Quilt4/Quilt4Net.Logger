@@ -18,20 +18,20 @@ namespace Quilt4Net.Internals.Standard
             var configuration = configurationDataLoader.Get();
             _httpClient = httpClient;
 
-            SetBaseAddress(configuration);
+            //SetBaseAddress(configuration);
 
             _apiKey = configuration.ApiKey;
             _logCompleteEvent = configuration.LogCompleteEvent;
             _logFailEvent = configuration.LogFailEvent;
         }
 
-        private void SetBaseAddress(ConfigurationData configuration)
-        {
-            var baseAddress = configuration.BaseAddress;
-            if (!baseAddress.EndsWith("/")) baseAddress += "/";
-            if (!Uri.TryCreate(baseAddress, UriKind.Absolute, out var address)) throw new InvalidOperationException($"Cannot parse '{baseAddress}' to an absolute uri.");
-            _httpClient.BaseAddress = address;
-        }
+        //private void SetBaseAddress(ConfigurationData configuration)
+        //{
+        //    var baseAddress = configuration.BaseAddress;
+        //    if (!baseAddress.EndsWith("/")) baseAddress += "/";
+        //    if (!Uri.TryCreate(baseAddress, UriKind.Absolute, out var address)) throw new InvalidOperationException($"Cannot parse '{baseAddress}' to an absolute uri.");
+        //    _httpClient.BaseAddress = address;
+        //}
 
         public void Send(LogInput logInput)
         {
@@ -42,21 +42,23 @@ namespace Quilt4Net.Internals.Standard
 
                 try
                 {
-                    var content = BuildContent(logInput);
-                    content.Headers.Add("X-API-KEY", _apiKey);
+                    using (var content = BuildContent(logInput))
+                    {
+                        content.Headers.Add("X-API-KEY", _apiKey);
 
-                    var response = await _httpClient.PostAsync("Collect", content);
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        var payload = await response.Content.ReadAsStringAsync();
-                        var errorMessage = GetErrorMessage(payload);
-                        _logFailEvent?.Invoke(new LogFailEventArgs(logInput, response.StatusCode, errorMessage?.Message ?? response.ReasonPhrase, sw.StopAndGetElapsed()));
-                    }
-                    else
-                    {
-                        string resourceLocation = null;
-                        if (response.Headers.TryGetValues("Location", out var locationValues)) resourceLocation = locationValues.FirstOrDefault();
-                        _logCompleteEvent?.Invoke(new LogCompleteEventArgs(logInput, resourceLocation, sw.StopAndGetElapsed()));
+                        var response = await _httpClient.PostAsync("Collect", content);
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            var payload = await response.Content.ReadAsStringAsync();
+                            var errorMessage = GetErrorMessage(payload);
+                            _logFailEvent?.Invoke(new LogFailEventArgs(logInput, response.StatusCode, errorMessage?.Message ?? response.ReasonPhrase, sw.StopAndGetElapsed()));
+                        }
+                        else
+                        {
+                            string resourceLocation = null;
+                            if (response.Headers.TryGetValues("Location", out var locationValues)) resourceLocation = locationValues.FirstOrDefault();
+                            _logCompleteEvent?.Invoke(new LogCompleteEventArgs(logInput, resourceLocation, sw.StopAndGetElapsed()));
+                        }
                     }
                 }
                 catch (Exception e)
