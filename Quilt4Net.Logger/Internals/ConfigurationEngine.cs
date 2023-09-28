@@ -36,9 +36,7 @@ internal class ConfigurationEngine : IHostedService
         {
             while (!_cancellationTokenSource.IsCancellationRequested)
             {
-                //TODO: Load config here
                 await _sender.UpdateConfigurationAsync(_cancellationTokenSource.Token);
-
                 await Task.Delay(TimeSpan.FromMinutes(5), _cancellationTokenSource.Token);
             }
         });

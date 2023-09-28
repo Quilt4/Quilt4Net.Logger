@@ -7,32 +7,30 @@ namespace Quilt4Net.Internals;
 
 internal class Sender : ISender
 {
-    private readonly IHttpClientFactory _httpClientFactory;
-    //private readonly HttpClient _httpClient;
+    private readonly HttpClient _httpClient;
     private readonly string _apiKey;
     private readonly Action<LogEventArgs> _logEvent;
     private readonly LogLevel _minLogLevel;
     private Configuration _configuration = new ();
 
-    public Sender(IHttpClientFactory httpClientFactory, IConfigurationDataLoader configurationDataLoader)
+    public Sender(IConfigurationDataLoader configurationDataLoader)
     {
-        _httpClientFactory = httpClientFactory;
+        _httpClient = new HttpClient();
         var configuration = configurationDataLoader.Get();
-        //_httpClient = new HttpClient();
 
-        //SetBaseAddress(configuration.BaseAddress, _httpClient);
+        SetBaseAddress(configuration.BaseAddress, _httpClient);
 
         _apiKey = configuration.ApiKey;
         _logEvent = configuration.LogEvent;
         _minLogLevel = configuration.MinLogLevel;
     }
 
-    //private void SetBaseAddress(string baseAddress, HttpClient httpClient)
-    //{
-    //    if (!baseAddress.EndsWith("/")) baseAddress += "/";
-    //    if (!Uri.TryCreate(baseAddress, UriKind.Absolute, out var address)) throw new InvalidOperationException($"Cannot parse '{baseAddress}' to an absolute uri.");
-    //    httpClient.BaseAddress = address;
-    //}
+    private void SetBaseAddress(string baseAddress, HttpClient httpClient)
+    {
+        if (!baseAddress.EndsWith("/")) baseAddress += "/";
+        if (!Uri.TryCreate(baseAddress, UriKind.Absolute, out var address)) throw new InvalidOperationException($"Cannot parse '{baseAddress}' to an absolute uri.");
+        httpClient.BaseAddress = address;
+    }
 
     public void Send(LogInput logInput)
     {
@@ -54,8 +52,8 @@ internal class Sender : ISender
                 content.Headers.Add("X-API-KEY", _apiKey);
 
                 //_logEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, "Post starting.", sw.Elapsed));
-                using var httpClient = _httpClientFactory.CreateClient("Quilt4Net.Sender");
-                var response = await httpClient.PostAsync("Collect", content);
+                //using var httpClient = _httpClientFactory.CreateClient("Quilt4Net.Sender");
+                using var response = await _httpClient.PostAsync("Collect", content);
                 //var response = await _httpClient.PostAsync("Collect", content);
                 //_logEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, "Post complete.", sw.Elapsed));
 
@@ -84,8 +82,8 @@ internal class Sender : ISender
         using var content = new HttpRequestMessage(HttpMethod.Get, $"Collect?MinLogLevel={(int)_minLogLevel}");
         content.Headers.Add("X-API-KEY", _apiKey);
 
-        using var httpClient = _httpClientFactory.CreateClient("Quilt4Net.Sender");
-        using var result = await httpClient.SendAsync(content, cancellationToken);
+        //using var httpClient = _httpClientFactory.CreateClient("Quilt4Net.Sender");
+        using var result = await _httpClient.SendAsync(content, cancellationToken);
         if (result.IsSuccessStatusCode)
         {
             _configuration = await result.Content.ReadFromJsonAsync<Configuration>(cancellationToken: cancellationToken);
@@ -106,5 +104,10 @@ internal class Sender : ISender
         {
             return null;
         }
+    }
+
+    public void Dispose()
+    {
+        // TODO release managed resources here
     }
 }
