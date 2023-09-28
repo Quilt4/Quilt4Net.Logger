@@ -12,6 +12,7 @@ internal class Sender : ISender
     private readonly Action<LogEventArgs> _logEvent;
     private readonly LogLevel _minLogLevel;
     private Configuration _configuration = new ();
+    private string _appDataKey;
 
     public Sender(IConfigurationDataLoader configurationDataLoader)
     {
@@ -46,15 +47,27 @@ internal class Sender : ISender
             sw.Start();
             //_logEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, "Initiate send.", sw.Elapsed));
 
+            if (string.IsNullOrEmpty(_appDataKey))
+            {
+                using var content = JsonContent.Create(logInput.AppData);
+                content.Headers.Add("X-API-KEY", _apiKey);
+                using var appDataResponse = await _httpClient.PostAsync("Collect/application", content);
+                _appDataKey = await appDataResponse.Content.ReadAsStringAsync();
+            }
+
             try
             {
+                logInput = logInput with
+                {
+                    AppDataKey = _appDataKey,
+                    AppData = null
+                };
+
                 using var content = JsonContent.Create(logInput);
                 content.Headers.Add("X-API-KEY", _apiKey);
 
                 //_logEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, "Post starting.", sw.Elapsed));
-                //using var httpClient = _httpClientFactory.CreateClient("Quilt4Net.Sender");
                 using var response = await _httpClient.PostAsync("Collect", content);
-                //var response = await _httpClient.PostAsync("Collect", content);
                 //_logEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, "Post complete.", sw.Elapsed));
 
                 if (!response.IsSuccessStatusCode)
@@ -82,11 +95,17 @@ internal class Sender : ISender
         using var content = new HttpRequestMessage(HttpMethod.Get, $"Collect?MinLogLevel={(int)_minLogLevel}");
         content.Headers.Add("X-API-KEY", _apiKey);
 
-        //using var httpClient = _httpClientFactory.CreateClient("Quilt4Net.Sender");
         using var result = await _httpClient.SendAsync(content, cancellationToken);
         if (result.IsSuccessStatusCode)
         {
-            _configuration = await result.Content.ReadFromJsonAsync<Configuration>(cancellationToken: cancellationToken);
+            try
+            {
+                _configuration = await result.Content.ReadFromJsonAsync<Configuration>(cancellationToken: cancellationToken);
+            }
+            catch (Exception e)
+            {
+                Debugger.Break();
+            }
         }
     }
 

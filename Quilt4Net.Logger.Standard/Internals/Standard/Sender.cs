@@ -18,20 +18,10 @@ namespace Quilt4Net.Internals.Standard
             var configuration = configurationDataLoader.Get();
             _httpClient = httpClient;
 
-            //SetBaseAddress(configuration);
-
             _apiKey = configuration.ApiKey;
             _logCompleteEvent = configuration.LogCompleteEvent;
             _logFailEvent = configuration.LogFailEvent;
         }
-
-        //private void SetBaseAddress(ConfigurationData configuration)
-        //{
-        //    var baseAddress = configuration.BaseAddress;
-        //    if (!baseAddress.EndsWith("/")) baseAddress += "/";
-        //    if (!Uri.TryCreate(baseAddress, UriKind.Absolute, out var address)) throw new InvalidOperationException($"Cannot parse '{baseAddress}' to an absolute uri.");
-        //    _httpClient.BaseAddress = address;
-        //}
 
         public void Send(LogInput logInput)
         {

@@ -18,7 +18,6 @@ internal class Quilt4NetLogger : ILogger
         _appData = configuration.AppData;
     }
 
-
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
     {
         var logData = ((IEnumerable<KeyValuePair<string, object>>)state).ToLogData();
