@@ -10,7 +10,9 @@ public static class BuilderExtensions
     {
         builder.Services.AddSingleton<ILoggerProvider>(serviceProvider => new Quilt4NetBlazorProvider(serviceProvider, options));
         builder.Services.AddSingleton<IConfigurationDataLoader, ConfigurationDataLoader>();
-        builder.Services.AddSingleton<ISender, Sender>();
+        builder.Services.AddSingleton<IMessageQueue, MessageQueue>();
+        builder.Services.AddSingleton<ISenderEngine, SenderEngine>();
+        builder.Services.AddHostedService<SenderEngine>();
         builder.Services.AddSingleton<ConfigurationEngine>();
         builder.Services.AddHostedService<ConfigurationEngine>();
         return builder;

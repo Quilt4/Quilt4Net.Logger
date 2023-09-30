@@ -12,12 +12,12 @@ public class Quilt4NetLoggerTests
     public void Basic()
     {
         //Arrange
-        var sender = new Mock<ISender>(MockBehavior.Strict);
-        sender.Setup(x => x.Send(It.IsAny<LogInput>()));
+        var messageQueue = new Mock<IMessageQueue>(MockBehavior.Strict);
+        messageQueue.Setup(x => x.Enqueue(It.IsAny<LogInput>()));
         var configurationDataLoader = new Mock<IConfigurationDataLoader>(MockBehavior.Strict);
         configurationDataLoader.Setup(x => x.Get()).Returns(Mock.Of<ConfigurationData>());
         var categoryName = new Fixture().Create<string>();
-        var sut = new Quilt4NetLogger(sender.Object, configurationDataLoader.Object, categoryName);
+        var sut = new Quilt4NetLogger(messageQueue.Object, configurationDataLoader.Object, categoryName);
 
         var state = new Dictionary<string, object> { { "Some", "Data" } };
 
@@ -28,6 +28,6 @@ public class Quilt4NetLoggerTests
         });
 
         //Assert
-        sender.Verify(x => x.Send(It.IsAny<LogInput>()), Times.Once);
+        messageQueue.Verify(x => x.Enqueue(It.IsAny<LogInput>()), Times.Once);
     }
 }

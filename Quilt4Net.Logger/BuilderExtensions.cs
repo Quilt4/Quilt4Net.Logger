@@ -11,7 +11,9 @@ public static class BuilderExtensions
     {
         builder.Services.AddSingleton<ILoggerProvider>(serviceProvider => new Quilt4NetProvider(serviceProvider, options));
         builder.Services.AddSingleton<IConfigurationDataLoader, ConfigurationDataLoader>();
-        builder.Services.AddSingleton<ISender, Sender>();
+        builder.Services.AddSingleton<IMessageQueue, MessageQueue>();
+        builder.Services.AddSingleton<ISenderEngine, SenderEngine>();
+        builder.Services.AddHostedService<SenderEngine>();
         builder.Services.AddSingleton<ConfigurationEngine>();
         builder.Services.AddHostedService<ConfigurationEngine>();
         return builder;
@@ -21,7 +23,7 @@ public static class BuilderExtensions
     /// This is normally not needed, the engine will start automatically. But if you are running a console implementation hosted services are not started automatically, this method can be called.
     /// </summary>
     /// <param name="serviceProvider"></param>
-    public static void StartQuilt4NetConfigurationEngine(this ServiceProvider serviceProvider)
+    public static void StartQuilt4NetEngine(this ServiceProvider serviceProvider)
     {
         Task.Run(async () =>
         {
@@ -30,13 +32,17 @@ public static class BuilderExtensions
 
             await Task.Delay(TimeSpan.FromMilliseconds(200)); //Wait for configuration to be loaded
 
-            bool started = false;
+            var started = false;
             for(var i = 0; i < 5; i++)
             {
                 try
                 {
                     var configurationEngine = serviceProvider.GetService<ConfigurationEngine>();
                     await configurationEngine.StartAsync(CancellationToken.None);
+
+                    var sender = serviceProvider.GetService<ISenderEngine>();
+                    await sender.StartAsync(CancellationToken.None);
+
                     started = true;
                     break;
                 }
@@ -49,7 +55,7 @@ public static class BuilderExtensions
             try
             {
                 var configurationDataLoader = serviceProvider.GetService<IConfigurationDataLoader>();
-                configurationDataLoader.Get().LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, null, $"The configuration engine was {(started ? "" : "NOT ")}stared.", sw.StopAndGetElapsed()));
+                configurationDataLoader.Get().LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, null, $"The engine was {(started ? "" : "NOT ")}stared.", sw.StopAndGetElapsed()));
             }
             catch (Exception e)
             {

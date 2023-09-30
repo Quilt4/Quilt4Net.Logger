@@ -38,9 +38,9 @@ public class Quilt4NetProvider : ILoggerProvider
 
     public virtual ILogger CreateLogger(string categoryName)
     {
-        var sender = _serviceProvider.GetService<ISender>();
+        var messageQueue = _serviceProvider.GetService<IMessageQueue>();
         var configurationLoader = _serviceProvider.GetService<IConfigurationDataLoader>();
-        return new Quilt4NetLogger(sender, configurationLoader, categoryName);
+        return new Quilt4NetLogger(messageQueue, configurationLoader, categoryName);
     }
 
     public void Dispose()

@@ -4,14 +4,14 @@ namespace Quilt4Net.Internals;
 
 internal class Quilt4NetLogger : ILogger
 {
-    private static ISender _sender;
+    private readonly IMessageQueue _messageQueue;
     private readonly string _categoryName;
     private readonly LogLevel _minLogLevel;
     private readonly LogAppData _appData;
 
-    internal Quilt4NetLogger(ISender sender, IConfigurationDataLoader configurationDataLoader, string categoryName = null)
+    internal Quilt4NetLogger(IMessageQueue messageQueue, IConfigurationDataLoader configurationDataLoader, string categoryName = null)
     {
-        _sender = sender;
+        _messageQueue = messageQueue;
         _categoryName = categoryName;
         var configuration = configurationDataLoader.Get();
         _minLogLevel = configuration.MinLogLevel;
@@ -69,9 +69,10 @@ internal class Quilt4NetLogger : ILogger
             Message = logMessage.Message,
             AppData = _appData,
             Data = logDataItems.ToArray(),
+            TimeInTicks = DateTime.UtcNow.Ticks
         };
 
-        _sender.Send(logInput);
+        _messageQueue.Enqueue(logInput);
     }
 
     protected  virtual LogDataItem ToLogData(KeyValuePair<string, object> x)
