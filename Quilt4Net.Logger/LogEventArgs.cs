@@ -22,19 +22,11 @@ public class LogEventArgs : EventArgs
     {
         get
         {
-            var data = (StatusCode == null ? null : $"StatusCode: '{StatusCode}'");
-            if (!string.IsNullOrEmpty(data)) data = $"({data})";
+            var status = (StatusCode == null ? null : $"StatusCode: '{StatusCode}'");
+            if (!string.IsNullOrEmpty(status)) status = $" ({status})";
             var elapsed = Elapsed == null ? null : $" took {Elapsed?.TotalMilliseconds:0}ms";
 
-            return $"{LogState}{elapsed}. {Message} {data}";
+            return $"{LogState}{elapsed}. {Message}{status}";
         }
     }
-}
-
-public enum ELogState
-{
-    Debug,
-    CallFailed,
-    Exception,
-    Complete
 }

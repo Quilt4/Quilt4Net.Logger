@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 
 namespace Quilt4Net.Internals;
 
@@ -10,9 +9,11 @@ internal class ConfigurationEngine : IHostedService
     private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly SemaphoreSlim _lock = new(1, 1);
     private bool _started;
+    private readonly ConfigurationData _configurationData;
 
-    public ConfigurationEngine(ISenderEngine sender, IMessageQueue messageQueue)
+    public ConfigurationEngine(IConfigurationDataLoader configurationDataLoader, ISenderEngine sender, IMessageQueue messageQueue)
     {
+        _configurationData = configurationDataLoader.Get();
         _sender = sender;
         _messageQueue = messageQueue;
         _cancellationTokenSource = new CancellationTokenSource();
@@ -51,9 +52,8 @@ internal class ConfigurationEngine : IHostedService
                 }
                 catch (Exception e)
                 {
-                    Debugger.Break();
-                    Console.WriteLine(e.Message);
-                    Trace.TraceError(e.Message);
+                    _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Exception, null, null, e.Message));
+                    await Task.Delay(TimeSpan.FromMinutes(15), _cancellationTokenSource.Token);
                 }
                 await Task.Delay(TimeSpan.FromMinutes(5), _cancellationTokenSource.Token);
             }

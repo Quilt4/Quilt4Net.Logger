@@ -30,14 +30,12 @@ internal class SenderEngine : ISenderEngine
                 try
                 {
                     var item = _messageQueue.DequeueOne(_cancellationTokenSource.Token);
-                    //_configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, null, $"There are {_messageQueue.QueueCount} items in queue.", null));
                     await SendAsync(item);
                 }
                 catch (Exception e)
                 {
-                    Debugger.Break();
-                    Console.WriteLine(e.Message);
-                    Trace.TraceError(e.Message);
+                    _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Exception, null, null, e.Message));
+
                 }
             }
         }, _cancellationTokenSource.Token);
@@ -71,16 +69,23 @@ internal class SenderEngine : ISenderEngine
         sw.Start();
         //_logEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, "Initiate send.", sw.Elapsed));
 
-        if (string.IsNullOrEmpty(_appDataKey))
-        {
-            using var content = JsonContent.Create(logInput.AppData);
-            content.Headers.Add("X-API-KEY", _configurationData.ApiKey);
-            using var appDataResponse = await _httpClient.PostAsync("Collect/application", content);
-            _appDataKey = await appDataResponse.Content.ReadAsStringAsync();
-        }
-
         try
         {
+            if (string.IsNullOrEmpty(_appDataKey))
+            {
+                using var appDataContent = JsonContent.Create(logInput.AppData);
+                appDataContent.Headers.Add("X-API-KEY", _configurationData.ApiKey);
+                using var appDataResponse = await _httpClient.PostAsync("Collect/application", appDataContent);
+                if (!appDataResponse.IsSuccessStatusCode)
+                {
+                    await HandleFailedCall(logInput, appDataResponse, sw);
+                }
+                else
+                {
+                    _appDataKey = await appDataResponse.Content.ReadAsStringAsync();
+                }
+            }
+
             logInput = logInput with
             {
                 AppDataKey = _appDataKey,
@@ -91,15 +96,14 @@ internal class SenderEngine : ISenderEngine
             content.Headers.Add("X-API-KEY", _configurationData.ApiKey);
 
             //_logEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, "Post starting.", sw.Elapsed));
-            using var response = await _httpClient.PostAsync("Collect", content);
+            using var response = await _httpClient.PostAsync("Collect/inject", content); //NOTE: Inject directly
+            //using var response = await _httpClient.PostAsync("Collect", content); //NOTE: Add to inbox on server
             //_logEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, "Post complete.", sw.Elapsed));
 
             if (!response.IsSuccessStatusCode)
             {
                 //TODO: Consider requeue
-                var payload = await response.Content.ReadAsStringAsync();
-                var errorMessage = GetErrorMessage(payload);
-                _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.CallFailed, logInput, response.StatusCode, errorMessage?.Message ?? response.ReasonPhrase, sw.StopAndGetElapsed()));
+                await HandleFailedCall(logInput, response, sw);
             }
             else
             {
@@ -115,6 +119,15 @@ internal class SenderEngine : ISenderEngine
         }
     }
 
+    private async Task HandleFailedCall(LogInput logInput, HttpResponseMessage response, Stopwatch sw)
+    {
+        var payload = await response.Content.ReadAsStringAsync();
+        var errorMessage = GetErrorMessage(payload);
+        var message = errorMessage?.Message ?? payload;
+        if (string.IsNullOrEmpty(message)) message = response.ReasonPhrase;
+        _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.CallFailed, logInput, response.StatusCode, message, sw.StopAndGetElapsed()));
+    }
+
     public async Task<Configuration> GetConfigurationAsync(CancellationToken cancellationToken)
     {
         using var content = new HttpRequestMessage(HttpMethod.Get, $"Collect?MinLogLevel={(int)_configurationData.MinLogLevel}");
@@ -126,7 +139,7 @@ internal class SenderEngine : ISenderEngine
             try
             {
                 _configuration = await result.Content.ReadFromJsonAsync<Configuration>(cancellationToken: cancellationToken);
-                _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, result.StatusCode, $"Log level set to '{_configuration.LogLevel}' on channel '{_configuration.Name}'.", null));
+                _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, result.StatusCode, $"Log level set to {_configuration.LogLevel} on channel '{_configuration.Name}'.", null));
                 return _configuration;
             }
             catch (Exception e)
