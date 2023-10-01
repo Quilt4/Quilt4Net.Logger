@@ -9,13 +9,19 @@ public static class BuilderExtensions
 {
     public static ILoggingBuilder Quilt4NetLogger(this ILoggingBuilder builder, Action<Quilt4NetOptions> options = null)
     {
-        builder.Services.AddSingleton<ILoggerProvider>(serviceProvider => new Quilt4NetProvider(serviceProvider, options));
+        builder.Services.AddSingleton<ILoggerProvider>(serviceProvider =>
+        {
+            serviceProvider.StartQuilt4NetEngine();
+            return new Quilt4NetProvider(serviceProvider, options);
+        });
         builder.Services.AddSingleton<IConfigurationDataLoader, ConfigurationDataLoader>();
         builder.Services.AddSingleton<IMessageQueue, MessageQueue>();
         builder.Services.AddSingleton<ISenderEngine, SenderEngine>();
-        builder.Services.AddHostedService<SenderEngine>();
         builder.Services.AddSingleton<ConfigurationEngine>();
+
+        builder.Services.AddHostedService<SenderEngine>();
         builder.Services.AddHostedService<ConfigurationEngine>();
+
         return builder;
     }
 
@@ -23,7 +29,7 @@ public static class BuilderExtensions
     /// This is normally not needed, the engine will start automatically. But if you are running a console implementation hosted services are not started automatically, this method can be called.
     /// </summary>
     /// <param name="serviceProvider"></param>
-    public static void StartQuilt4NetEngine(this ServiceProvider serviceProvider)
+    public static void StartQuilt4NetEngine(this IServiceProvider serviceProvider)
     {
         Task.Run(async () =>
         {

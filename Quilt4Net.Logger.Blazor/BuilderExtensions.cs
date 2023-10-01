@@ -8,13 +8,19 @@ public static class BuilderExtensions
 {
     public static ILoggingBuilder Quilt4NetBlazorLogger(this ILoggingBuilder builder, Action<Quilt4NetOptions> options = null)
     {
-        builder.Services.AddSingleton<ILoggerProvider>(serviceProvider => new Quilt4NetBlazorProvider(serviceProvider, options));
+        builder.Services.AddSingleton<ILoggerProvider>(serviceProvider =>
+        {
+            serviceProvider.StartQuilt4NetEngine();
+            return new Quilt4NetBlazorProvider(serviceProvider, options);
+        });
         builder.Services.AddSingleton<IConfigurationDataLoader, ConfigurationDataLoader>();
         builder.Services.AddSingleton<IMessageQueue, MessageQueue>();
         builder.Services.AddSingleton<ISenderEngine, SenderEngine>();
-        builder.Services.AddHostedService<SenderEngine>();
         builder.Services.AddSingleton<ConfigurationEngine>();
+
+        builder.Services.AddHostedService<SenderEngine>();
         builder.Services.AddHostedService<ConfigurationEngine>();
+
         return builder;
     }
 }

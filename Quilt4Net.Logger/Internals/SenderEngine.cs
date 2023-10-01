@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 namespace Quilt4Net.Internals;
 
@@ -13,6 +14,7 @@ internal class SenderEngine : ISenderEngine
     private readonly CancellationTokenSource _cancellationTokenSource;
     private string _appDataKey;
     private Configuration _configuration = new();
+    private bool _isConfigured;
 
     public SenderEngine(IConfigurationDataLoader configurationDataLoader, IMessageQueue messageQueue)
     {
@@ -28,6 +30,13 @@ internal class SenderEngine : ISenderEngine
         {
             while (!_cancellationTokenSource.IsCancellationRequested)
             {
+                if (!_isConfigured)
+                {
+                    _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, null, "Waiting for Quilt4Net configuration."));
+                    await Task.Delay(TimeSpan.FromSeconds(5), _cancellationTokenSource.Token);
+                    continue;
+                }
+
                 try
                 {
                     var item = _messageQueue.DequeueOne(_cancellationTokenSource.Token);
@@ -36,7 +45,7 @@ internal class SenderEngine : ISenderEngine
                 catch (Exception e)
                 {
                     _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Exception, null, null, e.Message));
-
+                    await Task.Delay(TimeSpan.FromSeconds(5), _cancellationTokenSource.Token);
                 }
             }
         }, _cancellationTokenSource.Token);
@@ -157,7 +166,8 @@ internal class SenderEngine : ISenderEngine
             try
             {
                 _configuration = await result.Content.ReadFromJsonAsync<Configuration>(cancellationToken: cancellationToken);
-                _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, result.StatusCode, $"Log level set to {_configuration.LogLevel} and rate limit tot {_configuration.SendIntervalLimitMilliseconds}ms on channel '{_configuration.Name}'.", null));
+                _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, result.StatusCode, $"Log level set to {(LogLevel)_configuration.LogLevel} and rate limit to {_configuration.SendIntervalLimitMilliseconds}ms on channel '{_configuration.Name}'."));
+                _isConfigured = true;
                 return _configuration;
             }
             catch (Exception e)

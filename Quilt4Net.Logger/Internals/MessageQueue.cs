@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace Quilt4Net.Internals;
+﻿namespace Quilt4Net.Internals;
 
 internal class MessageQueue : IMessageQueue
 {
@@ -24,11 +22,6 @@ internal class MessageQueue : IMessageQueue
         if (_queue.Count != 0 && _queue.Count % 100 == 0)
         {
             _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Warning, null, null, $"Queue is filling up. It contains {QueueCount} items."));
-        }
-
-        if (_queue.Count > 30)
-        {
-            Debugger.Break();
         }
 
         _queue.TryAdd(logInput);
