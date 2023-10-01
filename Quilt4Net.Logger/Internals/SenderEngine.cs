@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -78,7 +79,7 @@ internal class SenderEngine : ISenderEngine
                 using var appDataResponse = await _httpClient.PostAsync("Collect/application", appDataContent);
                 if (!appDataResponse.IsSuccessStatusCode)
                 {
-                    await HandleFailedCall(logInput, appDataResponse, sw);
+                    await ShowFailMessage(logInput, appDataResponse, sw);
                 }
                 else
                 {
@@ -96,20 +97,37 @@ internal class SenderEngine : ISenderEngine
             content.Headers.Add("X-API-KEY", _configurationData.ApiKey);
 
             //_logEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, "Post starting.", sw.Elapsed));
-            using var response = await _httpClient.PostAsync("Collect/inject", content); //NOTE: Inject directly
-            //using var response = await _httpClient.PostAsync("Collect", content); //NOTE: Add to inbox on server
+            //using var response = await _httpClient.PostAsync("Collect/inject", content); //NOTE: Inject directly
+            using var response = await _httpClient.PostAsync("Collect", content); //NOTE: Add to inbox on server
             //_logEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, "Post complete.", sw.Elapsed));
 
             if (!response.IsSuccessStatusCode)
             {
-                //TODO: Consider requeue
-                await HandleFailedCall(logInput, response, sw);
+                if (response.StatusCode == HttpStatusCode.TooManyRequests)
+                {
+                    _messageQueue.Enqueue(logInput);
+                    _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Warning, logInput, response.StatusCode, $"{response.ReasonPhrase} Waiting and retrying.", sw.StopAndGetElapsed()));
+                    await Task.Delay(TimeSpan.FromSeconds(2));
+                }
+                else
+                {
+                    await ShowFailMessage(logInput, response, sw);
+                }
             }
             else
             {
                 string resourceLocation = null;
                 if (response.Headers.TryGetValues("Location", out var locationValues)) resourceLocation = locationValues.FirstOrDefault();
                 _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Complete, logInput, response.StatusCode, resourceLocation, sw.StopAndGetElapsed()));
+            }
+
+            //NOTE: Limit the send rate to server
+            var limit = TimeSpan.FromMilliseconds(_configuration?.SendIntervalLimitMilliseconds ?? 500);
+            var wait = limit - sw.Elapsed;
+            if (wait.Ticks > 0)
+            {
+                _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, null, $"Wait for {wait.TotalMilliseconds:0}ms."));
+                await Task.Delay(wait);
             }
         }
         catch (Exception e)
@@ -119,7 +137,7 @@ internal class SenderEngine : ISenderEngine
         }
     }
 
-    private async Task HandleFailedCall(LogInput logInput, HttpResponseMessage response, Stopwatch sw)
+    private async Task ShowFailMessage(LogInput logInput, HttpResponseMessage response, Stopwatch sw)
     {
         var payload = await response.Content.ReadAsStringAsync();
         var errorMessage = GetErrorMessage(payload);
@@ -139,7 +157,7 @@ internal class SenderEngine : ISenderEngine
             try
             {
                 _configuration = await result.Content.ReadFromJsonAsync<Configuration>(cancellationToken: cancellationToken);
-                _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, result.StatusCode, $"Log level set to {_configuration.LogLevel} on channel '{_configuration.Name}'.", null));
+                _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, result.StatusCode, $"Log level set to {_configuration.LogLevel} and rate limit tot {_configuration.SendIntervalLimitMilliseconds}ms on channel '{_configuration.Name}'.", null));
                 return _configuration;
             }
             catch (Exception e)

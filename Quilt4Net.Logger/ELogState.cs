@@ -3,6 +3,7 @@
 public enum ELogState
 {
     Debug,
+    Warning,
     CallFailed,
     Exception,
     Complete
