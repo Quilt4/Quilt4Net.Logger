@@ -30,14 +30,14 @@ internal class SenderEngine : ISenderEngine
                 try
                 {
                     var item = _messageQueue.DequeueOne(_cancellationTokenSource.Token);
-                    //_configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, null, $"There are {_messageQueue.QueueCount} items in queue.", TimeSpan.Zero));
+                    //_configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, null, $"There are {_messageQueue.QueueCount} items in queue.", null));
                     await SendAsync(item);
                 }
                 catch (Exception e)
                 {
                     Debugger.Break();
-                    Console.WriteLine(e);
-                    throw;
+                    Console.WriteLine(e.Message);
+                    Trace.TraceError(e.Message);
                 }
             }
         }, _cancellationTokenSource.Token);
@@ -61,6 +61,12 @@ internal class SenderEngine : ISenderEngine
 
     private async Task SendAsync(LogInput logInput)
     {
+        if (_configuration?.LogLevel != null && logInput.LogLevel < _configuration.LogLevel)
+        {
+            _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, $"Skip because only logging {_configuration.LogLevel} and above, this message was {logInput.LogLevel}.", null));
+            return;
+        }
+
         var sw = new Stopwatch();
         sw.Start();
         //_logEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, "Initiate send.", sw.Elapsed));
@@ -109,7 +115,7 @@ internal class SenderEngine : ISenderEngine
         }
     }
 
-    public async Task UpdateConfigurationAsync(CancellationToken cancellationToken)
+    public async Task<Configuration> GetConfigurationAsync(CancellationToken cancellationToken)
     {
         using var content = new HttpRequestMessage(HttpMethod.Get, $"Collect?MinLogLevel={(int)_configurationData.MinLogLevel}");
         content.Headers.Add("X-API-KEY", _configurationData.ApiKey);
@@ -120,12 +126,18 @@ internal class SenderEngine : ISenderEngine
             try
             {
                 _configuration = await result.Content.ReadFromJsonAsync<Configuration>(cancellationToken: cancellationToken);
+                _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, result.StatusCode, $"Log level set to '{_configuration.LogLevel}' on channel '{_configuration.Name}'.", null));
+                return _configuration;
             }
             catch (Exception e)
             {
                 Debugger.Break();
+                throw;
             }
         }
+
+        _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.CallFailed, null, result.StatusCode, $"Got '{result.ReasonPhrase}' when calling configuration.", null));
+        return null;
     }
 
     protected virtual ErrorMessage GetErrorMessage(string payload)

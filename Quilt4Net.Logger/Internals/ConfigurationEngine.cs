@@ -6,13 +6,15 @@ namespace Quilt4Net.Internals;
 internal class ConfigurationEngine : IHostedService
 {
     private readonly ISenderEngine _sender;
+    private readonly IMessageQueue _messageQueue;
     private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly SemaphoreSlim _lock = new(1, 1);
     private bool _started;
 
-    public ConfigurationEngine(ISenderEngine sender)
+    public ConfigurationEngine(ISenderEngine sender, IMessageQueue messageQueue)
     {
         _sender = sender;
+        _messageQueue = messageQueue;
         _cancellationTokenSource = new CancellationTokenSource();
     }
 
@@ -35,19 +37,25 @@ internal class ConfigurationEngine : IHostedService
     {
         Task.Run(async () =>
         {
+            await Task.Delay(TimeSpan.FromSeconds(5), _cancellationTokenSource.Token);
+
             while (!_cancellationTokenSource.IsCancellationRequested)
             {
                 try
                 {
-                    await _sender.UpdateConfigurationAsync(_cancellationTokenSource.Token);
-                    await Task.Delay(TimeSpan.FromMinutes(5), _cancellationTokenSource.Token);
+                    var configuration = await _sender.GetConfigurationAsync(_cancellationTokenSource.Token);
+                    if (configuration != null)
+                    {
+                        _messageQueue.SetConfiguration(configuration);
+                    }
                 }
                 catch (Exception e)
                 {
                     Debugger.Break();
-                    Console.WriteLine(e);
-                    throw;
+                    Console.WriteLine(e.Message);
+                    Trace.TraceError(e.Message);
                 }
+                await Task.Delay(TimeSpan.FromMinutes(5), _cancellationTokenSource.Token);
             }
         });
     }
