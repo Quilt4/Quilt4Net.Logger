@@ -8,4 +8,5 @@ public record LogAppData
     public string Machine { get; init; }
     public string SystemUser { get; init; }
     public LogDataItem[] Data { get; init; }
+    public string LoggerInfo { get; init; }
 }
