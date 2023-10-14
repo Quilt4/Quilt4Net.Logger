@@ -103,9 +103,9 @@ internal class SenderEngine : ISenderEngine
 
     private async Task SendAsync(LogInput logInput)
     {
-        if (_configuration?.LogLevel != null && logInput.LogLevel < _configuration.LogLevel)
+        if (_configuration?.Filter?.LogLevel != null && logInput.LogLevel < _configuration?.Filter?.LogLevel)
         {
-            _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, $"Skip because only logging {_configuration.LogLevel} and above, this message was {logInput.LogLevel}."));
+            _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, $"Skip because only logging {_configuration?.Filter?.LogLevel} and above, this message was {logInput.LogLevel}."));
             return;
         }
 
@@ -227,7 +227,7 @@ internal class SenderEngine : ISenderEngine
             try
             {
                 _configuration = await result.Content.ReadFromJsonAsync<Configuration>(cancellationToken: cancellationToken);
-                _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, result.StatusCode, $"Log level set to {(LogLevel)_configuration.LogLevel} and rate limit to {_configuration.SendIntervalLimitMilliseconds}ms on channel '{_configuration.Name}'."));
+                _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, result.StatusCode, $"Log level set to {(LogLevel?)_configuration.Filter?.LogLevel} and rate limit to {_configuration.SendIntervalLimitMilliseconds}ms on channel '{_configuration.Name}'."));
                 _isConfigured = true;
                 _extraDelayMs = 0;
                 return _configuration;
