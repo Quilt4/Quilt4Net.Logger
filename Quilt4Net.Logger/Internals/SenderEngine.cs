@@ -15,6 +15,9 @@ internal class SenderEngine : ISenderEngine
     private string _appDataKey;
     private Configuration _configuration = new();
     private bool _isConfigured;
+    private readonly Stopwatch _sw;
+    private readonly SemaphoreSlim _lock = new (1, 1);
+    private bool _started;
 
     public SenderEngine(IConfigurationDataLoader configurationDataLoader, IMessageQueue messageQueue)
     {
@@ -22,23 +25,50 @@ internal class SenderEngine : ISenderEngine
         _configurationData = configurationDataLoader.Get();
         _httpClient = CreateHttpClient(_configurationData.BaseAddress);
         _cancellationTokenSource = new CancellationTokenSource();
+        _messageQueue.QueueEvent += async (_, e) =>
+        {
+            using var content = JsonContent.Create(new QueueState { Count = e.QueueCount });
+            content.Headers.Add("X-API-KEY", _configurationData.ApiKey);
+            using var response = await _httpClient.PostAsync("Collect/queue", content);
+            if (!response.IsSuccessStatusCode)
+            {
+                await ShowFailMessage(null, response, null);
+            }
+        };
+
+    _sw = new Stopwatch();
     }
 
-    public Task StartAsync(CancellationToken cancellationToken)
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _lock.WaitAsync(cancellationToken);
+            if (_started) return;
+            StartEngine();
+            _started = true;
+        }
+        finally
+        {
+            _lock.Release();
+        }
+    }
+
+    private void StartEngine()
     {
         Task.Run(async () =>
         {
             while (!_cancellationTokenSource.IsCancellationRequested)
             {
-                if (!_isConfigured)
-                {
-                    _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, null, "Waiting for Quilt4Net configuration."));
-                    await Task.Delay(TimeSpan.FromSeconds(5), _cancellationTokenSource.Token);
-                    continue;
-                }
-
                 try
                 {
+                    if (!_isConfigured)
+                    {
+                        _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, null, "Waiting for Quilt4Net configuration."));
+                        await Task.Delay(TimeSpan.FromSeconds(5), _cancellationTokenSource.Token);
+                        continue;
+                    }
+
                     var item = _messageQueue.DequeueOne(_cancellationTokenSource.Token);
                     await SendAsync(item);
                 }
@@ -49,7 +79,6 @@ internal class SenderEngine : ISenderEngine
                 }
             }
         }, _cancellationTokenSource.Token);
-        return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
@@ -71,30 +100,16 @@ internal class SenderEngine : ISenderEngine
     {
         if (_configuration?.LogLevel != null && logInput.LogLevel < _configuration.LogLevel)
         {
-            _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, $"Skip because only logging {_configuration.LogLevel} and above, this message was {logInput.LogLevel}.", null));
+            _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, $"Skip because only logging {_configuration.LogLevel} and above, this message was {logInput.LogLevel}."));
             return;
         }
 
         var sw = new Stopwatch();
         sw.Start();
-        //_logEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, "Initiate send.", sw.Elapsed));
 
         try
         {
-            if (string.IsNullOrEmpty(_appDataKey))
-            {
-                using var appDataContent = JsonContent.Create(logInput.AppData);
-                appDataContent.Headers.Add("X-API-KEY", _configurationData.ApiKey);
-                using var appDataResponse = await _httpClient.PostAsync("Collect/application", appDataContent);
-                if (!appDataResponse.IsSuccessStatusCode)
-                {
-                    await ShowFailMessage(logInput, appDataResponse, sw);
-                }
-                else
-                {
-                    _appDataKey = await appDataResponse.Content.ReadAsStringAsync();
-                }
-            }
+            if (await SendAppData(logInput, sw) == null) return;
 
             logInput = logInput with
             {
@@ -105,10 +120,8 @@ internal class SenderEngine : ISenderEngine
             using var content = JsonContent.Create(logInput);
             content.Headers.Add("X-API-KEY", _configurationData.ApiKey);
 
-            //_logEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, "Post starting.", sw.Elapsed));
-            //using var response = await _httpClient.PostAsync("Collect/inject", content); //NOTE: Inject directly
+            _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Timer, logInput, null, $"{_sw.GetElapsedAndReset().TotalMilliseconds:0} since last send. (LogInput)"));
             using var response = await _httpClient.PostAsync("Collect", content); //NOTE: Add to inbox on server
-            //_logEvent?.Invoke(new LogEventArgs(ELogState.Debug, logInput, null, "Post complete.", sw.Elapsed));
 
             if (!response.IsSuccessStatusCode)
             {
@@ -131,13 +144,7 @@ internal class SenderEngine : ISenderEngine
             }
 
             //NOTE: Limit the send rate to server
-            var limit = TimeSpan.FromMilliseconds(_configuration?.SendIntervalLimitMilliseconds ?? 500);
-            var wait = limit - sw.Elapsed;
-            if (wait.Ticks > 0)
-            {
-                _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, null, $"Wait for {wait.TotalMilliseconds:0}ms."));
-                await Task.Delay(wait);
-            }
+            await Wait(sw);
         }
         catch (Exception e)
         {
@@ -146,13 +153,60 @@ internal class SenderEngine : ISenderEngine
         }
     }
 
+    private async Task Wait(Stopwatch sw)
+    {
+        var limit = TimeSpan.FromMilliseconds(_configuration?.SendIntervalLimitMilliseconds ?? 500);
+        var wait = limit - sw.Elapsed;
+        if (wait.Ticks > 0)
+        {
+            _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, null, $"Wait for {wait.TotalMilliseconds:0}ms."));
+            await Task.Delay(wait);
+            sw.Stop();
+            sw.Reset();
+            sw.Start();
+        }
+    }
+
+    private async Task<string> SendAppData(LogInput logInput, Stopwatch sw)
+    {
+        if (string.IsNullOrEmpty(_appDataKey))
+        {
+            using var appDataContent = JsonContent.Create(logInput.AppData);
+            appDataContent.Headers.Add("X-API-KEY", _configurationData.ApiKey);
+            var message = $"{_sw.GetElapsedAndReset().TotalMilliseconds:0} since last send. (AppData)";
+            _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Timer, logInput, null, message));
+            using var appDataResponse = await _httpClient.PostAsync("Collect/application", appDataContent);
+            if (!appDataResponse.IsSuccessStatusCode)
+            {
+                if (appDataResponse.StatusCode == HttpStatusCode.TooManyRequests)
+                {
+                    _messageQueue.Enqueue(logInput);
+                    _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Warning, logInput, appDataResponse.StatusCode, $"{appDataResponse.ReasonPhrase} Waiting and retrying.", sw.StopAndGetElapsed()));
+                    await Task.Delay(TimeSpan.FromSeconds(2));
+                }
+                else
+                {
+                    await ShowFailMessage(logInput, appDataResponse, sw);
+                }
+            }
+            else
+            {
+                _appDataKey = await appDataResponse.Content.ReadAsStringAsync();
+            }
+
+            await Wait(sw);
+        }
+
+        return _appDataKey;
+    }
+
     private async Task ShowFailMessage(LogInput logInput, HttpResponseMessage response, Stopwatch sw)
     {
         var payload = await response.Content.ReadAsStringAsync();
         var errorMessage = GetErrorMessage(payload);
         var message = errorMessage?.Message ?? payload;
         if (string.IsNullOrEmpty(message)) message = response.ReasonPhrase;
-        _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.CallFailed, logInput, response.StatusCode, message, sw.StopAndGetElapsed()));
+        _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.CallFailed, logInput, response.StatusCode, message, sw?.StopAndGetElapsed()));
     }
 
     public async Task<Configuration> GetConfigurationAsync(CancellationToken cancellationToken)

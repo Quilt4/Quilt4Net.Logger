@@ -5,11 +5,14 @@ internal class MessageQueue : IMessageQueue
     private readonly ConfigurationData _configurationData;
     private readonly BlockingLogLevelCollection _queue = new(new LogLevelQueue(1000));
     private Configuration _configuration = new();
+    private bool _queueInfoSent;
 
     public MessageQueue(IConfigurationDataLoader configurationDataLoader)
     {
         _configurationData = configurationDataLoader.Get();
     }
+
+    public event EventHandler<QueueEventArgs> QueueEvent;
 
     public void Enqueue(LogInput logInput)
     {
@@ -19,8 +22,10 @@ internal class MessageQueue : IMessageQueue
             return;
         }
 
-        if (_queue.Count != 0 && _queue.Count % 100 == 0)
+        if (_queue.Count != 0 && _queue.Count % 10 == 0)
         {
+            _queueInfoSent = true;
+            QueueEvent?.Invoke(this, new QueueEventArgs(QueueCount));
             _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Warning, null, null, $"Queue is filling up. It contains {QueueCount} items."));
         }
 
@@ -32,6 +37,15 @@ internal class MessageQueue : IMessageQueue
     public LogInput DequeueOne(CancellationToken cancellationToken)
     {
         var item = _queue.Take(cancellationToken);
+
+        //NOTE: Send information that the queue now is zero again
+        if (QueueCount == 0 && _queueInfoSent)
+        {
+            QueueEvent?.Invoke(this, new QueueEventArgs(0));
+            _queueInfoSent = false;
+            _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, null, "Queue is now empty again."));
+        }
+
         return item;
     }
 
