@@ -18,6 +18,8 @@ internal class SenderEngine : ISenderEngine
     private readonly Stopwatch _sw;
     private readonly SemaphoreSlim _lock = new (1, 1);
     private bool _started;
+    private int _extraDelayMs;
+    private int _lastQueueCountSent;
 
     public SenderEngine(IConfigurationDataLoader configurationDataLoader, IMessageQueue messageQueue)
     {
@@ -27,6 +29,8 @@ internal class SenderEngine : ISenderEngine
         _cancellationTokenSource = new CancellationTokenSource();
         _messageQueue.QueueEvent += async (_, e) =>
         {
+            if (_lastQueueCountSent == e.QueueCount) return;
+
             using var content = JsonContent.Create(new QueueState { Count = e.QueueCount });
             content.Headers.Add("X-API-KEY", _configurationData.ApiKey);
             using var response = await _httpClient.PostAsync("Collect/queue", content);
@@ -34,6 +38,7 @@ internal class SenderEngine : ISenderEngine
             {
                 await ShowFailMessage(null, response, null);
             }
+            _lastQueueCountSent = e.QueueCount;
         };
 
     _sw = new Stopwatch();
@@ -129,7 +134,8 @@ internal class SenderEngine : ISenderEngine
                 {
                     _messageQueue.Enqueue(logInput);
                     _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Warning, logInput, response.StatusCode, $"{response.ReasonPhrase} Waiting and retrying.", sw.StopAndGetElapsed()));
-                    await Task.Delay(TimeSpan.FromSeconds(2));
+                    _extraDelayMs += 10; //NOTE: Slow down a bit if we are sending too fast.
+                    await Task.Delay(TimeSpan.FromSeconds(1));
                 }
                 else
                 {
@@ -148,14 +154,14 @@ internal class SenderEngine : ISenderEngine
         }
         catch (Exception e)
         {
-            //TODO: Consider requeue
+            Debugger.Break(); //Consider requeue
             _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Exception, logInput, null, e.Message, sw.StopAndGetElapsed()));
         }
     }
 
     private async Task Wait(Stopwatch sw)
     {
-        var limit = TimeSpan.FromMilliseconds(_configuration?.SendIntervalLimitMilliseconds ?? 500);
+        var limit = TimeSpan.FromMilliseconds((_configuration?.SendIntervalLimitMilliseconds ?? 500) + _extraDelayMs);
         var wait = limit - sw.Elapsed;
         if (wait.Ticks > 0)
         {
@@ -182,7 +188,8 @@ internal class SenderEngine : ISenderEngine
                 {
                     _messageQueue.Enqueue(logInput);
                     _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Warning, logInput, appDataResponse.StatusCode, $"{appDataResponse.ReasonPhrase} Waiting and retrying.", sw.StopAndGetElapsed()));
-                    await Task.Delay(TimeSpan.FromSeconds(2));
+                    _extraDelayMs += 10; //NOTE: Slow down a bit if we are sending too fast.
+                    await Task.Delay(TimeSpan.FromSeconds(1));
                 }
                 else
                 {
@@ -222,16 +229,18 @@ internal class SenderEngine : ISenderEngine
                 _configuration = await result.Content.ReadFromJsonAsync<Configuration>(cancellationToken: cancellationToken);
                 _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, result.StatusCode, $"Log level set to {(LogLevel)_configuration.LogLevel} and rate limit to {_configuration.SendIntervalLimitMilliseconds}ms on channel '{_configuration.Name}'."));
                 _isConfigured = true;
+                _extraDelayMs = 0;
                 return _configuration;
             }
             catch (Exception e)
             {
                 Debugger.Break();
+                _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Exception, null, null, e.Message));
                 throw;
             }
         }
 
-        _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.CallFailed, null, result.StatusCode, $"Got '{result.ReasonPhrase}' when calling configuration.", null));
+        _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.CallFailed, null, result.StatusCode, $"Got '{result.ReasonPhrase}' when calling configuration."));
         return null;
     }
 
