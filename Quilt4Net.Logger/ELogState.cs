@@ -6,5 +6,6 @@ public enum ELogState
     Warning,
     CallFailed,
     Exception,
-    Complete
+    Complete,
+    Timer
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace Quilt4Net.Internals;
 
@@ -62,6 +63,8 @@ internal class Quilt4NetLogger : ILogger
             logDataItems.Add(new LogDataItem { Key = "Q.StackTrace", Value = e.StackTrace, Type = e.StackTrace?.GetType().Name });
         }
 
+        var assemblyName = Assembly.GetAssembly(typeof(LogInput))?.GetName();
+
         var logInput = new LogInput
         {
             CategoryName = _categoryName,
@@ -69,7 +72,8 @@ internal class Quilt4NetLogger : ILogger
             Message = logMessage.Message,
             AppData = _appData,
             Data = logDataItems.ToArray(),
-            TimeInTicks = DateTime.UtcNow.Ticks
+            TimeInTicks = DateTime.UtcNow.Ticks,
+            LogLevelInfo = $"{assemblyName?.Name} {assemblyName?.Version}".Trim().NullIfEmpty()
         };
 
         _messageQueue.Enqueue(logInput);

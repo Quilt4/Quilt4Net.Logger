@@ -38,7 +38,7 @@ internal class ConfigurationEngine : IHostedService
     {
         Task.Run(async () =>
         {
-            await Task.Delay(TimeSpan.FromSeconds(5), _cancellationTokenSource.Token);
+            //await Task.Delay(TimeSpan.FromSeconds(5), _cancellationTokenSource.Token);
 
             while (!_cancellationTokenSource.IsCancellationRequested)
             {
@@ -49,13 +49,14 @@ internal class ConfigurationEngine : IHostedService
                     {
                         _messageQueue.SetConfiguration(configuration);
                     }
+
+                    await Task.Delay(TimeSpan.FromMinutes(5), _cancellationTokenSource.Token);
                 }
                 catch (Exception e)
                 {
                     _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Exception, null, null, e.Message));
                     await Task.Delay(TimeSpan.FromMinutes(15), _cancellationTokenSource.Token);
                 }
-                await Task.Delay(TimeSpan.FromMinutes(5), _cancellationTokenSource.Token);
             }
         });
     }

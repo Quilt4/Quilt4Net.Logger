@@ -10,4 +10,5 @@ public record LogInput
     public LogSessionData SessionData { get; init; }
     public LogDataItem[] Data { get; init; }
     public long? TimeInTicks { get; init; }
+    public string LogLevelInfo { get; init; }
 }
