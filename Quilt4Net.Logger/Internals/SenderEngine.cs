@@ -32,7 +32,7 @@ internal class SenderEngine : ISenderEngine
             if (_lastQueueCountSent == e.QueueCount) return;
 
             using var content = JsonContent.Create(new QueueState { Count = e.QueueCount });
-            content.Headers.Add("X-API-KEY", _configurationData.ApiKey);
+            //content.Headers.Add("X-API-KEY", _configurationData.ApiKey);
             using var response = await _httpClient.PostAsync("Collect/queue", content);
             if (!response.IsSuccessStatusCode)
             {
@@ -97,6 +97,8 @@ internal class SenderEngine : ISenderEngine
         if (!baseAddress.EndsWith("/")) baseAddress += "/";
         if (!Uri.TryCreate(baseAddress, UriKind.Absolute, out var address)) throw new InvalidOperationException($"Cannot parse '{baseAddress}' to an absolute uri.");
         var httpClient = new HttpClient();
+        httpClient.DefaultRequestHeaders.Add("mode", "no-cors");
+        httpClient.DefaultRequestHeaders.Add("X-API-KEY", _configurationData.ApiKey);
         httpClient.BaseAddress = address;
         return httpClient;
     }
@@ -123,7 +125,7 @@ internal class SenderEngine : ISenderEngine
             };
 
             using var content = JsonContent.Create(logInput);
-            content.Headers.Add("X-API-KEY", _configurationData.ApiKey);
+            //content.Headers.Add("X-API-KEY", _configurationData.ApiKey);
 
             _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Timer, logInput, null, $"{_sw.GetElapsedAndReset().TotalMilliseconds:0} since last send. (LogInput)"));
             using var response = await _httpClient.PostAsync("Collect", content); //NOTE: Add to inbox on server
@@ -178,7 +180,7 @@ internal class SenderEngine : ISenderEngine
         if (string.IsNullOrEmpty(_appDataKey))
         {
             using var appDataContent = JsonContent.Create(logInput.AppData);
-            appDataContent.Headers.Add("X-API-KEY", _configurationData.ApiKey);
+            //appDataContent.Headers.Add("X-API-KEY", _configurationData.ApiKey);
             var message = $"{_sw.GetElapsedAndReset().TotalMilliseconds:0} since last send. (AppData)";
             _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Timer, logInput, null, message));
             using var appDataResponse = await _httpClient.PostAsync("Collect/application", appDataContent);
@@ -219,7 +221,7 @@ internal class SenderEngine : ISenderEngine
     public async Task<Configuration> GetConfigurationAsync(CancellationToken cancellationToken)
     {
         using var content = new HttpRequestMessage(HttpMethod.Get, $"Collect?MinLogLevel={(int)_configurationData.MinLogLevel}");
-        content.Headers.Add("X-API-KEY", _configurationData.ApiKey);
+        //content.Headers.Add("X-API-KEY", _configurationData.ApiKey);
 
         using var result = await _httpClient.SendAsync(content, cancellationToken);
         if (result.IsSuccessStatusCode)
