@@ -31,7 +31,8 @@ public class Quilt4NetProvider : ILoggerProvider
                 ApiKey = o.ApiKey,
                 MinLogLevel = minLogLevel,
                 AppData = appData,
-                LogEvent = o.LogEvent
+                LogEvent = o.LogEvent,
+                HttpClientFactory = o.HttpClientFactory,
             };
         });
     }

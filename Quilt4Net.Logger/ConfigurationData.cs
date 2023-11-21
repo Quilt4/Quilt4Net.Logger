@@ -9,4 +9,5 @@ internal record ConfigurationData
     public LogLevel MinLogLevel { get; init; }
     public LogAppData AppData { get; init; }
     public Action<LogEventArgs> LogEvent { get; init; }
+    public Func<HttpClient> HttpClientFactory { get; init; }
 }

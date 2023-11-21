@@ -96,7 +96,7 @@ internal class SenderEngine : ISenderEngine
     {
         if (!baseAddress.EndsWith("/")) baseAddress += "/";
         if (!Uri.TryCreate(baseAddress, UriKind.Absolute, out var address)) throw new InvalidOperationException($"Cannot parse '{baseAddress}' to an absolute uri.");
-        var httpClient = new HttpClient();
+        var httpClient = _configurationData.HttpClientFactory?.Invoke() ?? new HttpClient();
         httpClient.DefaultRequestHeaders.Add("mode", "no-cors");
         httpClient.DefaultRequestHeaders.Add("X-API-KEY", _configurationData.ApiKey);
         httpClient.BaseAddress = address;
