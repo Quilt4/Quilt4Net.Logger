@@ -18,7 +18,6 @@ internal class SenderEngine : ISenderEngine
     private readonly Stopwatch _sw;
     private readonly SemaphoreSlim _lock = new (1, 1);
     private bool _started;
-    private int _extraDelayMs;
     private int _lastQueueCountSent;
 
     public SenderEngine(IConfigurationDataLoader configurationDataLoader, IMessageQueue messageQueue)
@@ -136,8 +135,8 @@ internal class SenderEngine : ISenderEngine
                 {
                     _messageQueue.Enqueue(logInput);
                     _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Warning, logInput, response.StatusCode, $"{response.ReasonPhrase} Waiting and retrying.", sw.StopAndGetElapsed()));
-                    _extraDelayMs += 10; //NOTE: Slow down a bit if we are sending too fast.
-                    await Task.Delay(TimeSpan.FromSeconds(1));
+                    await GetConfigurationAsync(CancellationToken.None);
+                    await Task.Delay(TimeSpan.FromMilliseconds(1000));
                 }
                 else
                 {
@@ -163,7 +162,7 @@ internal class SenderEngine : ISenderEngine
 
     private async Task Wait(Stopwatch sw)
     {
-        var limit = TimeSpan.FromMilliseconds((_configuration?.SendIntervalLimitMilliseconds ?? 500) + _extraDelayMs);
+        var limit = TimeSpan.FromMilliseconds((_configuration?.SendIntervalLimitMilliseconds ?? 500));
         var wait = limit - sw.Elapsed;
         if (wait.Ticks > 0)
         {
@@ -190,8 +189,8 @@ internal class SenderEngine : ISenderEngine
                 {
                     _messageQueue.Enqueue(logInput);
                     _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Warning, logInput, appDataResponse.StatusCode, $"{appDataResponse.ReasonPhrase} Waiting and retrying.", sw.StopAndGetElapsed()));
-                    _extraDelayMs += 10; //NOTE: Slow down a bit if we are sending too fast.
-                    await Task.Delay(TimeSpan.FromSeconds(1));
+                    await GetConfigurationAsync(CancellationToken.None);
+                    await Task.Delay(TimeSpan.FromMilliseconds(1000));
                 }
                 else
                 {
@@ -231,7 +230,6 @@ internal class SenderEngine : ISenderEngine
                 _configuration = await result.Content.ReadFromJsonAsync<Configuration>(cancellationToken: cancellationToken);
                 _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, result.StatusCode, $"Log level set to {(LogLevel?)_configuration.Filter?.LogLevel} and rate limit to {_configuration.SendIntervalLimitMilliseconds}ms on channel '{_configuration.Name}'."));
                 _isConfigured = true;
-                _extraDelayMs = 0;
                 return _configuration;
             }
             catch (Exception e)
