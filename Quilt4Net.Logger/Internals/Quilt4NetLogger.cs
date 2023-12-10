@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace Quilt4Net.Internals;
 
@@ -66,15 +67,18 @@ internal class Quilt4NetLogger : ILogger
 
         //var assemblyName = Assembly.GetAssembly(typeof(LogInput))?.GetName();
 
+        //TODO: Append all data here.
+        //Debugger.Break();
+
         var logInput = new LogInput
         {
             CategoryName = _categoryName,
             LogLevel = (int)logMessage.LogLevel,
             Message = logMessage.Message,
-            AppData = _appData,
+            //AppData = _appData,
             Data = logDataItems.ToArray(),
             TimeInTicks = DateTime.UtcNow.Ticks,
-            SessionData = _sessionData
+            //SessionData = _sessionData
             //LogLevelInfo = $"{assemblyName?.Name} {assemblyName?.Version}".Trim().NullIfEmpty()
         };
 

@@ -73,7 +73,6 @@ public class Quilt4NetProvider : ILoggerProvider
         {
             Application = applicationName ?? assemblyName?.Name,
             Version = assemblyName?.Version?.ToString(),
-            //Data = o.LoggingDefaultData.GetData().Select(ToLogData).ToArray(),
             LoggerInfo = $"{loggerInfo.Name} {loggerInfo.Version}"
         };
 
@@ -88,7 +87,7 @@ public class Quilt4NetProvider : ILoggerProvider
             Machine = Environment.MachineName,
             SystemUser = Environment.UserName,
             Data = o.LoggingDefaultData.GetData().Select(ToLogData).ToArray(),
-            ClientTime = DateTime.UtcNow,
+            ClientTime = DateTimeOffset.Now,
             CurrentUser = null,
         };
 
