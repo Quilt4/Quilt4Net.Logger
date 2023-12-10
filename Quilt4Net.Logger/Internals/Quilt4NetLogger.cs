@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace Quilt4Net.Internals;
 
@@ -9,6 +8,7 @@ internal class Quilt4NetLogger : ILogger
     private readonly string _categoryName;
     private readonly LogLevel _minLogLevel;
     private readonly LogAppData _appData;
+    private readonly LogSessionData _sessionData;
 
     internal Quilt4NetLogger(IMessageQueue messageQueue, IConfigurationDataLoader configurationDataLoader, string categoryName = null)
     {
@@ -17,6 +17,7 @@ internal class Quilt4NetLogger : ILogger
         var configuration = configurationDataLoader.Get();
         _minLogLevel = configuration.MinLogLevel;
         _appData = configuration.AppData;
+        _sessionData = configuration.SessionData;
     }
 
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
@@ -63,7 +64,7 @@ internal class Quilt4NetLogger : ILogger
             logDataItems.Add(new LogDataItem { Key = "Q.StackTrace", Value = e.StackTrace, Type = e.StackTrace?.GetType().Name });
         }
 
-        var assemblyName = Assembly.GetAssembly(typeof(LogInput))?.GetName();
+        //var assemblyName = Assembly.GetAssembly(typeof(LogInput))?.GetName();
 
         var logInput = new LogInput
         {
@@ -73,7 +74,8 @@ internal class Quilt4NetLogger : ILogger
             AppData = _appData,
             Data = logDataItems.ToArray(),
             TimeInTicks = DateTime.UtcNow.Ticks,
-            LogLevelInfo = $"{assemblyName?.Name} {assemblyName?.Version}".Trim().NullIfEmpty()
+            SessionData = _sessionData
+            //LogLevelInfo = $"{assemblyName?.Name} {assemblyName?.Version}".Trim().NullIfEmpty()
         };
 
         _messageQueue.Enqueue(logInput);
