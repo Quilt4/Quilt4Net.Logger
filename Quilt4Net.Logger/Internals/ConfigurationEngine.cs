@@ -38,8 +38,6 @@ internal class ConfigurationEngine : IHostedService
     {
         Task.Run(async () =>
         {
-            //await Task.Delay(TimeSpan.FromSeconds(5), _cancellationTokenSource.Token);
-
             while (!_cancellationTokenSource.IsCancellationRequested)
             {
                 try

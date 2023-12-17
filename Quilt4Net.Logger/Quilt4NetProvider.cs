@@ -23,7 +23,10 @@ public class Quilt4NetProvider : ILoggerProvider
             var configuration = serviceProvider.GetService<IConfiguration>();
             var o = LoadQuilt4NetOptions(configuration, options);
             var minLogLevel = Enum.TryParse(configuration?.GetSection("Logging").GetSection("LogLevel").GetSection("Default").Value, true, out LogLevel level) ? level : LogLevel.Information;
-            var appData = GetLoggerData(configuration, GetAppName(), o);
+
+            var appName = GetAppName();
+            var appData = GetAppData(configuration, appName.ApplicationName, o);
+            var sessionData = GetSessionData(configuration, appName.EnvironmentName, o);
 
             return new ConfigurationData
             {
@@ -31,6 +34,7 @@ public class Quilt4NetProvider : ILoggerProvider
                 ApiKey = o.ApiKey,
                 MinLogLevel = minLogLevel,
                 AppData = appData,
+                SessionData = sessionData,
                 LogEvent = o.LogEvent,
                 HttpClientFactory = o.HttpClientFactory,
             };
@@ -60,21 +64,34 @@ public class Quilt4NetProvider : ILoggerProvider
         return o;
     }
 
-    private LogAppData GetLoggerData(IConfiguration configuration, (string EnvironmentName, string ApplicationName) name, Quilt4NetOptions o)
+    private LogAppData GetAppData(IConfiguration configuration, string applicationName, Quilt4NetOptions o)
     {
         var assemblyName = Assembly.GetEntryAssembly()?.GetName();
+        var loggerInfo = Assembly.GetExecutingAssembly().GetName();
 
-        var appData = new LogAppData
+        var data = new LogAppData
         {
-            Environment = name.EnvironmentName ?? configuration["Environment"],
-            Application = name.ApplicationName ?? assemblyName?.Name,
+            Application = applicationName ?? assemblyName?.Name,
             Version = assemblyName?.Version?.ToString(),
+            LoggerInfo = $"{loggerInfo.Name} {loggerInfo.Version}"
+        };
+
+        return data;
+    }
+
+    private LogSessionData GetSessionData(IConfiguration configuration, string environmentName, Quilt4NetOptions o)
+    {
+        var data = new LogSessionData
+        {
+            Environment = environmentName ?? configuration["Environment"],
             Machine = Environment.MachineName,
             SystemUser = Environment.UserName,
             Data = o.LoggingDefaultData.GetData().Select(ToLogData).ToArray(),
+            ClientTime = DateTimeOffset.Now,
+            CurrentUser = null,
         };
 
-        return appData;
+        return data;
     }
 
     private LogDataItem ToLogData(KeyValuePair<string, object> x)

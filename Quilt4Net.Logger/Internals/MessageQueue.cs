@@ -16,7 +16,7 @@ internal class MessageQueue : IMessageQueue
 
     public void Enqueue(LogInput logInput)
     {
-        if (!_configuration?.Filter.ShouldLog(logInput.LogLevel) ?? false)
+        if (!_configuration.Filter.ShouldLog(logInput.LogLevel))
         {
             _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Warning, logInput, null, $"Skip because only logging {_configuration?.Filter.LogLevel} and above, this message was {logInput.LogLevel}."));
             return;

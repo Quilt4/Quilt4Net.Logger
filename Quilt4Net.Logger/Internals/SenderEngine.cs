@@ -12,14 +12,14 @@ internal class SenderEngine : ISenderEngine
     private readonly ConfigurationData _configurationData;
     private readonly HttpClient _httpClient;
     private readonly CancellationTokenSource _cancellationTokenSource;
-    private string _appDataKey;
     private Configuration _configuration = new();
     private bool _isConfigured;
     private readonly Stopwatch _sw;
     private readonly SemaphoreSlim _lock = new (1, 1);
     private bool _started;
-    private int _extraDelayMs;
     private int _lastQueueCountSent;
+    private string _appDataKey;
+    private string _sessionDataKey;
 
     public SenderEngine(IConfigurationDataLoader configurationDataLoader, IMessageQueue messageQueue)
     {
@@ -30,9 +30,9 @@ internal class SenderEngine : ISenderEngine
         _messageQueue.QueueEvent += async (_, e) =>
         {
             if (_lastQueueCountSent == e.QueueCount) return;
+            if (!_isConfigured) return;
 
             using var content = JsonContent.Create(new QueueState { Count = e.QueueCount });
-            //content.Headers.Add("X-API-KEY", _configurationData.ApiKey);
             using var response = await _httpClient.PostAsync("Collect/queue", content);
             if (!response.IsSuccessStatusCode)
             {
@@ -116,17 +116,13 @@ internal class SenderEngine : ISenderEngine
 
         try
         {
-            if (await SendAppData(logInput, sw) == null) return;
-
             logInput = logInput with
             {
                 AppDataKey = _appDataKey,
-                AppData = null
+                SessionDataKey = _sessionDataKey
             };
 
             using var content = JsonContent.Create(logInput);
-            //content.Headers.Add("X-API-KEY", _configurationData.ApiKey);
-
             _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Timer, logInput, null, $"{_sw.GetElapsedAndReset().TotalMilliseconds:0} since last send. (LogInput)"));
             using var response = await _httpClient.PostAsync("Collect", content); //NOTE: Add to inbox on server
 
@@ -136,8 +132,8 @@ internal class SenderEngine : ISenderEngine
                 {
                     _messageQueue.Enqueue(logInput);
                     _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Warning, logInput, response.StatusCode, $"{response.ReasonPhrase} Waiting and retrying.", sw.StopAndGetElapsed()));
-                    _extraDelayMs += 10; //NOTE: Slow down a bit if we are sending too fast.
-                    await Task.Delay(TimeSpan.FromSeconds(1));
+                    await GetConfigurationAsync(CancellationToken.None);
+                    await Task.Delay(TimeSpan.FromMilliseconds(1000));
                 }
                 else
                 {
@@ -163,7 +159,7 @@ internal class SenderEngine : ISenderEngine
 
     private async Task Wait(Stopwatch sw)
     {
-        var limit = TimeSpan.FromMilliseconds((_configuration?.SendIntervalLimitMilliseconds ?? 500) + _extraDelayMs);
+        var limit = TimeSpan.FromMilliseconds((_configuration?.SendIntervalLimitMilliseconds ?? 500));
         var wait = limit - sw.Elapsed;
         if (wait.Ticks > 0)
         {
@@ -175,39 +171,40 @@ internal class SenderEngine : ISenderEngine
         }
     }
 
-    private async Task<string> SendAppData(LogInput logInput, Stopwatch sw)
-    {
-        if (string.IsNullOrEmpty(_appDataKey))
-        {
-            using var appDataContent = JsonContent.Create(logInput.AppData);
-            //appDataContent.Headers.Add("X-API-KEY", _configurationData.ApiKey);
-            var message = $"{_sw.GetElapsedAndReset().TotalMilliseconds:0} since last send. (AppData)";
-            _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Timer, logInput, null, message));
-            using var appDataResponse = await _httpClient.PostAsync("Collect/application", appDataContent);
-            if (!appDataResponse.IsSuccessStatusCode)
-            {
-                if (appDataResponse.StatusCode == HttpStatusCode.TooManyRequests)
-                {
-                    _messageQueue.Enqueue(logInput);
-                    _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Warning, logInput, appDataResponse.StatusCode, $"{appDataResponse.ReasonPhrase} Waiting and retrying.", sw.StopAndGetElapsed()));
-                    _extraDelayMs += 10; //NOTE: Slow down a bit if we are sending too fast.
-                    await Task.Delay(TimeSpan.FromSeconds(1));
-                }
-                else
-                {
-                    await ShowFailMessage(logInput, appDataResponse, sw);
-                }
-            }
-            else
-            {
-                _appDataKey = await appDataResponse.Content.ReadAsStringAsync();
-            }
+    //private async Task<string> SendAppData(LogInput logInput, Stopwatch sw)
+    //{
+    //    //if (string.IsNullOrEmpty(_appDataKey))
+    //    //{
+    //    //    using var appDataContent = JsonContent.Create(logInput.AppData);
+    //    //    //appDataContent.Headers.Add("X-API-KEY", _configurationData.ApiKey);
+    //    //    var message = $"{_sw.GetElapsedAndReset().TotalMilliseconds:0} since last send. (AppData)";
+    //    //    _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Timer, logInput, null, message));
+    //    //    using var appDataResponse = await _httpClient.PostAsync("Collect/application", appDataContent);
+    //    //    if (!appDataResponse.IsSuccessStatusCode)
+    //    //    {
+    //    //        if (appDataResponse.StatusCode == HttpStatusCode.TooManyRequests)
+    //    //        {
+    //    //            _messageQueue.Enqueue(logInput);
+    //    //            _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Warning, logInput, appDataResponse.StatusCode, $"{appDataResponse.ReasonPhrase} Waiting and retrying.", sw.StopAndGetElapsed()));
+    //    //            await GetConfigurationAsync(CancellationToken.None);
+    //    //            await Task.Delay(TimeSpan.FromMilliseconds(1000));
+    //    //        }
+    //    //        else
+    //    //        {
+    //    //            await ShowFailMessage(logInput, appDataResponse, sw);
+    //    //        }
+    //    //    }
+    //    //    else
+    //    //    {
+    //    //        _appDataKey = await appDataResponse.Content.ReadAsStringAsync();
+    //    //    }
 
-            await Wait(sw);
-        }
+    //    //    await Wait(sw);
+    //    //}
 
-        return _appDataKey;
-    }
+    //    //return _appDataKey;
+    //    throw new NotImplementedException();
+    //}
 
     private async Task ShowFailMessage(LogInput logInput, HttpResponseMessage response, Stopwatch sw)
     {
@@ -220,18 +217,22 @@ internal class SenderEngine : ISenderEngine
 
     public async Task<Configuration> GetConfigurationAsync(CancellationToken cancellationToken)
     {
-        using var content = new HttpRequestMessage(HttpMethod.Get, $"Collect?MinLogLevel={(int)_configurationData.MinLogLevel}");
-        //content.Headers.Add("X-API-KEY", _configurationData.ApiKey);
-
-        using var result = await _httpClient.SendAsync(content, cancellationToken);
+        using var content = JsonContent.Create(new StartupRequest
+        {
+            AppData = _configurationData.AppData,
+            SessionData = _configurationData.SessionData
+        });
+        using var result = await _httpClient.PostAsync($"Collect/start/{(int)_configurationData.MinLogLevel}", content, cancellationToken);
         if (result.IsSuccessStatusCode)
         {
             try
             {
-                _configuration = await result.Content.ReadFromJsonAsync<Configuration>(cancellationToken: cancellationToken);
+                var response = await result.Content.ReadFromJsonAsync<StartupResponse>(cancellationToken: cancellationToken);
+                _configuration = response.Configuration;
+                _appDataKey = response.AppDataKey;
+                _sessionDataKey = response.SessionDataKey;
                 _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, result.StatusCode, $"Log level set to {(LogLevel?)_configuration.Filter?.LogLevel} and rate limit to {_configuration.SendIntervalLimitMilliseconds}ms on channel '{_configuration.Name}'."));
                 _isConfigured = true;
-                _extraDelayMs = 0;
                 return _configuration;
             }
             catch (Exception e)
