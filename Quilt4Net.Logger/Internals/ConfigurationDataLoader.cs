@@ -15,7 +15,7 @@ internal class ConfigurationDataLoader : IConfigurationDataLoader
 
     public void Set(Func<ConfigurationData> configurationData)
     {
-        if (_configurationData != null) throw new ConfigurationException("ConfigurationData has already been set.");
+        if (_configurationData != null) throw new ConfigurationException("ConfigurationData loader has already been set.");
         _configurationData = configurationData;
     }
 }
