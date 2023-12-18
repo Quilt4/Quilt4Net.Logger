@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace Quilt4Net.Internals;
 
@@ -8,8 +7,8 @@ internal class Quilt4NetLogger : ILogger
     private readonly IMessageQueue _messageQueue;
     private readonly string _categoryName;
     private readonly LogLevel _minLogLevel;
-    private readonly LogAppData _appData;
-    private readonly LogSessionData _sessionData;
+    //private readonly LogAppData _appData;
+    //private readonly LogSessionData _sessionData;
 
     internal Quilt4NetLogger(IMessageQueue messageQueue, IConfigurationDataLoader configurationDataLoader, string categoryName = null)
     {
@@ -17,8 +16,8 @@ internal class Quilt4NetLogger : ILogger
         _categoryName = categoryName;
         var configuration = configurationDataLoader.Get();
         _minLogLevel = configuration.MinLogLevel;
-        _appData = configuration.AppData;
-        _sessionData = configuration.SessionData;
+        //_appData = configuration.AppData;
+        //_sessionData = configuration.SessionData;
     }
 
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
@@ -65,21 +64,14 @@ internal class Quilt4NetLogger : ILogger
             logDataItems.Add(new LogDataItem { Key = "Q.StackTrace", Value = e.StackTrace, Type = e.StackTrace?.GetType().Name });
         }
 
-        //var assemblyName = Assembly.GetAssembly(typeof(LogInput))?.GetName();
-
-        //TODO: Append all data here.
-        //Debugger.Break();
-
+        var dateTime = DateTime.UtcNow;
         var logInput = new LogInput
         {
             CategoryName = _categoryName,
             LogLevel = (int)logMessage.LogLevel,
             Message = logMessage.Message,
-            //AppData = _appData,
             Data = logDataItems.ToArray(),
-            TimeInTicks = DateTime.UtcNow.Ticks,
-            //SessionData = _sessionData
-            //LogLevelInfo = $"{assemblyName?.Name} {assemblyName?.Version}".Trim().NullIfEmpty()
+            TimeInTicks = dateTime.Ticks
         };
 
         _messageQueue.Enqueue(logInput);
