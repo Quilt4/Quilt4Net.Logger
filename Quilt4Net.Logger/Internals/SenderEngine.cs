@@ -222,16 +222,20 @@ internal class SenderEngine : ISenderEngine
             AppData = _configurationData.AppData,
             SessionData = _configurationData.SessionData
         });
+
         using var result = await _httpClient.PostAsync($"Collect/start/{(int)_configurationData.MinLogLevel}", content, cancellationToken);
         if (result.IsSuccessStatusCode)
         {
             try
             {
-                var response = await result.Content.ReadFromJsonAsync<StartupResponse>(cancellationToken: cancellationToken);
+                var responseString = await result.Content.ReadAsStringAsync(cancellationToken);
+                if (string.IsNullOrEmpty(responseString)) return null;
+                var response = JsonSerializer.Deserialize<StartupResponse>(responseString);
                 _configuration = response.Configuration;
                 _appDataKey = response.AppDataKey;
                 _sessionDataKey = response.SessionDataKey;
-                _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, result.StatusCode, $"Log level set to {(LogLevel?)_configuration.Filter?.LogLevel} and rate limit to {_configuration.SendIntervalLimitMilliseconds}ms on channel '{_configuration.Name}'."));
+                if (_configuration == null) return null;
+                _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, result.StatusCode, $"Log level set to {(LogLevel?)_configuration.Filter?.LogLevel} and rate limit to {_configuration?.SendIntervalLimitMilliseconds}ms on channel '{_configuration?.Name}'."));
                 _isConfigured = true;
                 return _configuration;
             }

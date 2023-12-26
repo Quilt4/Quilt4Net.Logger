@@ -53,7 +53,7 @@ internal class ConfigurationEngine : IHostedService
                 catch (Exception e)
                 {
                     _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Exception, null, null, e.Message));
-                    await Task.Delay(TimeSpan.FromMinutes(15), _cancellationTokenSource.Token);
+                    await Task.Delay(TimeSpan.FromMinutes(5), _cancellationTokenSource.Token);
                 }
             }
         });
