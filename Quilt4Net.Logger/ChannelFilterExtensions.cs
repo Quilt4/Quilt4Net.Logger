@@ -1,4 +1,6 @@
-﻿namespace Quilt4Net;
+﻿using Quilt4Net.Dtos;
+
+namespace Quilt4Net;
 
 public static class ChannelFilterExtensions
 {

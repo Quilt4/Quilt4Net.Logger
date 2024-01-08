@@ -1,4 +1,6 @@
-﻿namespace Quilt4Net.Internals;
+﻿using Quilt4Net.Dtos;
+
+namespace Quilt4Net.Internals;
 
 internal interface IConfigurationDataLoader
 {

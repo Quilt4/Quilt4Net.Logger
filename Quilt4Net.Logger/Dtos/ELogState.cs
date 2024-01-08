@@ -1,4 +1,4 @@
-﻿namespace Quilt4Net;
+﻿namespace Quilt4Net.Dtos;
 
 public enum ELogState
 {

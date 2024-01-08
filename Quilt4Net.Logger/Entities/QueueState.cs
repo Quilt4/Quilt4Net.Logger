@@ -1,4 +1,4 @@
-﻿namespace Quilt4Net;
+﻿namespace Quilt4Net.Entities;
 
 public record QueueState
 {

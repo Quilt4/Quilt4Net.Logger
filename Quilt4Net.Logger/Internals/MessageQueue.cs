@@ -1,4 +1,7 @@
-﻿namespace Quilt4Net.Internals;
+﻿using Quilt4Net.Dtos;
+using Quilt4Net.Entities;
+
+namespace Quilt4Net.Internals;
 
 internal class MessageQueue : IMessageQueue
 {

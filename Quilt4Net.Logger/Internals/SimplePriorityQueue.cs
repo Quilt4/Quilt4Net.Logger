@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using Quilt4Net.Dtos;
 
 namespace Quilt4Net.Internals;
 
-public class LogLevelQueue : IProducerConsumerCollection<LogInput>
+internal class LogLevelQueue : IProducerConsumerCollection<LogInput>
 {
     private readonly int _itemLimit;
     private readonly ConcurrentDictionary<int, ConcurrentQueue<LogInput>> _queues = new();

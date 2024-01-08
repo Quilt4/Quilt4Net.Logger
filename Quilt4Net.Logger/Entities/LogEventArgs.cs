@@ -1,6 +1,7 @@
 ﻿using System.Net;
+using Quilt4Net.Dtos;
 
-namespace Quilt4Net;
+namespace Quilt4Net.Entities;
 
 public class LogEventArgs : EventArgs
 {
@@ -22,7 +23,7 @@ public class LogEventArgs : EventArgs
     {
         get
         {
-            var status = (StatusCode == null ? null : $"StatusCode: '{StatusCode}'");
+            var status = StatusCode == null ? null : $"StatusCode: '{StatusCode}'";
             if (!string.IsNullOrEmpty(status)) status = $" ({status})";
             var elapsed = Elapsed == null ? null : $" took {Elapsed?.TotalMilliseconds:0}ms";
 

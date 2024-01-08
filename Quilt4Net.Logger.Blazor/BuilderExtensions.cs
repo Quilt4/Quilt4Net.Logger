@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Quilt4Net.Entities;
 using Quilt4Net.Internals;
 
 namespace Quilt4Net;

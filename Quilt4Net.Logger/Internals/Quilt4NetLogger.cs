@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Quilt4Net.Dtos;
 
 namespace Quilt4Net.Internals;
 

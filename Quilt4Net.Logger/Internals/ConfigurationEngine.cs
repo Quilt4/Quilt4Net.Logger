@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
+using Quilt4Net.Dtos;
+using Quilt4Net.Entities;
 
 namespace Quilt4Net.Internals;
 

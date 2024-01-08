@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using Quilt4Net.Entities;
 
-namespace Quilt4Net;
+namespace Quilt4Net.Dtos;
 
 internal record ConfigurationData
 {

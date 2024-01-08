@@ -3,6 +3,8 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using Quilt4Net.Dtos;
+using Quilt4Net.Entities;
 
 namespace Quilt4Net.Internals;
 
@@ -223,18 +225,24 @@ internal class SenderEngine : ISenderEngine
             SessionData = _configurationData.SessionData
         });
 
+        _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, null, $"Senting start to api. (minLogLevel: {_configurationData.MinLogLevel}"));
         using var result = await _httpClient.PostAsync($"Collect/start/{(int)_configurationData.MinLogLevel}", content, cancellationToken);
+        _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, result.StatusCode, $"Got response from start to api. ({result.ReasonPhrase})"));
         if (result.IsSuccessStatusCode)
         {
             try
             {
                 var responseString = await result.Content.ReadAsStringAsync(cancellationToken);
                 if (string.IsNullOrEmpty(responseString)) return null;
-                var response = JsonSerializer.Deserialize<StartupResponse>(responseString);
+                var response = JsonSerializer.Deserialize<StartupResponse>(responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 _configuration = response.Configuration;
                 _appDataKey = response.AppDataKey;
                 _sessionDataKey = response.SessionDataKey;
-                if (_configuration == null) return null;
+                if (_configuration == null)
+                {
+                    _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Warning, null, null, "Got no configuration in the start response."));
+                    return null;
+                }
                 _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, result.StatusCode, $"Log level set to {(LogLevel?)_configuration.Filter?.LogLevel} and rate limit to {_configuration?.SendIntervalLimitMilliseconds}ms on channel '{_configuration?.Name}'."));
                 _isConfigured = true;
                 return _configuration;

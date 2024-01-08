@@ -1,4 +1,4 @@
-﻿namespace Quilt4Net;
+﻿namespace Quilt4Net.Dtos;
 
 //NOTE: One record per start of the application
 public record LogSessionData
