@@ -4,7 +4,7 @@
 		<TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RootNamespace>Quilt4Net</RootNamespace>
-		<Version>3.1.0</Version>
+		<Version>3.2.0</Version>
 		<Authors>Thargelion AB</Authors>
 		<Company>Thargelion AB</Company>
 		<Product>Quilt4Net Logger</Product>
@@ -38,6 +38,7 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="Quilt4Net.Server" />
 		<InternalsVisibleTo Include="Quilt4Net.Logger.Blazor" />
+		<InternalsVisibleTo Include="Quilt4Net.Logger.Prism" />
 		<InternalsVisibleTo Include="Quilt4Net.Logger.Tests" />
 		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
 	</ItemGroup>
