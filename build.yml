@@ -57,12 +57,12 @@ jobs:
       packagesToPack: '**/Quilt4Net.Logger.csproj'
       versioningScheme: 'byBuildNumber'
 
-  - task: DotNetCoreCLI@2
-    displayName: 'Pack Serilog.Sinks.Quilt4Net'
-    inputs:
-      command: 'pack'
-      packagesToPack: '**/Serilog.Sinks.Quilt4Net.csproj'
-      versioningScheme: 'byBuildNumber'
+  # - task: DotNetCoreCLI@2
+  #   displayName: 'Pack Serilog.Sinks.Quilt4Net'
+  #   inputs:
+  #     command: 'pack'
+  #     packagesToPack: '**/Serilog.Sinks.Quilt4Net.csproj'
+  #     versioningScheme: 'byBuildNumber'
 
   - task: DotNetCoreCLI@2
     displayName: 'Pack Quilt4Net.Logger.Blazor'
