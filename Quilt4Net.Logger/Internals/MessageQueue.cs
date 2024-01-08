@@ -25,7 +25,7 @@ internal class MessageQueue : IMessageQueue
             return;
         }
 
-        if (_queue.Count != 0 && _queue.Count % 10 == 0)
+        if (_queue.Count != 0 && _queue.Count % 20 == 0)
         {
             _queueInfoSent = true;
             QueueEvent?.Invoke(this, new QueueEventArgs(QueueCount));
