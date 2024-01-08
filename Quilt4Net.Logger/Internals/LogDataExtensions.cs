@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Quilt4Net.Dtos;
 
 namespace Quilt4Net.Internals;
 

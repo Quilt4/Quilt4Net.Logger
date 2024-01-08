@@ -1,8 +1,9 @@
 ﻿using System.Collections.Concurrent;
+using Quilt4Net.Dtos;
 
 namespace Quilt4Net.Internals;
 
-public class BlockingLogLevelCollection : BlockingCollection<LogInput>
+internal class BlockingLogLevelCollection : BlockingCollection<LogInput>
 {
     private readonly LogLevelQueue _logLevelQueue;
 

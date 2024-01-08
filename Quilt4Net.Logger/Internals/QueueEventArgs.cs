@@ -1,6 +1,6 @@
 ﻿namespace Quilt4Net.Internals;
 
-public class QueueEventArgs
+internal class QueueEventArgs
 {
     public int QueueCount { get; }
 

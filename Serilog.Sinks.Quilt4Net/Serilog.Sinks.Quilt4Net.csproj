@@ -3,13 +3,12 @@
 	<PropertyGroup>
 		<TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<RootNamespace>Quilt4Net</RootNamespace>
 		<Version>3.2.0</Version>
 		<Authors>Thargelion AB</Authors>
 		<Company>Thargelion AB</Company>
-		<Product>Quilt4Net Logger Blazor</Product>
-		<Tag>Logging Blazor WASM Quilt</Tag>
-		<Description>Native package used to send logg data to Quilt4Net service.</Description>
+		<Product>Quilt4Net Sink for Serilog</Product>
+		<Tag>Logging Serilog Quilt</Tag>
+		<Description>Sink for Serilog used to send logg data to Quilt4Net service.</Description>
 		<PackageIconUrl>https://quilt4net.com/quilt4net-48x48.png</PackageIconUrl>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<PackageProjectUrl>https://github.com/Quilt4/Quilt4Net.Logger</PackageProjectUrl>
@@ -29,10 +28,10 @@
 		</None>
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.25" />
+	  <PackageReference Include="Serilog" Version="3.1.1" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\Quilt4Net.Logger\Quilt4Net.Logger.csproj" />
+		<ProjectReference Include="..\Quilt4Net.Logger\Quilt4Net.Logger.csproj" />
 	</ItemGroup>
 
 </Project>

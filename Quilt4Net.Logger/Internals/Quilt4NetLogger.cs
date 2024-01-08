@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Quilt4Net.Dtos;
 
 namespace Quilt4Net.Internals;
 
@@ -64,14 +65,13 @@ internal class Quilt4NetLogger : ILogger
             logDataItems.Add(new LogDataItem { Key = "Q.StackTrace", Value = e.StackTrace, Type = e.StackTrace?.GetType().Name });
         }
 
-        var dateTime = DateTime.UtcNow;
         var logInput = new LogInput
         {
             CategoryName = _categoryName,
             LogLevel = (int)logMessage.LogLevel,
             Message = logMessage.Message,
             Data = logDataItems.ToArray(),
-            TimeInTicks = dateTime.Ticks
+            TimeInTicks = DateTime.UtcNow.Ticks
         };
 
         _messageQueue.Enqueue(logInput);

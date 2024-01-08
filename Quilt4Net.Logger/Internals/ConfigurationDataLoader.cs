@@ -1,12 +1,10 @@
-﻿namespace Quilt4Net.Internals;
+﻿using Quilt4Net.Dtos;
+
+namespace Quilt4Net.Internals;
 
 internal class ConfigurationDataLoader : IConfigurationDataLoader
 {
     private Func<ConfigurationData> _configurationData;
-
-    public ConfigurationDataLoader()
-    {
-    }
 
     public ConfigurationData Get()
     {

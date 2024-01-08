@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Quilt4Net.Dtos;
 using Quilt4Net.Internals;
 using Xunit;
 

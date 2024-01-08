@@ -1,9 +1,10 @@
 ﻿using System.Reflection;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Quilt4Net.Dtos;
+using Quilt4Net.Entities;
 using Quilt4Net.Internals;
 
 namespace Quilt4Net;
@@ -11,16 +12,21 @@ namespace Quilt4Net;
 [ProviderAlias("Quilt4NetLogger")]
 public class Quilt4NetProvider : ILoggerProvider
 {
-    protected readonly IServiceProvider _serviceProvider;
+    protected readonly IIocProxy _iocProxy;
 
     public Quilt4NetProvider(IServiceProvider serviceProvider, Action<Quilt4NetOptions> options)
+        : this(new ServiceProviderIocProxy(serviceProvider), options)
     {
-        _serviceProvider = serviceProvider;
+    }
 
-        var configurationDataLoader = serviceProvider.GetService<IConfigurationDataLoader>();
+    internal Quilt4NetProvider(IIocProxy iocProxy, Action<Quilt4NetOptions> options)
+    {
+        _iocProxy = iocProxy;
+
+        var configurationDataLoader = _iocProxy.GetService<IConfigurationDataLoader>();
         configurationDataLoader.Set(() =>
         {
-            var configuration = serviceProvider.GetService<IConfiguration>();
+            var configuration = _iocProxy.GetService<IConfiguration>();
             var o = LoadQuilt4NetOptions(configuration, options);
             var minLogLevel = Enum.TryParse(configuration?.GetSection("Logging").GetSection("LogLevel").GetSection("Default").Value, true, out LogLevel level) ? level : LogLevel.Information;
 
@@ -43,8 +49,8 @@ public class Quilt4NetProvider : ILoggerProvider
 
     public virtual ILogger CreateLogger(string categoryName)
     {
-        var messageQueue = _serviceProvider.GetService<IMessageQueue>();
-        var configurationLoader = _serviceProvider.GetService<IConfigurationDataLoader>();
+        var messageQueue = _iocProxy.GetService<IMessageQueue>();
+        var configurationLoader = _iocProxy.GetService<IConfigurationDataLoader>();
         return new Quilt4NetLogger(messageQueue, configurationLoader, categoryName);
     }
 
@@ -71,7 +77,7 @@ public class Quilt4NetProvider : ILoggerProvider
 
         var data = new LogAppData
         {
-            Application = applicationName ?? assemblyName?.Name,
+            Application = configuration?["Application"].NullIfEmpty() ?? applicationName.NullIfEmpty() ?? assemblyName?.Name.NullIfEmpty() ?? "Unknown",
             Version = assemblyName?.Version?.ToString(),
             LoggerInfo = $"{loggerInfo.Name} {loggerInfo.Version}"
         };
@@ -83,7 +89,7 @@ public class Quilt4NetProvider : ILoggerProvider
     {
         var data = new LogSessionData
         {
-            Environment = environmentName ?? configuration["Environment"],
+            Environment = o.Environment.NullIfEmpty() ?? configuration?["Environment"].NullIfEmpty() ?? environmentName.NullIfEmpty() ?? "Unknown",
             Machine = Environment.MachineName,
             SystemUser = Environment.UserName,
             Data = o.LoggingDefaultData.GetData().Select(ToLogData).ToArray(),
@@ -106,7 +112,7 @@ public class Quilt4NetProvider : ILoggerProvider
 
     protected virtual (string EnvironmentName, string ApplicationName) GetAppName()
     {
-        var hostEnvironment = _serviceProvider.GetService<IHostEnvironment>();
+        var hostEnvironment = _iocProxy.GetService<IHostEnvironment>();
         return (hostEnvironment?.EnvironmentName, hostEnvironment?.ApplicationName);
     }
 }
