@@ -1,15 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
+		<TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<RootNamespace>Quilt4Net</RootNamespace>
 		<Version>3.2.0</Version>
 		<Authors>Thargelion AB</Authors>
 		<Company>Thargelion AB</Company>
-		<Product>Quilt4Net Logger Serilog</Product>
+		<Product>Quilt4Net Sink for Serilog</Product>
 		<Tag>Logging Serilog Quilt</Tag>
-		<Description>Native package used to send logg data to Quilt4Net service.</Description>
+		<Description>Sink for Serilog used to send logg data to Quilt4Net service.</Description>
 		<PackageIconUrl>https://quilt4net.com/quilt4net-48x48.png</PackageIconUrl>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<PackageProjectUrl>https://github.com/Quilt4/Quilt4Net.Logger</PackageProjectUrl>
@@ -27,6 +26,9 @@
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Serilog" Version="3.1.1" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Quilt4Net.Logger\Quilt4Net.Logger.csproj" />

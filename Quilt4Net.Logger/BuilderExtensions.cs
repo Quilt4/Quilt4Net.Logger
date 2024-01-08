@@ -7,6 +7,27 @@ using Quilt4Net.Internals;
 
 namespace Quilt4Net;
 
+public interface IIocProxy
+{
+    T GetService<T>();
+}
+
+public class ServiceProviderIocProxy : IIocProxy
+{
+    private readonly IServiceProvider _serviceProvider;
+
+    public ServiceProviderIocProxy(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
+    public T GetService<T>()
+    {
+        return _serviceProvider.GetService<T>();
+    }
+}
+
+
 public static class BuilderExtensions
 {
     public static ILoggingBuilder Quilt4NetLogger(this ILoggingBuilder builder, Action<Quilt4NetOptions> options = null)
@@ -33,6 +54,11 @@ public static class BuilderExtensions
     /// <param name="serviceProvider"></param>
     public static void StartQuilt4NetEngine(this IServiceProvider serviceProvider)
     {
+        StartQuilt4NetEngine(new ServiceProviderIocProxy(serviceProvider));
+    }
+
+    public static void StartQuilt4NetEngine(this IIocProxy iocProxy)
+    {
         Task.Run(async () =>
         {
             var sw = new Stopwatch();
@@ -45,10 +71,10 @@ public static class BuilderExtensions
             {
                 try
                 {
-                    var configurationEngine = serviceProvider.GetService<ConfigurationEngine>();
+                    var configurationEngine = iocProxy.GetService<ConfigurationEngine>();
                     await configurationEngine.StartAsync(CancellationToken.None);
 
-                    var sender = serviceProvider.GetService<ISenderEngine>();
+                    var sender = iocProxy.GetService<ISenderEngine>();
                     await sender.StartAsync(CancellationToken.None);
 
                     started = true;
@@ -62,7 +88,7 @@ public static class BuilderExtensions
 
             try
             {
-                var configurationDataLoader = serviceProvider.GetService<IConfigurationDataLoader>();
+                var configurationDataLoader = iocProxy.GetService<IConfigurationDataLoader>();
                 configurationDataLoader.Get().LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, null, $"The engine was {(started ? "" : "NOT ")}stared.", sw.StopAndGetElapsed()));
             }
             catch (Exception e)

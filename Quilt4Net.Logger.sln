@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quilt4Net.Logger.Blazor", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quilt4Net.Logger.Tests", "Quilt4Net.Logger.Tests\Quilt4Net.Logger.Tests.csproj", "{2BF459CC-363C-4D77-A954-8A75C99F4339}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quilt4Net.Logger.Serilog", "Quilt4Net.Logger.Serilog\Quilt4Net.Logger.Serilog.csproj", "{5073B460-E64A-41BA-94EB-2F06E79B6061}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Sinks.Quilt4Net", "Serilog.Sinks.Quilt4Net\Serilog.Sinks.Quilt4Net.csproj", "{5073B460-E64A-41BA-94EB-2F06E79B6061}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

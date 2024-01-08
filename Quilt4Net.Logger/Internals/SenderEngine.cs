@@ -173,41 +173,6 @@ internal class SenderEngine : ISenderEngine
         }
     }
 
-    //private async Task<string> SendAppData(LogInput logInput, Stopwatch sw)
-    //{
-    //    //if (string.IsNullOrEmpty(_appDataKey))
-    //    //{
-    //    //    using var appDataContent = JsonContent.Create(logInput.AppData);
-    //    //    //appDataContent.Headers.Add("X-API-KEY", _configurationData.ApiKey);
-    //    //    var message = $"{_sw.GetElapsedAndReset().TotalMilliseconds:0} since last send. (AppData)";
-    //    //    _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Timer, logInput, null, message));
-    //    //    using var appDataResponse = await _httpClient.PostAsync("Collect/application", appDataContent);
-    //    //    if (!appDataResponse.IsSuccessStatusCode)
-    //    //    {
-    //    //        if (appDataResponse.StatusCode == HttpStatusCode.TooManyRequests)
-    //    //        {
-    //    //            _messageQueue.Enqueue(logInput);
-    //    //            _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Warning, logInput, appDataResponse.StatusCode, $"{appDataResponse.ReasonPhrase} Waiting and retrying.", sw.StopAndGetElapsed()));
-    //    //            await GetConfigurationAsync(CancellationToken.None);
-    //    //            await Task.Delay(TimeSpan.FromMilliseconds(1000));
-    //    //        }
-    //    //        else
-    //    //        {
-    //    //            await ShowFailMessage(logInput, appDataResponse, sw);
-    //    //        }
-    //    //    }
-    //    //    else
-    //    //    {
-    //    //        _appDataKey = await appDataResponse.Content.ReadAsStringAsync();
-    //    //    }
-
-    //    //    await Wait(sw);
-    //    //}
-
-    //    //return _appDataKey;
-    //    throw new NotImplementedException();
-    //}
-
     private async Task ShowFailMessage(LogInput logInput, HttpResponseMessage response, Stopwatch sw)
     {
         var payload = await response.Content.ReadAsStringAsync();

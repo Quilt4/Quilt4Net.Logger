@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Quilt4Net.Entities;
 
@@ -15,7 +14,7 @@ public class Quilt4NetBlazorProvider : Quilt4NetProvider
 
     protected override (string EnvironmentName, string ApplicationName) GetAppName()
     {
-        var hostEnvironment = _serviceProvider.GetService<IWebAssemblyHostEnvironment>();
+        var hostEnvironment = _iocProxy.GetService<IWebAssemblyHostEnvironment>();
         return (hostEnvironment.Environment, null);
     }
 }

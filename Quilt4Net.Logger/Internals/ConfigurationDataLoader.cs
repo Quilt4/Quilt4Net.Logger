@@ -6,10 +6,6 @@ internal class ConfigurationDataLoader : IConfigurationDataLoader
 {
     private Func<ConfigurationData> _configurationData;
 
-    public ConfigurationDataLoader()
-    {
-    }
-
     public ConfigurationData Get()
     {
         return _configurationData?.Invoke() ?? throw new ConfigurationException("ConfigurationData has not been set.");
