@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Quilt4Net;
 using Quilt4Net.Entities;
 using Quilt4Net.Internals;
+using Quilt4Net.Ioc;
 using Serilog.Configuration;
 using Serilog.Events;
 

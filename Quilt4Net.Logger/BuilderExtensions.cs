@@ -4,29 +4,9 @@ using Microsoft.Extensions.Logging;
 using Quilt4Net.Dtos;
 using Quilt4Net.Entities;
 using Quilt4Net.Internals;
+using Quilt4Net.Ioc;
 
 namespace Quilt4Net;
-
-public interface IIocProxy
-{
-    T GetService<T>();
-}
-
-public class ServiceProviderIocProxy : IIocProxy
-{
-    private readonly IServiceProvider _serviceProvider;
-
-    public ServiceProviderIocProxy(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
-
-    public T GetService<T>()
-    {
-        return _serviceProvider.GetService<T>();
-    }
-}
-
 
 public static class BuilderExtensions
 {

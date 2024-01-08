@@ -2,13 +2,12 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Quilt4Net;
 using Quilt4Net.Entities;
 using Quilt4Net.Internals;
 
-namespace Serilog.Sinks.Quilt4Net;
+namespace Quilt4Net.Ioc;
 
-internal class InstanceContainer : IIocProxy
+public class InstanceContainer : IIocProxy
 {
     private readonly IConfiguration _configuration;
     private readonly IHostEnvironment _hostEnvironment;

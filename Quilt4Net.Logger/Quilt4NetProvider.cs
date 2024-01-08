@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Quilt4Net.Dtos;
 using Quilt4Net.Entities;
 using Quilt4Net.Internals;
+using Quilt4Net.Ioc;
 
 namespace Quilt4Net;
 
@@ -19,7 +20,7 @@ public class Quilt4NetProvider : ILoggerProvider
     {
     }
 
-    internal Quilt4NetProvider(IIocProxy iocProxy, Action<Quilt4NetOptions> options)
+    public Quilt4NetProvider(IIocProxy iocProxy, Action<Quilt4NetOptions> options)
     {
         _iocProxy = iocProxy;
 
