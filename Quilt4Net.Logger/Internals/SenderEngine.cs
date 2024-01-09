@@ -81,6 +81,7 @@ internal class SenderEngine : ISenderEngine
                 }
                 catch (Exception e)
                 {
+                    Debugger.Break();
                     _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Exception, null, null, e.Message));
                     await Task.Delay(TimeSpan.FromSeconds(5), _cancellationTokenSource.Token);
                 }
