@@ -29,19 +29,19 @@ internal class SenderEngine : ISenderEngine
         _configurationData = configurationDataLoader.Get();
         _httpClient = CreateHttpClient(_configurationData.BaseAddress);
         _cancellationTokenSource = new CancellationTokenSource();
-        _messageQueue.QueueEvent += async (_, e) =>
-        {
-            if (_lastQueueCountSent == e.QueueCount) return;
-            if (!_isConfigured) return;
+        //_messageQueue.QueueEvent += async (_, e) =>
+        //{
+        //    if (_lastQueueCountSent == e.QueueCount) return;
+        //    if (!_isConfigured) return;
 
-            using var content = JsonContent.Create(new QueueState { Count = e.QueueCount });
-            using var response = await _httpClient.PostAsync("Collect/queue", content);
-            if (!response.IsSuccessStatusCode)
-            {
-                await ShowFailMessage(null, response, null);
-            }
-            _lastQueueCountSent = e.QueueCount;
-        };
+        //    using var content = JsonContent.Create(new QueueState { Count = e.QueueCount });
+        //    using var response = await _httpClient.PostAsync("Collect/queue", content);
+        //    if (!response.IsSuccessStatusCode)
+        //    {
+        //        await ShowFailMessage(null, response, null);
+        //    }
+        //    _lastQueueCountSent = e.QueueCount;
+        //};
 
     _sw = new Stopwatch();
     }
