@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using System.Diagnostics;
+using System.Text.Json;
 using Quilt4Net.Dtos;
 
 namespace Quilt4Net.Internals;
@@ -7,10 +9,12 @@ internal static class LogDataExtensions
 {
     public static LogDataItem ToLogDataItem(this KeyValuePair<string, object> x)
     {
+        TrySerializeValue(x.Value, out var serialize);
+
         return new LogDataItem
         {
             Key = x.Key,
-            Value = x.Value == null ? null : System.Text.Json.JsonSerializer.Serialize(x.Value),
+            Value = serialize,
             Type = x.Value?.GetType().FullName
         };
     }
@@ -77,5 +81,24 @@ internal static class LogDataExtensions
         data.TryAdd(Constants.OriginalFormat, logMessage.Message);
 
         return data;
+    }
+
+    private static bool TrySerializeValue(object val, out string data)
+    {
+        data = null;
+
+        if (val == null) return false;
+
+        try
+        {
+            data = JsonSerializer.Serialize(val);
+            return true;
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine($"Cannot Serialize value of type '{val.GetType().FullName}'.");
+            Debugger.Break();
+            return false;
+        }
     }
 }
