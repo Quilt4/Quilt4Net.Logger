@@ -44,10 +44,10 @@ public static class BuilderExtensions
             var sw = new Stopwatch();
             sw.Start();
 
-            await Task.Delay(TimeSpan.FromMilliseconds(200)); //Wait for configuration to be loaded
+            await Task.Delay(TimeSpan.FromSeconds(1)); //Wait for configuration to be loaded
 
             var started = false;
-            for(var i = 0; i < 5; i++)
+            for (var i = 0; i < 5; i++)
             {
                 try
                 {
@@ -64,15 +64,23 @@ public static class BuilderExtensions
                 {
                     await Task.Delay(TimeSpan.FromSeconds(1));
                 }
+                catch (Exception e)
+                {
+                    Debugger.Break();
+                    Console.WriteLine($"{e.Message} @{e.StackTrace}");
+                    break;
+                }
             }
 
             try
             {
                 var configurationDataLoader = iocProxy.GetService<IConfigurationDataLoader>();
-                configurationDataLoader.Get().LogEvent?.Invoke(new LogEventArgs(ELogState.Debug, null, null, $"The engine was {(started ? "" : "NOT ")}stared.", sw.StopAndGetElapsed()));
+                var eLogState = started ? ELogState.Debug : ELogState.Warning;
+                configurationDataLoader.Get().LogEvent?.Invoke(new LogEventArgs(eLogState, null, null, $"The engine was {(started ? "" : "NOT ")}stared.", sw.StopAndGetElapsed()));
             }
             catch (Exception e)
             {
+                Debugger.Break();
                 Console.WriteLine($"{e.Message} @{e.StackTrace}");
             }
         });

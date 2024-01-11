@@ -94,10 +94,9 @@ internal static class LogDataExtensions
             data = JsonSerializer.Serialize(val);
             return true;
         }
-        catch
+        catch (Exception e)
         {
-            Debug.WriteLine($"Cannot Serialize value of type '{val.GetType().FullName}'.");
-            Debugger.Break();
+            Debug.WriteLine($"Cannot Serialize value of type '{val.GetType().FullName}'. ErrType: {e.GetType().Name}");
             return false;
         }
     }
