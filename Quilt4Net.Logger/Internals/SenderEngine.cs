@@ -10,16 +10,15 @@ namespace Quilt4Net.Internals;
 
 internal class SenderEngine : ISenderEngine
 {
+    private static readonly SemaphoreSlim _lock = new(1, 1);
     private readonly IMessageQueue _messageQueue;
     private readonly ConfigurationData _configurationData;
     private readonly HttpClient _httpClient;
     private readonly CancellationTokenSource _cancellationTokenSource;
     private Configuration _configuration = new();
     private bool _isConfigured;
-    private readonly Stopwatch _sw;
-    private readonly SemaphoreSlim _lock = new (1, 1);
+    private readonly Stopwatch _sw = new();
     private bool _started;
-    private int _lastQueueCountSent;
     private string _appDataKey;
     private string _sessionDataKey;
 
@@ -29,21 +28,6 @@ internal class SenderEngine : ISenderEngine
         _configurationData = configurationDataLoader.Get();
         _httpClient = CreateHttpClient(_configurationData.BaseAddress);
         _cancellationTokenSource = new CancellationTokenSource();
-        //_messageQueue.QueueEvent += async (_, e) =>
-        //{
-        //    if (_lastQueueCountSent == e.QueueCount) return;
-        //    if (!_isConfigured) return;
-
-        //    using var content = JsonContent.Create(new QueueState { Count = e.QueueCount });
-        //    using var response = await _httpClient.PostAsync("Collect/queue", content);
-        //    if (!response.IsSuccessStatusCode)
-        //    {
-        //        await ShowFailMessage(null, response, null);
-        //    }
-        //    _lastQueueCountSent = e.QueueCount;
-        //};
-
-    _sw = new Stopwatch();
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -81,7 +65,7 @@ internal class SenderEngine : ISenderEngine
                 }
                 catch (Exception e)
                 {
-                    Debugger.Break();
+                    //Debugger.Break();
                     _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Exception, null, null, e.Message));
                     await Task.Delay(TimeSpan.FromSeconds(5), _cancellationTokenSource.Token);
                 }
@@ -155,7 +139,7 @@ internal class SenderEngine : ISenderEngine
         }
         catch (Exception e)
         {
-            Debugger.Break(); //Consider requeue
+            //TODO: Consider requeue
             _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Exception, logInput, null, e.Message, sw.StopAndGetElapsed()));
         }
     }
