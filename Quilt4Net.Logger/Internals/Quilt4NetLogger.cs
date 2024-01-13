@@ -13,7 +13,7 @@ internal class Quilt4NetLogger : ILogger
     {
         _messageQueue = messageQueue;
         _categoryName = categoryName;
-        var configuration = (ConfigurationData)configurationData;
+        var configuration = configurationData;
         _minLogLevel = configuration.MinLogLevel;
     }
 

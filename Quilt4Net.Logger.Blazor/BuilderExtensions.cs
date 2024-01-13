@@ -20,7 +20,7 @@ public static class BuilderExtensions
             var p = (Quilt4NetProvider)serviceProvider.GetService<ILoggerProvider>();
             return p.ConfigurationData;
         });
-        builder.Services.AddSingleton<IConfigurationDataLoader, ConfigurationDataLoader>();
+        //builder.Services.AddSingleton<IConfigurationDataLoader, ConfigurationDataLoader>();
         builder.Services.AddSingleton<IMessageQueue, MessageQueue>();
         builder.Services.AddSingleton<IStateService>(serviceProvider =>
         {
