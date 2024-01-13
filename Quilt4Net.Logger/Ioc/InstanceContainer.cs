@@ -17,6 +17,7 @@ public class InstanceContainer : IIocProxy
     private readonly Lazy<ISenderEngine> _senderEngine;
     private readonly Lazy<IConfigurationEngine> _configurationEngine;
     private readonly Lazy<ILoggerProvider> _quilt4NetProvider;
+    private readonly Lazy<IStateService> _stateService;
 
     public InstanceContainer(IConfiguration configuration, IHostEnvironment hostEnvironment, Action<Quilt4NetOptions> options)
     {
@@ -27,6 +28,7 @@ public class InstanceContainer : IIocProxy
         _messageQueue = new Lazy<IMessageQueue>(() => new MessageQueue(_configurationData.Value));
         _senderEngine = new Lazy<ISenderEngine>(() => new SenderEngine(_configurationData.Value, _messageQueue.Value));
         _configurationEngine = new Lazy<IConfigurationEngine>(() => new ConfigurationEngine(_configurationData.Value, _senderEngine.Value, _messageQueue.Value));
+        _stateService = new Lazy<IStateService>(() => new StateService(_configurationEngine.Value, _senderEngine.Value, _messageQueue.Value, ((Quilt4NetProvider)_quilt4NetProvider.Value).Options));
     }
 
     public T GetService<T>()
@@ -47,6 +49,8 @@ public class InstanceContainer : IIocProxy
                 return (T)_senderEngine.Value;
             case nameof(IMessageQueue):
                 return (T)_messageQueue.Value;
+            case nameof(IStateService):
+                return (T)_stateService.Value;
             default:
                 Debugger.Break();
                 throw new ArgumentOutOfRangeException($"Cannot find instance of type '{typeof(T).Name}'.");
