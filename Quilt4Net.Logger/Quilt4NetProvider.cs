@@ -29,8 +29,8 @@ public class Quilt4NetProvider : ILoggerProvider
         _iocProxy = iocProxy;
         _optionsLoader = options;
 
-        var configurationDataLoader = _iocProxy.GetService<IConfigurationDataLoader>();
-        configurationDataLoader.Set(() => (ConfigurationData)ConfigurationData);
+        //var configurationDataLoader = _iocProxy.GetService<IConfigurationDataLoader>();
+        //configurationDataLoader.Set(() => (ConfigurationData)ConfigurationData);
     }
 
     internal Quilt4NetOptions Options
@@ -74,9 +74,8 @@ public class Quilt4NetProvider : ILoggerProvider
     {
         _stateService ??= _iocProxy.GetService<IStateService>();
         var messageQueue = _iocProxy.GetService<IMessageQueue>();
-        var configurationLoader = _iocProxy.GetService<IConfigurationDataLoader>();
         var configuration = _iocProxy.GetService<IConfigurationData>();
-        return new Quilt4NetLogger(messageQueue, configurationLoader, configuration, categoryName);
+        return new Quilt4NetLogger(messageQueue, configuration, categoryName);
     }
 
     public void Dispose()
