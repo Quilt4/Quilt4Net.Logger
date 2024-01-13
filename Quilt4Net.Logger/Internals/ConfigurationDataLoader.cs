@@ -2,18 +2,20 @@
 
 namespace Quilt4Net.Internals;
 
+[Obsolete("Use ConfigurationData or IConfigurationData instead.")]
 internal class ConfigurationDataLoader : IConfigurationDataLoader
 {
-    private Func<ConfigurationData> _configurationData;
+    private Func<ConfigurationData> _configurationDataLoader;
+    private ConfigurationData _configurationData;
 
     public ConfigurationData Get()
     {
-        return _configurationData?.Invoke() ?? throw new ConfigurationException("ConfigurationData has not been set.");
+        return _configurationData ??= _configurationDataLoader?.Invoke() ?? throw new ConfigurationException("ConfigurationDataLoader has not been set yet.");
     }
 
     public void Set(Func<ConfigurationData> configurationData)
     {
-        if (_configurationData != null) throw new ConfigurationException("ConfigurationData loader has already been set.");
-        _configurationData = configurationData;
+        if (_configurationDataLoader != null) throw new ConfigurationException("ConfigurationData loader has already been set.");
+        _configurationDataLoader = configurationData;
     }
 }

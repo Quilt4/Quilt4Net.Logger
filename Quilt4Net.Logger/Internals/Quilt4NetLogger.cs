@@ -8,17 +8,13 @@ internal class Quilt4NetLogger : ILogger
     private readonly IMessageQueue _messageQueue;
     private readonly string _categoryName;
     private readonly LogLevel _minLogLevel;
-    //private readonly LogAppData _appData;
-    //private readonly LogSessionData _sessionData;
 
-    internal Quilt4NetLogger(IMessageQueue messageQueue, IConfigurationDataLoader configurationDataLoader, string categoryName = null)
+    internal Quilt4NetLogger(IMessageQueue messageQueue, IConfigurationDataLoader configurationDataLoader, IConfigurationData configurationData, string categoryName = null)
     {
         _messageQueue = messageQueue;
         _categoryName = categoryName;
         var configuration = configurationDataLoader.Get();
         _minLogLevel = configuration.MinLogLevel;
-        //_appData = configuration.AppData;
-        //_sessionData = configuration.SessionData;
     }
 
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
@@ -56,6 +52,7 @@ internal class Quilt4NetLogger : ILogger
         {
             logDataItems = logMessage.GetData()
                 .Where(x => x.Key != "Message" && $"{x.Value}" != logMessage.Message)
+                .Where(x => x.Value.GetType().FullName != "System.RuntimeType") //NOTE: Without this, Blazor apps are crashing.
                 .Select(ToLogData)
                 .ToList();
         }

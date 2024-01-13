@@ -14,6 +14,10 @@ namespace Quilt4Net;
 public class Quilt4NetProvider : ILoggerProvider
 {
     protected readonly IIocProxy _iocProxy;
+    private readonly Action<Quilt4NetOptions> _optionsLoader;
+    private IConfigurationData _configurationData;
+    private IStateService _stateService;
+    private Quilt4NetOptions _options;
 
     public Quilt4NetProvider(IServiceProvider serviceProvider, Action<Quilt4NetOptions> options)
         : this(new ServiceProviderIocProxy(serviceProvider), options)
@@ -23,36 +27,77 @@ public class Quilt4NetProvider : ILoggerProvider
     public Quilt4NetProvider(IIocProxy iocProxy, Action<Quilt4NetOptions> options)
     {
         _iocProxy = iocProxy;
+        _optionsLoader = options;
+
+        //var configuration = _iocProxy.GetService<IConfiguration>();
+        //var o = LoadQuilt4NetOptions(configuration, options);
+
+        //var minLogLevel = Enum.TryParse(configuration?.GetSection("Logging").GetSection("LogLevel").GetSection("Default").Value, true, out LogLevel level) ? level : LogLevel.Information;
+        //var appName = GetAppName(); //TODO: Refactor
+        //var appData = GetAppData(configuration, appName.ApplicationName, o);
+        //var sessionData = GetSessionData(configuration, appName.EnvironmentName, o);
+        //var configurationData = new ConfigurationData
+        //{
+        //    BaseAddress = o.BaseAddress,
+        //    ApiKey = o.ApiKey,
+        //    MinLogLevel = minLogLevel,
+        //    AppData = appData,
+        //    SessionData = sessionData,
+        //    LogEvent = o.LogEvent,
+        //    HttpClientFactory = o.HttpClientFactory,
+        //};
+
+        //TODO: This is the one provider. Perhaps this also can handle states
+        //o.LogStateEvent?.Invoke(new StateChangedEventArgs(ELoggerState.Running, -1));
 
         var configurationDataLoader = _iocProxy.GetService<IConfigurationDataLoader>();
-        configurationDataLoader.Set(() =>
+        configurationDataLoader.Set(() => (ConfigurationData)ConfigurationData);
+    }
+
+    internal Quilt4NetOptions Options
+    {
+        get
         {
+            if (_options != null) return _options;
+
             var configuration = _iocProxy.GetService<IConfiguration>();
-            var o = LoadQuilt4NetOptions(configuration, options);
+            _options ??= LoadQuilt4NetOptions(configuration, _optionsLoader);
+            return _options;
+        }
+    }
+
+    internal IConfigurationData ConfigurationData
+    {
+        get
+        {
+            if (_configurationData != null) return _configurationData;
+
+            var configuration = _iocProxy.GetService<IConfiguration>();
             var minLogLevel = Enum.TryParse(configuration?.GetSection("Logging").GetSection("LogLevel").GetSection("Default").Value, true, out LogLevel level) ? level : LogLevel.Information;
-
             var appName = GetAppName();
-            var appData = GetAppData(configuration, appName.ApplicationName, o);
-            var sessionData = GetSessionData(configuration, appName.EnvironmentName, o);
-
-            return new ConfigurationData
+            var appData = GetAppData(configuration, appName.ApplicationName, Options);
+            var sessionData = GetSessionData(configuration, appName.EnvironmentName, Options);
+            _configurationData = new ConfigurationData
             {
-                BaseAddress = o.BaseAddress,
-                ApiKey = o.ApiKey,
+                BaseAddress = Options.BaseAddress,
+                ApiKey = Options.ApiKey,
                 MinLogLevel = minLogLevel,
                 AppData = appData,
                 SessionData = sessionData,
-                LogEvent = o.LogEvent,
-                HttpClientFactory = o.HttpClientFactory,
+                LogEvent = Options.LogEvent,
+                HttpClientFactory = Options.HttpClientFactory,
             };
-        });
+            return _configurationData;
+        }
     }
 
     public virtual ILogger CreateLogger(string categoryName)
     {
+        _stateService ??= _iocProxy.GetService<IStateService>();
         var messageQueue = _iocProxy.GetService<IMessageQueue>();
         var configurationLoader = _iocProxy.GetService<IConfigurationDataLoader>();
-        return new Quilt4NetLogger(messageQueue, configurationLoader, categoryName);
+        var configuration = _iocProxy.GetService<IConfigurationData>();
+        return new Quilt4NetLogger(messageQueue, configurationLoader, configuration, categoryName);
     }
 
     public void Dispose()
