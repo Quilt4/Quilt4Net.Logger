@@ -3,7 +3,7 @@ using Quilt4Net.Entities;
 
 namespace Quilt4Net.Dtos;
 
-internal record ConfigurationData
+internal record ConfigurationData : IConfigurationData
 {
     public string BaseAddress { get; init; }
     public string ApiKey { get; init; }

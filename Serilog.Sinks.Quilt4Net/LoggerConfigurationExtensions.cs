@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Quilt4Net;
 using Quilt4Net.Entities;
 using Quilt4Net.Internals;
 using Quilt4Net.Ioc;
@@ -18,7 +17,7 @@ public static class LoggerConfigurationExtensions
 
         var instanceContainer = new InstanceContainer(configuration, hostEnvironment, options);
         instanceContainer.GetService<ILoggerProvider>();
-        instanceContainer.StartQuilt4NetEngine();
+        //instanceContainer.StartQuilt4NetEngine();
 
         return sinkConfiguration.Sink(new Quilt4NetSink(instanceContainer.GetService<IMessageQueue>()), LogEventLevel.Verbose);
     }

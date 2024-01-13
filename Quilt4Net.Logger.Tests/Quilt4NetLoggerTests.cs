@@ -17,8 +17,9 @@ public class Quilt4NetLoggerTests
         messageQueue.Setup(x => x.Enqueue(It.IsAny<LogInput>()));
         var configurationDataLoader = new Mock<IConfigurationDataLoader>(MockBehavior.Strict);
         configurationDataLoader.Setup(x => x.Get()).Returns(Mock.Of<ConfigurationData>());
+        var configurationData = new Mock<IConfigurationData>(MockBehavior.Strict);
         var categoryName = new Fixture().Create<string>();
-        var sut = new Quilt4NetLogger(messageQueue.Object, configurationDataLoader.Object, categoryName);
+        var sut = new Quilt4NetLogger(messageQueue.Object, configurationDataLoader.Object, configurationData.Object, categoryName);
 
         var state = new Dictionary<string, object> { { "Some", "Data" } };
 

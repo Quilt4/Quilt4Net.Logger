@@ -22,13 +22,17 @@ internal class SenderEngine : ISenderEngine
     private string _appDataKey;
     private string _sessionDataKey;
 
-    public SenderEngine(IConfigurationDataLoader configurationDataLoader, IMessageQueue messageQueue)
+    public SenderEngine(IConfigurationData configurationData, IMessageQueue messageQueue)
     {
         _messageQueue = messageQueue;
-        _configurationData = configurationDataLoader.Get();
+        _configurationData = (ConfigurationData)configurationData;
         _httpClient = CreateHttpClient(_configurationData.BaseAddress);
         _cancellationTokenSource = new CancellationTokenSource();
     }
+
+    public event EventHandler<SendActionEventArgs> SendEvent;
+
+    public bool Started => _started;
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -65,7 +69,7 @@ internal class SenderEngine : ISenderEngine
                 }
                 catch (Exception e)
                 {
-                    //Debugger.Break();
+                    SendEvent?.Invoke(this, new SendActionEventArgs(ESendActionEh.Crash, "Restart in 5 seconds.", e));
                     _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Exception, null, null, e.Message));
                     await Task.Delay(TimeSpan.FromSeconds(5), _cancellationTokenSource.Token);
                 }
@@ -119,6 +123,7 @@ internal class SenderEngine : ISenderEngine
                 {
                     _messageQueue.Enqueue(logInput);
                     _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Warning, logInput, response.StatusCode, $"{response.ReasonPhrase} Waiting and retrying.", sw.StopAndGetElapsed()));
+                    SendEvent?.Invoke(this, new SendActionEventArgs(ESendActionEh.Fail, $"{response.StatusCode}: {response.ReasonPhrase}"));
                     await GetConfigurationAsync(CancellationToken.None);
                     await Task.Delay(TimeSpan.FromMilliseconds(1000));
                 }
@@ -132,6 +137,7 @@ internal class SenderEngine : ISenderEngine
                 string resourceLocation = null;
                 if (response.Headers.TryGetValues("Location", out var locationValues)) resourceLocation = locationValues.FirstOrDefault();
                 _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Complete, logInput, response.StatusCode, resourceLocation, sw.StopAndGetElapsed()));
+                SendEvent?.Invoke(this, new SendActionEventArgs(ESendActionEh.Success));
             }
 
             //NOTE: Limit the send rate to server
@@ -141,6 +147,7 @@ internal class SenderEngine : ISenderEngine
         {
             //TODO: Consider requeue
             _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Exception, logInput, null, e.Message, sw.StopAndGetElapsed()));
+            SendEvent?.Invoke(this, new SendActionEventArgs(ESendActionEh.Crash, null, e));
         }
     }
 

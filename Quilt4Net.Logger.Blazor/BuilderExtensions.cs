@@ -11,13 +11,27 @@ public static class BuilderExtensions
     {
         builder.Services.AddSingleton<ILoggerProvider>(serviceProvider =>
         {
-            serviceProvider.StartQuilt4NetEngine();
-            return new Quilt4NetBlazorProvider(serviceProvider, options);
+            var provider = new Quilt4NetBlazorProvider(serviceProvider, options);
+            //serviceProvider.StartQuilt4NetEngine();
+            return provider;
+        });
+        builder.Services.AddSingleton(serviceProvider =>
+        {
+            var p = (Quilt4NetProvider)serviceProvider.GetService<ILoggerProvider>();
+            return p.ConfigurationData;
         });
         builder.Services.AddSingleton<IConfigurationDataLoader, ConfigurationDataLoader>();
         builder.Services.AddSingleton<IMessageQueue, MessageQueue>();
+        builder.Services.AddSingleton<IStateService>(serviceProvider =>
+        {
+            var configurationEngine = serviceProvider.GetService<IConfigurationEngine>();
+            var senderEngine = serviceProvider.GetService<ISenderEngine>();
+            var messageQueue = serviceProvider.GetService<IMessageQueue>();
+            var p = (Quilt4NetProvider)serviceProvider.GetService<ILoggerProvider>();
+            return new StateService(configurationEngine, senderEngine, messageQueue, p.Options);
+        });
         builder.Services.AddSingleton<ISenderEngine, SenderEngine>();
-        builder.Services.AddSingleton<ConfigurationEngine>();
+        builder.Services.AddSingleton<IConfigurationEngine, ConfigurationEngine>();
 
         builder.Services.AddHostedService<SenderEngine>();
         builder.Services.AddHostedService<ConfigurationEngine>();
