@@ -29,29 +29,8 @@ public class Quilt4NetProvider : ILoggerProvider
         _iocProxy = iocProxy;
         _optionsLoader = options;
 
-        //var configuration = _iocProxy.GetService<IConfiguration>();
-        //var o = LoadQuilt4NetOptions(configuration, options);
-
-        //var minLogLevel = Enum.TryParse(configuration?.GetSection("Logging").GetSection("LogLevel").GetSection("Default").Value, true, out LogLevel level) ? level : LogLevel.Information;
-        //var appName = GetAppName(); //TODO: Refactor
-        //var appData = GetAppData(configuration, appName.ApplicationName, o);
-        //var sessionData = GetSessionData(configuration, appName.EnvironmentName, o);
-        //var configurationData = new ConfigurationData
-        //{
-        //    BaseAddress = o.BaseAddress,
-        //    ApiKey = o.ApiKey,
-        //    MinLogLevel = minLogLevel,
-        //    AppData = appData,
-        //    SessionData = sessionData,
-        //    LogEvent = o.LogEvent,
-        //    HttpClientFactory = o.HttpClientFactory,
-        //};
-
-        //TODO: This is the one provider. Perhaps this also can handle states
-        //o.LogStateEvent?.Invoke(new StateChangedEventArgs(ELoggerState.Running, -1));
-
-        var configurationDataLoader = _iocProxy.GetService<IConfigurationDataLoader>();
-        configurationDataLoader.Set(() => (ConfigurationData)ConfigurationData);
+        //var configurationDataLoader = _iocProxy.GetService<IConfigurationDataLoader>();
+        //configurationDataLoader.Set(() => (ConfigurationData)ConfigurationData);
     }
 
     internal Quilt4NetOptions Options
@@ -95,9 +74,8 @@ public class Quilt4NetProvider : ILoggerProvider
     {
         _stateService ??= _iocProxy.GetService<IStateService>();
         var messageQueue = _iocProxy.GetService<IMessageQueue>();
-        var configurationLoader = _iocProxy.GetService<IConfigurationDataLoader>();
         var configuration = _iocProxy.GetService<IConfigurationData>();
-        return new Quilt4NetLogger(messageQueue, configurationLoader, configuration, categoryName);
+        return new Quilt4NetLogger(messageQueue, configuration, categoryName);
     }
 
     public void Dispose()

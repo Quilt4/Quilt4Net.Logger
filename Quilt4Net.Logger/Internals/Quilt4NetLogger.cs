@@ -9,11 +9,11 @@ internal class Quilt4NetLogger : ILogger
     private readonly string _categoryName;
     private readonly LogLevel _minLogLevel;
 
-    internal Quilt4NetLogger(IMessageQueue messageQueue, IConfigurationDataLoader configurationDataLoader, IConfigurationData configurationData, string categoryName = null)
+    internal Quilt4NetLogger(IMessageQueue messageQueue, IConfigurationData configurationData, string categoryName = null)
     {
         _messageQueue = messageQueue;
         _categoryName = categoryName;
-        var configuration = configurationDataLoader.Get();
+        var configuration = configurationData;
         _minLogLevel = configuration.MinLogLevel;
     }
 

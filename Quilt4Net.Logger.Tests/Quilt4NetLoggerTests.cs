@@ -15,11 +15,12 @@ public class Quilt4NetLoggerTests
         //Arrange
         var messageQueue = new Mock<IMessageQueue>(MockBehavior.Strict);
         messageQueue.Setup(x => x.Enqueue(It.IsAny<LogInput>()));
-        var configurationDataLoader = new Mock<IConfigurationDataLoader>(MockBehavior.Strict);
-        configurationDataLoader.Setup(x => x.Get()).Returns(Mock.Of<ConfigurationData>());
+        //var configurationDataLoader = new Mock<IConfigurationDataLoader>(MockBehavior.Strict);
+        //configurationDataLoader.Setup(x => x.Get()).Returns(Mock.Of<ConfigurationData>());
         var configurationData = new Mock<IConfigurationData>(MockBehavior.Strict);
+        configurationData.Setup(x => x.MinLogLevel).Returns(LogLevel.Information);
         var categoryName = new Fixture().Create<string>();
-        var sut = new Quilt4NetLogger(messageQueue.Object, configurationDataLoader.Object, configurationData.Object, categoryName);
+        var sut = new Quilt4NetLogger(messageQueue.Object, configurationData.Object, categoryName);
 
         var state = new Dictionary<string, object> { { "Some", "Data" } };
 
