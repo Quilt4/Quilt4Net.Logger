@@ -107,8 +107,6 @@ internal class StateService : IStateService
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            //TODO: Do not downgrade to 'Ready' if the current state is higher.
-            //var state = e.ConfigurationAction == EConfigurationAction.Crash ? ELoggerState.Crash : ELoggerState.Ready;
             FireAction(state, messageQueue.QueueCount, e.Exception);
         };
     }
@@ -122,9 +120,9 @@ internal class StateService : IStateService
             _lastState = state;
             _options.LogStateEvent?.Invoke(new StateChangedEventArgs(state, /*queueCount, _sendCount,*/ exception));
         }
-        catch (Exception e)
+        catch
         {
-            //TODO: The called message failed.
+            // ignored
         }
     }
 }

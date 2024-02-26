@@ -145,7 +145,6 @@ internal class SenderEngine : ISenderEngine
         }
         catch (Exception e)
         {
-            //TODO: Consider requeue
             _configurationData.LogEvent?.Invoke(new LogEventArgs(ELogState.Exception, logInput, null, e.Message, sw.StopAndGetElapsed()));
             SendEvent?.Invoke(this, new SendActionEventArgs(ESendActionEh.Crash, null, e));
         }
