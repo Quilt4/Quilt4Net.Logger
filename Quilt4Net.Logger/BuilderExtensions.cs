@@ -12,7 +12,6 @@ public static class BuilderExtensions
         builder.Services.AddSingleton<ILoggerProvider>(serviceProvider =>
         {
             var provider = new Quilt4NetProvider(serviceProvider, options);
-            //serviceProvider.StartQuilt4NetEngine();
             return provider;
         });
         builder.Services.AddSingleton(serviceProvider =>
@@ -20,7 +19,6 @@ public static class BuilderExtensions
             var p = (Quilt4NetProvider)serviceProvider.GetService<ILoggerProvider>();
             return p.ConfigurationData;
         });
-        //builder.Services.AddSingleton<IConfigurationDataLoader, ConfigurationDataLoader>();
         builder.Services.AddSingleton<IMessageQueue, MessageQueue>();
         builder.Services.AddSingleton<IStateService>(serviceProvider =>
         {
@@ -38,64 +36,4 @@ public static class BuilderExtensions
 
         return builder;
     }
-
-    ///// <summary>
-    ///// This is normally not needed, the engine will start automatically. But if you are running a console implementation hosted services are not started automatically, this method can be called.
-    ///// </summary>
-    ///// <param name="serviceProvider"></param>
-    //public static void StartQuilt4NetEngine(this IServiceProvider serviceProvider)
-    //{
-    //    StartQuilt4NetEngine(new ServiceProviderIocProxy(serviceProvider));
-    //}
-
-    //public static void StartQuilt4NetEngine(this IIocProxy iocProxy)
-    //{
-    //    Task.Run(async () =>
-    //    {
-    //        //TODO: Do not start if already started.
-
-    //        var sw = new Stopwatch();
-    //        sw.Start();
-
-    //        //await Task.Delay(TimeSpan.FromSeconds(1)); //Wait for configuration to be loaded
-
-    //        var started = false;
-    //        for (var i = 0; i < 5; i++)
-    //        {
-    //            try
-    //            {
-    //                var configurationEngine = iocProxy.GetService<IConfigurationEngine>();
-    //                await configurationEngine.StartAsync(CancellationToken.None);
-
-    //                var sender = iocProxy.GetService<ISenderEngine>();
-    //                await sender.StartAsync(CancellationToken.None);
-
-    //                started = true;
-    //                break;
-    //            }
-    //            catch (ConfigurationException e)
-    //            {
-    //                await Task.Delay(TimeSpan.FromSeconds(1));
-    //            }
-    //            catch (Exception e)
-    //            {
-    //                Debugger.Break();
-    //                Console.WriteLine($"{e.Message} @{e.StackTrace}");
-    //                break;
-    //            }
-    //        }
-
-    //        try
-    //        {
-    //            var configurationDataLoader = iocProxy.GetService<IConfigurationDataLoader>();
-    //            var eLogState = started ? ELogState.Debug : ELogState.Warning;
-    //            configurationDataLoader.Get().LogEvent?.Invoke(new LogEventArgs(eLogState, null, null, $"The engine was {(started ? "" : "NOT ")}stared.", sw.StopAndGetElapsed()));
-    //        }
-    //        catch (Exception e)
-    //        {
-    //            Debugger.Break();
-    //            Console.WriteLine($"{e.Message} @{e.StackTrace}");
-    //        }
-    //    });
-    //}
 }

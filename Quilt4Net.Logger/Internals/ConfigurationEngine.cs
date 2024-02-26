@@ -49,7 +49,6 @@ internal class ConfigurationEngine : IConfigurationEngine
             {
                 try
                 {
-                    //TODO: Waiting for configuration
                     var configuration = await _sender.GetConfigurationAsync(_cancellationTokenSource.Token);
                     if (configuration != null)
                     {
